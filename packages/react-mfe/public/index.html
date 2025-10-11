@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>React MFE - User Management</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+                'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+                sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        code {
+            font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+                monospace;
+        }
+    </style>
+</head>
+<body>
+    <noscript>You need to enable JavaScript to run this app.</noscript>
+    <div id="root"></div>
+    
+    <% if (isLocal) { %>
+    <!-- UMD module loading for standalone mode -->
+    <script src="https://cdn.jsdelivr.net/npm/react@18/umd/react.development.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/single-spa@6/lib/umd/single-spa.min.js"></script>
+    <% } %>
+    
+    <script src="react-mfe.js"></script>
+    
+    <% if (isLocal) { %>
+    <script>
+        // UMD module should be available globally for standalone mode
+        if (window['@single-spa-demo/react-mfe']) {
+            const module = window['@single-spa-demo/react-mfe'];
+            console.log('React MFE module loaded:', module);
+            
+            // Create mock Single-SPA props for standalone mode
+            const props = {
+                name: '@single-spa-demo/react-mfe',
+                singleSpa: true,
+                mountParcel: () => {},
+                domElement: document.getElementById('root')
+            };
+            
+            // Bootstrap and mount
+            module.bootstrap(props)
+                .then(() => module.mount(props))
+                .then(() => console.log('React MFE mounted successfully'))
+                .catch(err => console.error('Failed to mount React MFE:', err));
+        } else {
+            console.error('React MFE module not found in global scope');
+        }
+    </script>
+    <% } %>
+</body>
+</html>

@@ -1,0 +1,79 @@
+{
+  "name": "single-spa-mfe-demo",
+  "version": "1.0.0",
+  "description": "Single-SPA micro-frontend demo with React, Vue, and Angular",
+  "private": true,
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "install:all": "npm install && npm run install:packages",
+    "install:packages": "npm install --workspace=packages/shell-app && npm install --workspace=packages/react-mfe && npm install --workspace=packages/vue-mfe && npm install --workspace=packages/angular-mfe && npm install --workspace=packages/shared-library",
+    "dev": "concurrently \"npm run dev:shared\" \"npm run dev:react\" \"npm run dev:vue\" \"npm run dev:angular\" \"npm run dev:shell\"",
+    "dev:shell": "npm run start --workspace=packages/shell-app",
+    "dev:react": "npm run start --workspace=packages/react-mfe",
+    "dev:vue": "npm run start --workspace=packages/vue-mfe",
+    "dev:angular": "npm run start --workspace=packages/angular-mfe",
+    "dev:shared": "npm run dev --workspace=packages/shared-library",
+    "build": "npm run build:shared && npm run build:react && npm run build:vue && npm run build:angular && npm run build:shell",
+    "build:shell": "npm run build --workspace=packages/shell-app",
+    "build:react": "npm run build --workspace=packages/react-mfe",
+    "build:vue": "npm run build --workspace=packages/vue-mfe",
+    "build:angular": "npm run build --workspace=packages/angular-mfe",
+    "build:shared": "npm run build --workspace=packages/shared-library",
+    "test": "npm run test --workspaces",
+    "lint": "npm run lint --workspaces",
+    "clean": "npm run clean --workspaces && node scripts/clean-node-modules.cjs",
+    "deploy:all": "npm run build && concurrently \"npm run deploy:shared\" \"npm run deploy:react\" \"npm run deploy:vue\" \"npm run deploy:angular\" && npm run deploy:shell",
+    "deploy:shell": "cd packages/shell-app && vercel --prod",
+    "deploy:react": "cd packages/react-mfe && vercel --prod",
+    "deploy:vue": "cd packages/vue-mfe && vercel --prod",
+    "deploy:angular": "cd packages/angular-mfe && vercel --prod",
+    "deploy:shared": "cd packages/shared-library && vercel --prod",
+    "preview:all": "concurrently \"npm run preview:shared\" \"npm run preview:react\" \"npm run preview:vue\" \"npm run preview:angular\" \"npm run preview:shell\"",
+    "preview:shell": "cd packages/shell-app && vercel",
+    "preview:react": "cd packages/react-mfe && vercel",
+    "preview:vue": "cd packages/vue-mfe && vercel",
+    "preview:angular": "cd packages/angular-mfe && vercel",
+    "preview:shared": "cd packages/shared-library && vercel",
+    "sonar:start": "docker-compose -f docker-compose.sonar.yml up -d sonarqube sonarqube-db",
+    "sonar:stop": "docker-compose -f docker-compose.sonar.yml down",
+    "sonar:scan": "npm run sonar:analyze",
+    "sonar:analyze": "docker-compose -f docker-compose.sonar.yml run --rm sonar-scanner sonar-scanner",
+    "sonar:logs": "docker-compose -f docker-compose.sonar.yml logs -f sonarqube",
+    "sonar:clean": "docker-compose -f docker-compose.sonar.yml down -v",
+    "sonar:wait": "node scripts/wait-for-sonar.js",
+    "test:coverage": "npm run test:coverage --workspaces --if-present",
+    "lint:all": "npm run lint --workspaces --if-present",
+    "format:check": "prettier --check \"packages/**/src/**/*.{js,jsx,ts,tsx,vue}\"",
+    "format:write": "prettier --write \"packages/**/src/**/*.{js,jsx,ts,tsx,vue}\""
+  },
+  "devDependencies": {
+    "@types/node": "^20.8.7",
+    "@types/systemjs": "^6.15.3",
+    "concurrently": "^8.2.2",
+    "lerna": "^7.4.2",
+    "rimraf": "^5.0.5",
+    "typescript": "^5.2.2",
+    "vercel": "^32.4.1"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/your-username/single-spa-mfe-demo.git"
+  },
+  "keywords": [
+    "single-spa",
+    "micro-frontend",
+    "react",
+    "vue",
+    "angular",
+    "vercel",
+    "microservices"
+  ],
+  "author": "Your Name",
+  "license": "MIT"
+}

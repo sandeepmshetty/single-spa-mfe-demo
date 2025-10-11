@@ -1,0 +1,82 @@
+{
+  "name": "@single-spa-demo/angular-mfe",
+  "version": "1.0.0",
+  "description": "Angular 17 micro-frontend for dashboard and analytics",
+  "main": "src/main.single-spa.ts",
+  "scripts": {
+    "ng": "ng",
+    "start": "ng serve --port 3003",
+    "build": "ng build",
+    "build:single-spa": "ng build --configuration production",
+    "test": "ng test",
+    "test:coverage": "ng test --code-coverage",
+    "lint": "ng lint",
+    "e2e": "ng e2e",
+    "serve:single-spa": "ng serve --configuration single-spa",
+  "build:analyze": "npx webpack-bundle-analyzer dist/angular-mfe/main.*.js",
+  "type-check": "tsc --noEmit",
+  "clean": "node ../../scripts/rm-paths.cjs dist .angular"
+  },
+  "dependencies": {
+    "@angular/cdk": "^17.3.10",
+    "@angular/material": "^17.3.10",
+    "@angular/animations": "^17.0.0",
+    "@angular/common": "^17.0.0",
+    "@angular/compiler": "^17.3.12",
+    "@angular/core": "^17.0.0",
+    "@angular/forms": "^17.0.0",
+    "@angular/platform-browser": "^17.0.0",
+    "@angular/platform-browser-dynamic": "^17.0.0",
+    "@angular/router": "^17.0.0",
+    "@single-spa-demo/shared-library": "file:../shared-library",
+    "date-fns": "^2.30.0",
+    "rxjs": "~7.8.0",
+    "single-spa": "^6.0.3",
+    "single-spa-angular": "^9.0.0",
+    "tslib": "^2.3.0",
+  "zone.js": "~0.14.4"
+  },
+  "devDependencies": {
+    "@angular-builders/custom-webpack": "^17.0.2",
+    "@angular-devkit/build-angular": "^17.0.0",
+    "@angular-devkit/core": "^17.0.0",
+    "@angular-devkit/schematics": "^17.0.0",
+    "@angular-eslint/eslint-plugin": "^17.0.0",
+    "@angular-eslint/template-parser": "^17.0.0",
+    "@angular/cli": "^17.3.17",
+    "@angular/compiler-cli": "^17.3.12",
+    "@types/jasmine": "~5.1.0",
+    "@types/node": "^18.15.0",
+    "@typescript-eslint/eslint-plugin": "^6.0.0",
+    "@typescript-eslint/parser": "^6.0.0",
+    "eslint": "^8.52.0",
+    "jasmine-core": "~5.1.0",
+    "karma": "~6.4.0",
+    "karma-chrome-launcher": "~3.2.0",
+    "karma-coverage": "~2.2.0",
+    "karma-jasmine": "~5.1.0",
+    "karma-jasmine-html-reporter": "~2.1.0",
+    "typescript": "^5.2.2",
+    "webpack": "^5.102.0",
+    "webpack-merge": "^6.0.1"
+  },
+  "browserslist": [
+    "defaults",
+    "not IE 11"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/your-username/single-spa-mfe-demo.git",
+    "directory": "packages/angular-mfe"
+  },
+  "keywords": [
+    "angular",
+    "angular17",
+    "single-spa",
+    "micro-frontend",
+    "dashboard",
+    "analytics"
+  ],
+  "author": "Your Name",
+  "license": "MIT"
+}

@@ -1,0 +1,59 @@
+<div class="angular-mfe-app" [class.embedded]="isEmbedded">
+  <!-- Header (only show when not embedded) -->
+  <header class="app-header" *ngIf="!isEmbedded">
+    <div class="toolbar">
+      <div class="toolbar-left">
+        <span class="icon">📊</span>
+        <span class="title">{{ title }}</span>
+      </div>
+      
+      <nav class="nav-buttons">
+        <button class="nav-btn" (click)="navigateTo('/dashboard')">
+          📈 Dashboard
+        </button>
+        <button class="nav-btn" (click)="navigateTo('/analytics')">
+          📊 Analytics
+        </button>
+      </nav>
+      
+      <div class="user-info" *ngIf="currentUser">
+        <span class="user-icon">👤</span>
+        <span>{{ currentUser.name || 'User' }}</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="main-content">
+    <div class="container">
+      <!-- Welcome message when embedded -->
+      <div class="welcome-section" *ngIf="isEmbedded">
+        <div class="welcome-card">
+          <div class="card-header">
+            <span class="card-icon">📊</span>
+            <div class="card-title-section">
+              <h2>Angular MFE</h2>
+              <p>Dashboard & Analytics</p>
+            </div>
+          </div>
+          <div class="card-content">
+            <p>This is the Angular micro-frontend providing dashboard and analytics functionality.</p>
+            <button class="btn btn-primary" (click)="emitTestEvent()">
+              🚀 Send Test Event
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Router Outlet -->
+      <router-outlet></router-outlet>
+    </div>
+  </main>
+
+  <!-- Footer (only show when not embedded) -->
+  <footer class="footer" *ngIf="!isEmbedded">
+    <div class="container">
+      <p>&copy; 2024 Angular MFE. Part of Single-SPA Demo.</p>
+    </div>
+  </footer>
+</div>
