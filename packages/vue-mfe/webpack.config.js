@@ -67,7 +67,7 @@ module.exports = (env, argv) => {
     },
     
     output: {
-      filename: isProduction ? 'vue-mfe.[contenthash].js' : 'vue-mfe.js',
+      filename: 'vue-mfe.js',
       path: path.resolve(__dirname, 'dist'),
       publicPath: '/',
       library: '@single-spa-demo/vue-mfe',
@@ -103,11 +103,7 @@ module.exports = (env, argv) => {
       },
     },
     
-    externals: isProduction ? {
-      'vue': 'Vue',
-      'vue-router': 'VueRouter',
-      'single-spa': 'singleSpa',
-    } : {},
+    externals: {},
     
     optimization: {
       splitChunks: false,

@@ -7,11 +7,10 @@ export const MFE_CONFIG = {
     'shared-library': 'http://localhost:9000/shared-library.js'
   },
   production: {
-    // Update these URLs after deploying to Vercel
-    'react-mfe': process.env.REACT_MFE_URL || 'https://react-mfe-xxx.vercel.app/react-mfe.js',
-    'vue-mfe': process.env.VUE_MFE_URL || 'https://vue-mfe-xxx.vercel.app/vue-mfe.js',
-    'angular-mfe': process.env.ANGULAR_MFE_URL || 'https://angular-mfe-xxx.vercel.app/main.js',
-    'shared-library': process.env.SHARED_LIB_URL || 'https://shared-library-xxx.vercel.app/shared-library.js'
+    'react-mfe': 'https://react-mfe-tau.vercel.app/react-mfe.js',
+    'vue-mfe': 'https://vue-mfe.vercel.app/vue-mfe.js',
+    'angular-mfe': 'https://angular-mfe-indol.vercel.app/main.js',
+    'shared-library': 'https://shared-library.vercel.app/shared-library.js'
   }
 };
 

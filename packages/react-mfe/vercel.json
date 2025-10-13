@@ -1,47 +1,4 @@
 {
-  "name": "react-mfe",
-  "version": 2,
-  "builds": [
-    {
-      "src": "dist/**",
-      "use": "@vercel/static"
-    }
-  ],
-  "routes": [
-    {
-      "src": "/react-mfe.js",
-      "dest": "/dist/react-mfe.js",
-      "headers": {
-        "Access-Control-Allow-Origin": "*",
-        "Cache-Control": "public, max-age=31536000, immutable",
-        "Content-Type": "application/javascript"
-      }
-    },
-    {
-      "src": "/assets/(.*)",
-      "dest": "/dist/assets/$1",
-      "headers": {
-        "Access-Control-Allow-Origin": "*",
-        "Cache-Control": "public, max-age=31536000, immutable"
-      }
-    },
-    {
-      "src": "/(.*\\.(js|css|map))",
-      "dest": "/dist/$1",
-      "headers": {
-        "Access-Control-Allow-Origin": "*",
-        "Cache-Control": "public, max-age=31536000, immutable"
-      }
-    },
-    {
-      "src": "/health",
-      "dest": "/api/health.js"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "/dist/index.html"
-    }
-  ],
   "headers": [
     {
       "source": "/(.*)",
@@ -65,5 +22,6 @@
     "NODE_ENV": "production",
     "REACT_APP_MFE_NAME": "react-users"
   },
+  "buildCommand": "npm run build",
   "outputDirectory": "dist"
 }

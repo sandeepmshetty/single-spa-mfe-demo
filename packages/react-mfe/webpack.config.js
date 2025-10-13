@@ -54,7 +54,7 @@ module.exports = (env, argv) => {
     },
     
     output: {
-      filename: isProduction ? 'react-mfe.[contenthash].js' : 'react-mfe.js',
+      filename: 'react-mfe.js',
       path: path.resolve(__dirname, 'dist'),
       publicPath: '/',
       library: '@single-spa-demo/react-mfe',
@@ -89,11 +89,7 @@ module.exports = (env, argv) => {
       },
     },
     
-    externals: isProduction ? {
-      'react': 'React',
-      'react-dom': 'ReactDOM',
-      'single-spa': 'singleSpa',
-    } : {},
+    externals: {},
     
     optimization: {
       splitChunks: false,

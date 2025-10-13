@@ -42,7 +42,7 @@ module.exports = (env, argv) => {
     },
     
     output: {
-      filename: isProduction ? 'shell-app.[contenthash].js' : 'shell-app.js',
+      filename: 'shell-app.js',
       path: path.resolve(__dirname, 'dist'),
       publicPath: '/',
       clean: true,
@@ -60,14 +60,6 @@ module.exports = (env, argv) => {
       }),
       new (require('webpack')).DefinePlugin({
         'process.env.NODE_ENV': JSON.stringify(isProduction ? 'production' : 'development'),
-      }),
-      new CopyWebpackPlugin({
-        patterns: [
-          {
-            from: path.resolve(__dirname, '../shared-library/dist/shared-library.js'),
-            to: 'shared-library.js',
-          },
-        ],
       }),
     ],
     
