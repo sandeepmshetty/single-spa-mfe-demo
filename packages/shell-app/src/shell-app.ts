@@ -1,5 +1,5 @@
 import { registerApplication, start, navigateToUrl } from 'single-spa';
-// import { constructApplications, constructRoutes, constructLayoutEngine } from 'single-spa-layout';
+import { MFEErrorBoundary } from './error-boundary';
 
 // Import shared services type
 type SharedServices = Window['sharedServices'];
@@ -10,7 +10,16 @@ let sharedServices: SharedServices | Record<string, any> = {} as any;
 async function initializeSharedServices(): Promise<SharedServices> {
   try {
     const sharedLib = await System.import('@single-spa-demo/shared-library');
+    
+    // Version compatibility check
+    const requiredVersion = '1.0.0';
+    if (sharedLib.versionInfo && !sharedLib.versionInfo.compatible(requiredVersion)) {
+      console.warn(`Shared library version mismatch. Required: ${requiredVersion}, Found: ${sharedLib.VERSION}`);
+    }
+    
     sharedServices = {
+      version: sharedLib.VERSION,
+      versionInfo: sharedLib.versionInfo,
       eventBus: sharedLib.eventBus,
       authService: sharedLib.authService,
       storageService: sharedLib.storageService,
@@ -26,7 +35,7 @@ async function initializeSharedServices(): Promise<SharedServices> {
     // Make services globally available with type safety
     window.sharedServices = sharedServices as SharedServices;
     
-    console.log('🔗 Shared services initialized:', Object.keys(sharedServices));
+    console.log(`🔗 Shared services v${sharedLib.VERSION} initialized:`, Object.keys(sharedServices));
     return sharedServices as SharedServices;
   } catch (error) {
     console.error('Failed to initialize shared services:', error);
@@ -34,27 +43,10 @@ async function initializeSharedServices(): Promise<SharedServices> {
   }
 }
 
-// Application configuration
-const isDevelopment = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+import { getMFEConfig } from './config';
 
-const appConfig = {
-  development: {
-    'react-mfe': 'http://localhost:3001/react-mfe.js',
-    'vue-mfe': 'http://localhost:3002/vue-mfe.js',
-    'angular-mfe': 'http://localhost:3003/main.js',
-    'shared-library': 'http://localhost:9000/shared-library.js'
-  },
-  production: {
-    'react-mfe': '/react-mfe.js',
-    'vue-mfe': '/vue-mfe.js',
-    'angular-mfe': '/angular-mfe.js',
-    'shared-library': '/shared-library.js'
-  }
-};
-
-const currentConfig = isDevelopment ? appConfig.development : appConfig.production;
-
-const urls = currentConfig;
+// Get MFE URLs based on environment
+const urls = getMFEConfig();
 
 // Update SystemJS import map dynamically
 function updateImportMap() {
@@ -136,32 +128,37 @@ registerApplication({
 });
 
 // React MFE - User Management
+const reactErrorBoundary = new MFEErrorBoundary({
+  name: 'react-mfe',
+  onError: (error) => showErrorState('Failed to load User Management application'),
+  fallbackUI: `
+    <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 400px; padding: 2rem; text-align: center;">
+      <div style="font-size: 3rem; margin-bottom: 1rem;">⚠️</div>
+      <h2 style="color: #ef4444; margin-bottom: 0.5rem;">User Management Unavailable</h2>
+      <p style="color: #6b7280; margin-bottom: 1.5rem;">The user management module failed to load.</p>
+      <button onclick="window.location.reload()" style="padding: 0.75rem 1.5rem; background: #3b82f6; color: white; border: none; border-radius: 0.5rem; cursor: pointer;">Reload</button>
+    </div>
+  `
+});
+
 registerApplication({
   name: 'react-mfe',
-  app: () => {
+  app: reactErrorBoundary.wrap(() => {
     showLoadingState('Loading React MFE...');
     return System.import('@single-spa-demo/react-mfe')
       .then((module: any) => {
         console.log('React MFE loaded:', module);
-        // Handle UMD module format
         const lifecycles = module.default || module;
         if (typeof lifecycles === 'function') {
-          // If it's a function, call it to get the actual lifecycles
           return lifecycles();
         }
-        // Return the lifecycles directly
         return {
           bootstrap: lifecycles.bootstrap,
           mount: lifecycles.mount,
           unmount: lifecycles.unmount
         };
-      })
-      .catch((error: any) => {
-        console.error('Failed to load React MFE:', error);
-        showErrorState('Failed to load User Management application');
-        throw error;
       });
-  },
+  }),
   activeWhen: (location: Location) => location.pathname.startsWith('/users'),
   customProps: () => ({
     domElement: () => document.getElementById('single-spa-application:react-mfe'),
@@ -170,32 +167,37 @@ registerApplication({
 });
 
 // Vue MFE - Products
+const vueErrorBoundary = new MFEErrorBoundary({
+  name: 'vue-mfe',
+  onError: (error) => showErrorState('Failed to load Products application'),
+  fallbackUI: `
+    <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 400px; padding: 2rem; text-align: center;">
+      <div style="font-size: 3rem; margin-bottom: 1rem;">⚠️</div>
+      <h2 style="color: #ef4444; margin-bottom: 0.5rem;">Products Unavailable</h2>
+      <p style="color: #6b7280; margin-bottom: 1.5rem;">The products module failed to load.</p>
+      <button onclick="window.location.reload()" style="padding: 0.75rem 1.5rem; background: #3b82f6; color: white; border: none; border-radius: 0.5rem; cursor: pointer;">Reload</button>
+    </div>
+  `
+});
+
 registerApplication({
   name: 'vue-mfe',
-  app: () => {
+  app: vueErrorBoundary.wrap(() => {
     showLoadingState('Loading Vue MFE...');
     return System.import('@single-spa-demo/vue-mfe')
       .then((module: any) => {
         console.log('Vue MFE loaded:', module);
-        // Handle UMD module format
         const lifecycles = module.default || module;
         if (typeof lifecycles === 'function') {
-          // If it's a function, call it to get the actual lifecycles
           return lifecycles();
         }
-        // Return the lifecycles directly
         return {
           bootstrap: lifecycles.bootstrap,
           mount: lifecycles.mount,
           unmount: lifecycles.unmount
         };
-      })
-      .catch((error: any) => {
-        console.error('Failed to load Vue MFE:', error);
-        showErrorState('Failed to load Products application');
-        throw error;
       });
-  },
+  }),
   activeWhen: (location: Location) => location.pathname.startsWith('/products'),
   customProps: () => ({
     ...sharedServices
@@ -203,32 +205,37 @@ registerApplication({
 });
 
 // Angular MFE - Dashboard
+const angularErrorBoundary = new MFEErrorBoundary({
+  name: 'angular-mfe',
+  onError: (error) => showErrorState('Failed to load Dashboard application'),
+  fallbackUI: `
+    <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 400px; padding: 2rem; text-align: center;">
+      <div style="font-size: 3rem; margin-bottom: 1rem;">⚠️</div>
+      <h2 style="color: #ef4444; margin-bottom: 0.5rem;">Dashboard Unavailable</h2>
+      <p style="color: #6b7280; margin-bottom: 1.5rem;">The dashboard module failed to load.</p>
+      <button onclick="window.location.reload()" style="padding: 0.75rem 1.5rem; background: #3b82f6; color: white; border: none; border-radius: 0.5rem; cursor: pointer;">Reload</button>
+    </div>
+  `
+});
+
 registerApplication({
   name: 'angular-mfe',
-  app: () => {
+  app: angularErrorBoundary.wrap(() => {
     showLoadingState('Loading Angular MFE...');
     return System.import('@single-spa-demo/angular-mfe')
       .then((module: any) => {
         console.log('Angular MFE loaded:', module);
-        // Handle UMD module format
         const lifecycles = module.default || module;
         if (typeof lifecycles === 'function') {
-          // If it's a function, call it to get the actual lifecycles
           return lifecycles();
         }
-        // Return the lifecycles directly
         return {
           bootstrap: lifecycles.bootstrap,
           mount: lifecycles.mount,
           unmount: lifecycles.unmount
         };
-      })
-      .catch((error: any) => {
-        console.error('Failed to load Angular MFE:', error);
-        showErrorState('Failed to load Dashboard application');
-        throw error;
       });
-  },
+  }),
   activeWhen: (location: Location) => location.pathname.startsWith('/dashboard'),
   customProps: () => ({
     domElement: () => document.getElementById('single-spa-application:angular-mfe'),

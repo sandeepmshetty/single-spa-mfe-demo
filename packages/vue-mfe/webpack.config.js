@@ -1,6 +1,7 @@
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const { VueLoaderPlugin } = require('vue-loader');
+const { ModuleFederationPlugin } = require('webpack').container;
 const path = require('path');
 
 module.exports = (env, argv) => {
@@ -78,6 +79,7 @@ module.exports = (env, argv) => {
     plugins: [
       new CleanWebpackPlugin(),
       new VueLoaderPlugin(),
+
       new HtmlWebpackPlugin({
         template: 'public/index.html',
         inject: false,

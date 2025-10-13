@@ -157,7 +157,9 @@ export class AuthService {
   async updateProfile(userData: Partial<User>): Promise<boolean> {
     try {
       const currentState = this.authState$.value;
-      if (!currentState.user) return false;
+      if (!currentState.user) {
+        return false;
+      }
 
       // Mock profile update - replace with real API call
       const updatedUser = { ...currentState.user, ...userData };
@@ -256,7 +258,9 @@ export class AuthService {
    */
   private isTokenExpired(token?: string): boolean {
     const currentToken = token || this.authState$.value.token;
-    if (!currentToken) return true;
+    if (!currentToken) {
+      return true;
+    }
 
     const expiry = this.getTokenExpiry(currentToken);
     return expiry ? Date.now() > expiry : false;

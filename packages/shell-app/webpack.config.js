@@ -56,7 +56,7 @@ module.exports = (env, argv) => {
         templateParameters: {
           isLocal: !isProduction,
         },
-        minify: false, // Disable HTML minification to avoid parse errors
+        minify: false,
       }),
       new (require('webpack')).DefinePlugin({
         'process.env.NODE_ENV': JSON.stringify(isProduction ? 'production' : 'development'),
