@@ -11,10 +11,9 @@ This project demonstrates a micro-frontend architecture using Single-SPA where:
 - **Angular MFE**: Analytics dashboard and reporting (Port: 3003)
 - **Shared Library**: Common utilities, components, and communication layer (Port: 3004)
 
-## Current Directory
-```
-C:\Users\sande\Repo\Micro-Frontend\Micro-Frontend-Single-SPA\
-```
+## Repository
+- **GitHub**: https://github.com/sandeepmshetty/single-spa-mfe-demo
+- **Vercel**: https://vercel.com/sandeep-shettys-projects
 
 ## Project Structure
 
@@ -35,34 +34,124 @@ single-spa-mfe-demo/
 
 ### Prerequisites
 - Node.js 18+ 
-- npm or yarn
+- npm 9.0.0+
 - Git
 
-### Development Setup
+### Local Development
 
-1. **Install dependencies:**
-   ```powershell
+1. **Clone the repository:**
+   ```bash
+   git clone https://github.com/sandeepmshetty/single-spa-mfe-demo.git
+   cd single-spa-mfe-demo
+   ```
+
+2. **Install dependencies:**
+   ```bash
    npm install
    npm run install:all
    ```
 
-2. **Start all applications:**
-   ```powershell
+3. **Start all applications concurrently:**
+   ```bash
    npm run dev
    ```
+   This starts all 5 micro-frontends simultaneously.
 
-3. **Access the applications:**
-   - Shell App: http://localhost:9000
+4. **Access the applications:**
+   - **Shell App**: http://localhost:9000 (main entry point)
    - React MFE: http://localhost:3001  
    - Vue MFE: http://localhost:3002
    - Angular MFE: http://localhost:3003
    - Shared Library: http://localhost:3004
 
+### Individual Development
+
+Run individual micro-frontends:
+```bash
+npm run dev:shell      # Shell app only
+npm run dev:react      # React MFE only
+npm run dev:vue        # Vue MFE only
+npm run dev:angular    # Angular MFE only
+npm run dev:shared     # Shared library only
+```
+
 ## Deployment on Vercel
 
-Each micro-frontend will be deployed independently:
-- **Shell**: `shell.your-domain.com`
-- **React MFE**: `react-mfe.your-domain.com`
-- **Vue MFE**: `vue-mfe.your-domain.com`  
-- **Angular MFE**: `angular-mfe.your-domain.com`
-- **Shared Library**: `shared.your-domain.com`
+Each micro-frontend is deployed independently:
+- **Shell App**: https://mfe-shell-app.vercel.app
+- **React MFE**: https://react-mfe-tau.vercel.app
+- **Vue MFE**: https://vue-mfe.vercel.app
+- **Angular MFE**: https://angular-mfe-indol.vercel.app
+- **Shared Library**: https://shared-library.vercel.app
+
+### Live Demo
+Access the application at: **https://mfe-shell-app.vercel.app**
+
+### Deployment Process
+
+**Deploy all MFEs:**
+```bash
+npm run deploy:all
+```
+
+**Deploy individual MFE:**
+```bash
+cd packages/shell-app
+npm run build
+vercel --prod
+```
+
+**Important:** After deploying MFEs, update production URLs in:
+- `packages/shell-app/src/config.ts`
+- `packages/shell-app/src/index.html`
+
+Then redeploy the shell-app.
+
+## Features
+
+- ✅ **Framework Agnostic**: React, Vue, and Angular working together
+- ✅ **Independent Deployment**: Each MFE deployed separately on Vercel
+- ✅ **Shared Services**: Common utilities via shared-library
+- ✅ **Event-Driven Communication**: Cross-MFE messaging with event bus
+- ✅ **TypeScript**: Full type safety across all packages
+- ✅ **Monorepo**: npm workspaces for efficient development
+- ✅ **Hot Reload**: Fast development with webpack dev servers
+
+## Technology Stack
+
+- **Orchestration**: Single-SPA 6.x
+- **Module Loading**: SystemJS 6.x
+- **React**: 18.x with TypeScript
+- **Vue**: 3.x with Composition API
+- **Angular**: 17.x with RxJS
+- **Build**: Webpack 5.x, Angular CLI
+- **Deployment**: Vercel
+- **Package Manager**: npm workspaces
+
+## Available Scripts
+
+```bash
+# Development
+npm run dev                    # Start all MFEs
+npm run dev:shell              # Start shell only
+
+# Building
+npm run build                  # Build all packages
+npm run build:shell            # Build shell only
+
+# Testing
+npm test                       # Run all tests
+npm run test:integration       # Integration tests
+
+# Deployment
+npm run deploy:all             # Deploy all to production
+npm run deploy:preview         # Deploy to preview
+
+# Utilities
+npm run clean                  # Clean build artifacts
+npm run lint                   # Lint all packages
+```
+
+## License
+
+MIT
