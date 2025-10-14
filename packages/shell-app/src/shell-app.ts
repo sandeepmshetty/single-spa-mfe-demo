@@ -341,7 +341,7 @@ async function performHealthCheck() {
   
   try {
     const checks = await Promise.allSettled([
-      fetch('/health', { method: 'HEAD' }).then(r => r.ok),
+      fetch('/api/health', { method: 'HEAD' }).then(r => r.ok),
       Promise.resolve(System.has('@single-spa-demo/shared-library')),
     ]);
     
