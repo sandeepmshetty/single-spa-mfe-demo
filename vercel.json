@@ -1,5 +1,8 @@
 {
   "version": 2,
+  "buildCommand": "cd packages/shell-app && npm install && npm run build",
+  "outputDirectory": "packages/shell-app/dist",
+  "installCommand": "npm install",
   "functions": {
     "api/**/*.js": {
       "memory": 1024,
