@@ -1,7 +1,12 @@
 import React, { createContext, useContext, useEffect, useState, ReactNode } from 'react';
 import { authManager, type IAuthState } from '@single-spa-demo/shared-library';
 
-interface IAuthContext extends IAuthState {
+interface IAuthContext {
+  isAuthenticated: boolean;
+  user: IAuthState['user'];
+  token: IAuthState['token'];
+  refreshToken: IAuthState['refreshToken'];
+  expiresAt: IAuthState['expiresAt'];
   hasRole: (role: string) => boolean;
   hasAnyRole: (roles: string[]) => boolean;
   login: (email: string, password: string) => Promise<boolean>;
@@ -14,7 +19,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [authState, setAuthState] = useState<IAuthState>(() => authManager.getState());
 
   useEffect(() => {
-    const unsubscribe = authManager.subscribe((state) => setAuthState(state));
+    const unsubscribe = authManager.subscribe((state: IAuthState) => setAuthState(state));
     return unsubscribe;
   }, []);
 

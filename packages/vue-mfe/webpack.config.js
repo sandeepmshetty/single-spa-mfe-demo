@@ -1,7 +1,8 @@
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const { VueLoaderPlugin } = require('vue-loader');
-const { ModuleFederationPlugin } = require('webpack').container;
+const { ModuleFederationPlugin, DefinePlugin } = require('webpack').container;
+const webpack = require('webpack');
 const path = require('path');
 
 module.exports = (env, argv) => {
@@ -79,7 +80,11 @@ module.exports = (env, argv) => {
     plugins: [
       new CleanWebpackPlugin(),
       new VueLoaderPlugin(),
-
+      new webpack.DefinePlugin({
+        __VUE_OPTIONS_API__: JSON.stringify(true),
+        __VUE_PROD_DEVTOOLS__: JSON.stringify(false),
+        __VUE_PROD_HYDRATION_MISMATCH_DETAILS__: JSON.stringify(false),
+      }),
       new HtmlWebpackPlugin({
         template: 'public/index.html',
         inject: false,
@@ -103,7 +108,10 @@ module.exports = (env, argv) => {
       },
     },
     
-    externals: {},
+    externals: {
+      '@single-spa-demo/shared-library': '@single-spa-demo/shared-library',
+      'vue': 'vue',
+    },
     
     optimization: {
       splitChunks: false,

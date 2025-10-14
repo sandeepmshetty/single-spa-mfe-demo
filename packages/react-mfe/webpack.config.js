@@ -89,7 +89,11 @@ module.exports = (env, argv) => {
       },
     },
     
-    externals: {},
+    externals: {
+      '@single-spa-demo/shared-library': '@single-spa-demo/shared-library',
+      'react': 'react',
+      'react-dom': 'react-dom',
+    },
     
     optimization: {
       splitChunks: false,
