@@ -19,3 +19,4 @@ packages/*/coverage/
 
 # SonarQube tokens (sensitive)
 .sonar-token*
+.vercel

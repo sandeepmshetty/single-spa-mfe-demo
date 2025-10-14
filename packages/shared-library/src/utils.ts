@@ -28,7 +28,7 @@ export class Utils {
     if (typeof obj === 'object') {
       const clonedObj = {} as any;
       for (const key in obj) {
-        if (obj.hasOwnProperty(key)) {
+        if (Object.prototype.hasOwnProperty.call(obj, key)) {
           clonedObj[key] = Utils.deepClone(obj[key]);
         }
       }
@@ -45,7 +45,7 @@ export class Utils {
     func: T,
     wait: number
   ): (...args: Parameters<T>) => void {
-    let timeout: NodeJS.Timeout | null = null;
+    let timeout: ReturnType<typeof setTimeout> | null = null;
     
     return (...args: Parameters<T>) => {
       if (timeout) {
@@ -53,7 +53,7 @@ export class Utils {
       }
       
       timeout = setTimeout(() => {
-        func.apply(null, args);
+        func(...args);
       }, wait);
     };
   }
@@ -69,7 +69,7 @@ export class Utils {
     
     return (...args: Parameters<T>) => {
       if (!inThrottle) {
-        func.apply(null, args);
+        func(...args);
         inThrottle = true;
         setTimeout(() => inThrottle = false, limit);
       }
@@ -186,9 +186,9 @@ export class Utils {
     const params = new URLSearchParams(urlString);
     const result: Record<string, string> = {};
     
-    for (const [key, value] of params.entries()) {
+    params.forEach((value, key) => {
       result[key] = value;
-    }
+    });
     
     return result;
   }
@@ -197,7 +197,9 @@ export class Utils {
    * Set query parameters in URL
    */
   static setQueryParams(params: Record<string, string>, replace = false): void {
-    if (typeof window === 'undefined') return;
+    if (typeof window === 'undefined') {
+      return;
+    }
 
     const url = new URL(window.location.href);
     
@@ -298,10 +300,18 @@ export class Utils {
    * Check if object is empty
    */
   static isEmpty(obj: any): boolean {
-    if (obj == null) return true;
-    if (Array.isArray(obj)) return obj.length === 0;
-    if (typeof obj === 'object') return Object.keys(obj).length === 0;
-    if (typeof obj === 'string') return obj.trim().length === 0;
+    if (obj === null || obj === undefined) {
+      return true;
+    }
+    if (Array.isArray(obj)) {
+      return obj.length === 0;
+    }
+    if (typeof obj === 'object') {
+      return Object.keys(obj).length === 0;
+    }
+    if (typeof obj === 'string') {
+      return obj.trim().length === 0;
+    }
     return false;
   }
 

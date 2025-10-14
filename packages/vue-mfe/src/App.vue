@@ -1,5 +1,6 @@
 ﻿<template>
-  <div class="vue-mfe">
+  <ErrorFallback v-if="hasError" :error="error" />
+  <div v-else class="vue-mfe">
     <header class="vue-header">
       <h1>Vue MFE - Products</h1>
       <p>Single-SPA Vue 3 Micro-Frontend</p>
@@ -39,6 +40,10 @@
 
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue';
+import { useErrorHandler } from './composables/useErrorHandler';
+import ErrorFallback from './components/ErrorFallback.vue';
+
+const { error, hasError } = useErrorHandler('vue-mfe');
 
 // Access shared services from window (provided by shell)
 const sharedServices = (window as any).sharedServices;

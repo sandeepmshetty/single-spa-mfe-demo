@@ -17,7 +17,6 @@
     "jsx": "preserve",
     "declaration": true,
     "outDir": "./dist",
-    "rootDir": "./src",
     "types": ["node", "vite/client"],
     "paths": {
       "@/*": ["./src/*"],

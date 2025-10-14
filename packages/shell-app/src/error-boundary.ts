@@ -1,15 +1,15 @@
 // Error Boundary for MFE Loading Failures
-export interface ErrorBoundaryConfig {
+export interface IErrorBoundaryConfig {
   name: string;
   onError?: (error: Error) => void;
   fallbackUI?: string;
 }
 
 export class MFEErrorBoundary {
-  private config: ErrorBoundaryConfig;
+  private config: IErrorBoundaryConfig;
   private container: HTMLElement | null = null;
 
-  constructor(config: ErrorBoundaryConfig) {
+  constructor(config: IErrorBoundaryConfig) {
     this.config = config;
   }
 

@@ -1,5 +1,5 @@
 import { BehaviorSubject } from 'rxjs';
-import { AuthState, User } from './types';
+import { IAuthState, IUser } from './types';
 import { STORAGE_KEYS, EVENT_TYPES, API_ENDPOINTS } from './constants';
 import { eventBus } from './event-bus';
 import { storageService } from './storage-service';
@@ -9,7 +9,7 @@ import { apiClient } from './api-client';
  * Centralized authentication service for all micro-frontends
  */
 export class AuthService {
-  private authState$ = new BehaviorSubject<AuthState>({
+  private authState$ = new BehaviorSubject<IAuthState>({
     isAuthenticated: false,
     user: null,
     token: null,
@@ -25,14 +25,14 @@ export class AuthService {
   /**
    * Get current authentication state
    */
-  getAuthState(): AuthState {
+  getAuthState(): IAuthState {
     return this.authState$.value;
   }
 
   /**
    * Subscribe to authentication state changes
    */
-  onAuthChange(callback: (state: AuthState) => void): () => void {
+  onAuthChange(callback: (state: IAuthState) => void): () => void {
     const subscription = this.authState$.subscribe(callback);
     return () => subscription.unsubscribe();
   }
@@ -48,7 +48,7 @@ export class AuthService {
   /**
    * Get current user
    */
-  getCurrentUser(): User | null {
+  getCurrentUser(): IUser | null {
     return this.authState$.value.user;
   }
 
@@ -68,7 +68,7 @@ export class AuthService {
       const response = await this.mockLogin(email, password);
       
       if (response.success) {
-        const authState: AuthState = {
+        const authState: IAuthState = {
           isAuthenticated: true,
           user: response.user,
           token: response.token,
@@ -99,7 +99,7 @@ export class AuthService {
       // Call logout API if needed
       // await apiClient.post(API_ENDPOINTS.AUTH.LOGOUT);
       
-      const clearedState: AuthState = {
+      const clearedState: IAuthState = {
         isAuthenticated: false,
         user: null,
         token: null,
@@ -130,7 +130,7 @@ export class AuthService {
       const response = await this.mockTokenRefresh(currentState.refreshToken);
       
       if (response.success) {
-        const updatedState: AuthState = {
+        const updatedState: IAuthState = {
           ...currentState,
           token: response.token,
           expiresAt: Date.now() + (24 * 60 * 60 * 1000)
@@ -154,7 +154,7 @@ export class AuthService {
   /**
    * Update user profile
    */
-  async updateProfile(userData: Partial<User>): Promise<boolean> {
+  async updateProfile(userData: Partial<IUser>): Promise<boolean> {
     try {
       const currentState = this.authState$.value;
       if (!currentState.user) {
@@ -164,7 +164,7 @@ export class AuthService {
       // Mock profile update - replace with real API call
       const updatedUser = { ...currentState.user, ...userData };
       
-      const updatedState: AuthState = {
+      const updatedState: IAuthState = {
         ...currentState,
         user: updatedUser
       };
@@ -190,7 +190,7 @@ export class AuthService {
       const userData = storageService.getItem(STORAGE_KEYS.USER_DATA);
 
       if (token && userData && !this.isTokenExpired(token)) {
-        const authState: AuthState = {
+        const authState: IAuthState = {
           isAuthenticated: true,
           user: JSON.parse(userData),
           token,
@@ -225,14 +225,14 @@ export class AuthService {
   /**
    * Update authentication state and notify subscribers
    */
-  private updateAuthState(state: AuthState): void {
+  private updateAuthState(state: IAuthState): void {
     this.authState$.next(state);
   }
 
   /**
    * Persist authentication state to storage
    */
-  private persistAuthState(state: AuthState): void {
+  private persistAuthState(state: IAuthState): void {
     if (state.token) {
       storageService.setItem(STORAGE_KEYS.AUTH_TOKEN, state.token);
     }

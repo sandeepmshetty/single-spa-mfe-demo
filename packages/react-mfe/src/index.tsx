@@ -1,12 +1,16 @@
 ﻿import React from 'react';
 import { createRoot, Root } from 'react-dom/client';
 import App from './App';
+import { ErrorBoundary } from './components/ErrorBoundary';
+import { AuthProvider } from './components/AuthProvider';
+import { performanceMonitor } from '@single-spa-demo/shared-library';
 
 // Custom Single-SPA React 18 implementation
 let root: Root | null = null;
 
 export async function bootstrap() {
   console.log('React MFE bootstrapping...');
+  performanceMonitor.init('react-mfe');
   return Promise.resolve();
 }
 
@@ -35,13 +39,21 @@ export async function mount(props: any) {
   
   // Create React 18 root
   root = createRoot(domElement);
-  root.render(<App {...props} />);
+  root.render(
+    <ErrorBoundary mfeName="react-mfe">
+      <AuthProvider>
+        <App {...props} />
+      </AuthProvider>
+    </ErrorBoundary>
+  );
   
   return Promise.resolve();
 }
 
 export async function unmount() {
   console.log('React MFE unmounting...');
+  
+  performanceMonitor.cleanup();
   
   if (root) {
     root.unmount();

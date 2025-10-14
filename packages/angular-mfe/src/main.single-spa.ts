@@ -1,5 +1,6 @@
 import './polyfills';
 import { enableProdMode, NgZone } from '@angular/core';
+import { performanceMonitor } from '@single-spa-demo/shared-library';
 import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
 import { Router, NavigationStart } from '@angular/router';
 import { singleSpaAngular, getSingleSpaExtraProviders } from 'single-spa-angular';
@@ -43,6 +44,7 @@ const lifecycles = singleSpaAngular({
 // Custom lifecycle with shared services integration
 const customBootstrap = async (props: any) => {
   console.log('🔧 Angular MFE: Custom bootstrap starting...');
+  performanceMonitor.init('angular-mfe');
   
   // Initialize shared services if available
   if (props.eventBus || props.authService) {
@@ -140,6 +142,7 @@ const customMount = async (props: any) => {
 
 const customUnmount = async (props: any) => {
   console.log('🔌 Angular MFE: Unmounting Dashboard...');
+  performanceMonitor.cleanup();
   
   // Cleanup event listeners
   if (props.eventBus) {

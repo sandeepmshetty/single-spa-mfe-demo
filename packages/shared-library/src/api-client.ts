@@ -1,4 +1,4 @@
-import { ApiResponse } from './types';
+import { IApiResponse } from './types';
 import { API_ENDPOINTS, HTTP_STATUS } from './constants';
 
 /**
@@ -17,35 +17,35 @@ export class ApiClient {
   /**
    * GET request
    */
-  async get<T = any>(endpoint: string, params?: Record<string, any>): Promise<ApiResponse<T>> {
+  async get<T = any>(endpoint: string, params?: Record<string, any>): Promise<IApiResponse<T>> {
     return this.request('GET', endpoint, undefined, params);
   }
 
   /**
    * POST request
    */
-  async post<T = any>(endpoint: string, data?: any): Promise<ApiResponse<T>> {
+  async post<T = any>(endpoint: string, data?: any): Promise<IApiResponse<T>> {
     return this.request('POST', endpoint, data);
   }
 
   /**
    * PUT request
    */
-  async put<T = any>(endpoint: string, data?: any): Promise<ApiResponse<T>> {
+  async put<T = any>(endpoint: string, data?: any): Promise<IApiResponse<T>> {
     return this.request('PUT', endpoint, data);
   }
 
   /**
    * PATCH request
    */
-  async patch<T = any>(endpoint: string, data?: any): Promise<ApiResponse<T>> {
+  async patch<T = any>(endpoint: string, data?: any): Promise<IApiResponse<T>> {
     return this.request('PATCH', endpoint, data);
   }
 
   /**
    * DELETE request
    */
-  async delete<T = any>(endpoint: string): Promise<ApiResponse<T>> {
+  async delete<T = any>(endpoint: string): Promise<IApiResponse<T>> {
     return this.request('DELETE', endpoint);
   }
 
@@ -57,7 +57,7 @@ export class ApiClient {
     endpoint: string,
     data?: any,
     params?: Record<string, any>
-  ): Promise<ApiResponse<T>> {
+  ): Promise<IApiResponse<T>> {
     try {
       const url = this.buildURL(endpoint, params);
       const config: RequestInit = {
@@ -126,7 +126,7 @@ export class ApiClient {
     // Add authentication header if token exists
     const token = this.getAuthToken();
     if (token) {
-      headers.Authorization = `Bearer ${token}`;
+      headers['Authorization'] = `Bearer ${token}`;
     }
 
     return headers;
@@ -168,7 +168,7 @@ export class ApiClient {
   /**
    * Upload file
    */
-  async uploadFile<T = any>(endpoint: string, file: File, additionalData?: Record<string, any>): Promise<ApiResponse<T>> {
+  async uploadFile<T = any>(endpoint: string, file: File, additionalData?: Record<string, any>): Promise<IApiResponse<T>> {
     try {
       const formData = new FormData();
       formData.append('file', file);
@@ -184,7 +184,7 @@ export class ApiClient {
       // Add authentication header if token exists
       const token = this.getAuthToken();
       if (token) {
-        headers.Authorization = `Bearer ${token}`;
+        headers['Authorization'] = `Bearer ${token}`;
       }
 
       const response = await fetch(`${this.baseURL}${endpoint}`, {

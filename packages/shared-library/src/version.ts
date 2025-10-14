@@ -1,11 +1,11 @@
 export const VERSION = '1.0.0';
 
-export interface VersionInfo {
+export interface IVersionInfo {
   version: string;
   compatible: (requiredVersion: string) => boolean;
 }
 
-export const versionInfo: VersionInfo = {
+export const versionInfo: IVersionInfo = {
   version: VERSION,
   compatible: (requiredVersion: string): boolean => {
     const [reqMajor, reqMinor] = requiredVersion.split('.').map(Number);

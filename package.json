@@ -7,6 +7,8 @@
     "packages/*"
   ],
   "scripts": {
+    "api:dev": "vercel dev",
+    "api:dev:local": "node api/dev-server.js",
     "install:all": "npm install && npm run install:packages && cd tests && npm install",
     "install:packages": "npm install --workspace=packages/shell-app && npm install --workspace=packages/react-mfe && npm install --workspace=packages/vue-mfe && npm install --workspace=packages/angular-mfe && npm install --workspace=packages/shared-library",
     "test:integration": "cd tests && npm test",
@@ -57,11 +59,15 @@
   "devDependencies": {
     "@types/node": "^20.8.7",
     "@types/systemjs": "^6.15.3",
+    "@vercel/node": "^3.0.0",
     "concurrently": "^8.2.2",
     "lerna": "^7.4.2",
     "rimraf": "^5.0.5",
     "typescript": "^5.2.2",
     "vercel": "^32.4.1"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.39.0"
   },
   "engines": {
     "node": ">=18.0.0",

@@ -1,58 +1,58 @@
 // Type definitions for the shared library
 
-export interface User {
+export interface IUser {
   id: string;
   name: string;
   email: string;
   avatar?: string;
   roles: string[];
-  preferences: UserPreferences;
+  preferences: IUserPreferences;
 }
 
-export interface UserPreferences {
+export interface IUserPreferences {
   theme: 'light' | 'dark';
   language: string;
   notifications: boolean;
   timezone: string;
 }
 
-export interface AuthState {
+export interface IAuthState {
   isAuthenticated: boolean;
-  user: User | null;
+  user: IUser | null;
   token: string | null;
   refreshToken: string | null;
   expiresAt: number | null;
 }
 
-export interface ApiResponse<T = any> {
+export interface IApiResponse<T = any> {
   data: T | null;
   message: string;
   success: boolean;
   timestamp: string;
 }
 
-export interface EventPayload {
+export interface IEventPayload {
   type: string;
   data: any;
   source: string;
   timestamp: string;
 }
 
-export interface MicroFrontendInfo {
+export interface IMicroFrontendInfo {
   name: string;
   version: string;
   status: 'loading' | 'mounted' | 'unmounted' | 'error';
   url: string;
 }
 
-export interface NavigationEvent {
+export interface INavigationEvent {
   from: string;
   to: string;
-  user?: User;
+  user?: IUser;
   timestamp: string;
 }
 
-export interface Product {
+export interface IProduct {
   id: string;
   name: string;
   description: string;
@@ -63,13 +63,13 @@ export interface Product {
   inStock: boolean;
 }
 
-export interface CartItem {
-  product: Product;
+export interface ICartItem {
+  product: IProduct;
   quantity: number;
   addedAt: string;
 }
 
-export interface DashboardMetric {
+export interface IDashboardMetric {
   id: string;
   name: string;
   value: number;
@@ -113,7 +113,7 @@ export type StorageKey =
   | 'language';
 
 // API endpoints
-export interface ApiEndpoints {
+export interface IApiEndpoints {
   auth: {
     login: string;
     logout: string;
@@ -138,22 +138,22 @@ export interface ApiEndpoints {
 }
 
 // Configuration interface
-export interface SharedConfig {
+export interface ISharedConfig {
   apiBaseUrl: string;
   authTokenKey: string;
   debug: boolean;
   version: string;
 }
 
-export interface LogLevel {
+export interface ILogLevel {
   DEBUG: 0;
   INFO: 1;
   WARN: 2;
   ERROR: 3;
 }
 
-export interface LogEntry {
-  level: keyof LogLevel;
+export interface ILogEntry {
+  level: keyof ILogLevel;
   message: string;
   data?: any;
   timestamp: string;

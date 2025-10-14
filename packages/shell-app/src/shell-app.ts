@@ -1,5 +1,6 @@
 import { registerApplication, start, navigateToUrl } from 'single-spa';
 import { MFEErrorBoundary } from './error-boundary';
+import { globalErrorHandler } from './global-error-handler';
 
 // Import shared services type
 type SharedServices = Window['sharedServices'];
@@ -459,6 +460,9 @@ function setupSingleSpaEventHandlers() {
 async function initializeApplication() {
   try {
     console.log('🚀 Initializing Shell Application...');
+    
+    // Initialize global error handler
+    globalErrorHandler.init();
     
     // Update import map for current environment
     updateImportMap();

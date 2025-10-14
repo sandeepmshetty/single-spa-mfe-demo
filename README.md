@@ -109,6 +109,7 @@ Then redeploy the shell-app.
 
 ## Features
 
+### Core Architecture
 - ✅ **Framework Agnostic**: React, Vue, and Angular working together
 - ✅ **Independent Deployment**: Each MFE deployed separately on Vercel
 - ✅ **Shared Services**: Common utilities via shared-library
@@ -116,6 +117,14 @@ Then redeploy the shell-app.
 - ✅ **TypeScript**: Full type safety across all packages
 - ✅ **Monorepo**: npm workspaces for efficient development
 - ✅ **Hot Reload**: Fast development with webpack dev servers
+
+### Phase 1: Standard MFE Architecture (47% Complete)
+- ✅ **Error Boundaries**: Centralized error handling with fallback UIs
+- ✅ **Authentication**: JWT token management with RBAC
+- ✅ **Performance Monitoring**: Core Web Vitals tracking
+- ⏳ **Module Federation**: Planned migration from SystemJS
+
+📚 **[View Phase 1 Documentation](./docs/README.md)**
 
 ## Technology Stack
 
@@ -151,6 +160,13 @@ npm run deploy:preview         # Deploy to preview
 npm run clean                  # Clean build artifacts
 npm run lint                   # Lint all packages
 ```
+
+## Documentation
+
+- **[Phase 1 Implementation](./docs/README.md)** - Standard MFE architecture components
+- **[Quick Start Guide](./docs/PHASE1_QUICK_START.md)** - Integration instructions
+- **[Development Guidelines](./.amazonq/rules/memory-bank/guidelines.md)** - Coding standards
+- **[Tech Stack](./.amazonq/rules/memory-bank/tech.md)** - Technology details
 
 ## License
 

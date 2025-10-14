@@ -12,10 +12,8 @@
         content="default-src 'self' 'unsafe-inline' 'unsafe-eval' https: http://localhost:* data: blob:; connect-src 'self' ws://localhost:* http://localhost:* https:;">
     <meta http-equiv="X-Content-Type-Options" content="nosniff">
 
-    <!-- SystemJS -->
-
-    <!-- Zone.js for Angular (must be loaded before Angular bootstraps) -->
-    <script src="https://cdn.jsdelivr.net/npm/zone.js@0.14.2/dist/zone.min.js"></script>
+    <!-- Zone.js for Angular (only needed if using Angular MFE) -->
+    <script src="https://cdn.jsdelivr.net/npm/zone.js@0.14.10/fesm2015/zone.min.js"></script>
 
     <!-- Preconnect to external resources -->
     <link rel="preconnect" href="https://cdn.jsdelivr.net">
@@ -629,15 +627,14 @@
     }
     </script>
 
-    <!-- Single-SPA Global Scripts -->
-    <script src="https://cdn.jsdelivr.net/npm/single-spa@6.0.1/lib/umd/single-spa.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/single-spa-layout@2.1.0/dist/umd/single-spa-layout.min.js"></script>
-
-    <!-- SystemJS -->
+    <!-- SystemJS (must load before single-spa) -->
     <script src="https://cdn.jsdelivr.net/npm/systemjs@6.14.2/dist/system.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/systemjs@6.14.2/dist/extras/amd.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/systemjs@6.14.2/dist/extras/named-exports.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/systemjs@6.14.2/dist/extras/named-register.min.js"></script>
+
+    <!-- Single-SPA Global Scripts -->
+    <script src="https://unpkg.com/single-spa@5.9.5/lib/system/single-spa.min.js"></script>
 
     <!-- Load the shell application -->
     <script>

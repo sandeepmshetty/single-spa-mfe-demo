@@ -2,6 +2,7 @@ import { createApp, h } from 'vue';
 import singleSpaVue from 'single-spa-vue';
 import App from './App.vue';
 import router from './router/index';
+import { performanceMonitor } from '@single-spa-demo/shared-library';
 
 // Single-SPA Vue lifecycle
 const vueLifecycles = singleSpaVue({
@@ -25,4 +26,20 @@ const vueLifecycles = singleSpaVue({
   }
 });
 
-export const { bootstrap, mount, unmount } = vueLifecycles;
+export const bootstrap = async (props: any) => {
+  performanceMonitor.init('vue-mfe');
+  if (vueLifecycles.bootstrap) {
+    return vueLifecycles.bootstrap(props);
+  }
+  return Promise.resolve();
+};
+
+export const mount = vueLifecycles.mount;
+
+export const unmount = async (props: any) => {
+  performanceMonitor.cleanup();
+  if (vueLifecycles.unmount) {
+    return vueLifecycles.unmount(props);
+  }
+  return Promise.resolve();
+};

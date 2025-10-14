@@ -1,4 +1,4 @@
-import { NgModule } from '@angular/core';
+import { NgModule, ErrorHandler } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
@@ -15,6 +15,7 @@ import { NotFoundComponent } from './not-found/not-found.component';
 import { SharedServicesService } from './services/shared-services.service';
 import { DashboardService } from './services/dashboard.service';
 import { AnalyticsService } from './services/analytics.service';
+import { GlobalErrorHandler } from './services/error-handler.service';
 
 @NgModule({
   declarations: [
@@ -36,6 +37,7 @@ import { AnalyticsService } from './services/analytics.service';
     ])
   ],
   providers: [
+    { provide: ErrorHandler, useClass: GlobalErrorHandler },
     SharedServicesService,
     DashboardService,
     AnalyticsService

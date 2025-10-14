@@ -100,14 +100,14 @@ export const counterActions = {
 /**
  * User state for authentication demo
  */
-interface UserState {
+interface IUserState {
   id: string | null;
   name: string | null;
   email: string | null;
   isAuthenticated: boolean;
 }
 
-export const userState = new SharedState<UserState>(
+export const userState = new SharedState<IUserState>(
   {
     id: null,
     name: null,
@@ -133,7 +133,7 @@ export const userActions = {
     eventBus.emit(EVENT_TYPES.AUTH_LOGOUT, null, source);
   },
   
-  updateProfile: (updates: Partial<UserState>, source?: string) => {
+  updateProfile: (updates: Partial<IUserState>, source?: string) => {
     const current = userState.getValue();
     userState.setValue({ ...current, ...updates }, source);
     eventBus.emit(EVENT_TYPES.USER_PROFILE_UPDATE, updates, source);
@@ -141,5 +141,5 @@ export const userActions = {
   
   getUser: () => userState.getValue(),
   
-  subscribe: (callback: (user: UserState) => void) => userState.subscribe(callback)
+  subscribe: (callback: (user: IUserState) => void) => userState.subscribe(callback)
 };

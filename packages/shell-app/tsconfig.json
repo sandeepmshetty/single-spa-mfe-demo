@@ -22,5 +22,5 @@
     }
   },
   "include": ["src/**/*", "types/**/*"],
-  "exclude": ["node_modules", "dist"]
+  "exclude": ["node_modules", "dist", "../shared-library/src"]
 }

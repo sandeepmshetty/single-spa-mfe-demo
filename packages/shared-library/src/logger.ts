@@ -1,16 +1,16 @@
-import { LogEntry, LogLevel } from './types';
+import { ILogEntry, ILogLevel } from './types';
 import { LOG_LEVELS } from './constants';
 
 /**
  * Centralized logging service for all micro-frontends
  */
 export class Logger {
-  private logLevel: keyof LogLevel = 'INFO';
-  private logs: LogEntry[] = [];
+  private logLevel: keyof ILogLevel = 'INFO';
+  private logs: ILogEntry[] = [];
   private maxLogs = 1000;
   private source: string;
 
-  constructor(source = 'unknown', logLevel: keyof LogLevel = 'INFO') {
+  constructor(source = 'unknown', logLevel: keyof ILogLevel = 'INFO') {
     this.source = source;
     this.logLevel = logLevel;
   }
@@ -46,7 +46,7 @@ export class Logger {
   /**
    * Generic log method
    */
-  private log(level: keyof LogLevel, message: string, data?: any): void {
+  private log(level: keyof ILogLevel, message: string, data?: any): void {
     const numericLevel = LOG_LEVELS[level];
     const currentLevel = LOG_LEVELS[this.logLevel];
 
@@ -55,7 +55,7 @@ export class Logger {
       return;
     }
 
-    const logEntry: LogEntry = {
+    const logEntry: ILogEntry = {
       level,
       message,
       data,
@@ -81,7 +81,7 @@ export class Logger {
   /**
    * Output log entry to console
    */
-  private outputToConsole(entry: LogEntry): void {
+  private outputToConsole(entry: ILogEntry): void {
     const timestamp = new Date(entry.timestamp).toLocaleTimeString();
     const prefix = `[${timestamp}] [${entry.source}] [${entry.level}]`;
     
@@ -104,7 +104,7 @@ export class Logger {
   /**
    * Send log to external logging service
    */
-  private sendToExternalLogger(entry: LogEntry): void {
+  private sendToExternalLogger(entry: ILogEntry): void {
     // In a real implementation, this would send logs to a service like
     // Datadog, LogRocket, Sentry, etc.
     
@@ -130,28 +130,28 @@ export class Logger {
   /**
    * Set log level
    */
-  setLogLevel(level: keyof LogLevel): void {
+  setLogLevel(level: keyof ILogLevel): void {
     this.logLevel = level;
   }
 
   /**
    * Get current log level
    */
-  getLogLevel(): keyof LogLevel {
+  getLogLevel(): keyof ILogLevel {
     return this.logLevel;
   }
 
   /**
    * Get all logs
    */
-  getLogs(): LogEntry[] {
+  getLogs(): ILogEntry[] {
     return [...this.logs];
   }
 
   /**
    * Get logs by level
    */
-  getLogsByLevel(level: keyof LogLevel): LogEntry[] {
+  getLogsByLevel(level: keyof ILogLevel): ILogEntry[] {
     return this.logs.filter(log => log.level === level);
   }
 
