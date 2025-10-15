@@ -1,0 +1,109 @@
+version: '3.8'
+
+services:
+  # Main micro-frontend application
+  mfe-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: single-spa-mfe-app
+    ports:
+      - "8080:80"
+    networks:
+      - mfe-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # Development services (individual micro-frontends)
+  shell-dev:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.shell
+    container_name: mfe-shell-dev
+    ports:
+      - "9000:9000"
+    volumes:
+      - ./packages/shell-app:/app
+      - /app/node_modules
+    environment:
+      - NODE_ENV=development
+    networks:
+      - mfe-network
+    profiles:
+      - dev
+
+  react-dev:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.react
+    container_name: mfe-react-dev
+    ports:
+      - "8081:8081"
+    volumes:
+      - ./packages/react-mfe:/app
+      - /app/node_modules
+    environment:
+      - NODE_ENV=development
+    networks:
+      - mfe-network
+    profiles:
+      - dev
+
+  vue-dev:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.vue
+    container_name: mfe-vue-dev
+    ports:
+      - "8082:8082"
+    volumes:
+      - ./packages/vue-mfe:/app
+      - /app/node_modules
+    environment:
+      - NODE_ENV=development
+    networks:
+      - mfe-network
+    profiles:
+      - dev
+
+  angular-dev:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.angular
+    container_name: mfe-angular-dev
+    ports:
+      - "8083:8083"
+    volumes:
+      - ./packages/angular-mfe:/app
+      - /app/node_modules
+    environment:
+      - NODE_ENV=development
+    networks:
+      - mfe-network
+    profiles:
+      - dev
+
+  shared-dev:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.shared
+    container_name: mfe-shared-dev
+    ports:
+      - "8084:8084"
+    volumes:
+      - ./packages/shared-library:/app
+      - /app/node_modules
+    environment:
+      - NODE_ENV=development
+    networks:
+      - mfe-network
+    profiles:
+      - dev
+
+networks:
+  mfe-network:
+    driver: bridge

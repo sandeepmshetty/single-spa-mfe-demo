@@ -1,0 +1,14 @@
+FROM node:18-alpine
+
+WORKDIR /app
+
+# Install dependencies
+COPY packages/shell-app/package*.json ./
+RUN npm install
+
+# Copy source code
+COPY packages/shell-app .
+
+EXPOSE 9000
+
+CMD ["npm", "start"]

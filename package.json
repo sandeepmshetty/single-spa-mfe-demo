@@ -54,7 +54,15 @@
     "test:coverage": "npm run test:coverage --workspaces --if-present",
     "lint:all": "npm run lint --workspaces --if-present",
     "format:check": "prettier --check \"packages/**/src/**/*.{js,jsx,ts,tsx,vue}\"",
-    "format:write": "prettier --write \"packages/**/src/**/*.{js,jsx,ts,tsx,vue}\""
+    "format:write": "prettier --write \"packages/**/src/**/*.{js,jsx,ts,tsx,vue}\"",
+    "docker:build": "docker-compose build",
+    "docker:up": "docker-compose up -d",
+    "docker:down": "docker-compose down",
+    "docker:dev": "docker-compose -f docker-compose.dev.yml up --build",
+    "docker:dev:down": "docker-compose -f docker-compose.dev.yml down",
+    "docker:prod": "docker-compose up --build -d",
+    "docker:logs": "docker-compose logs -f",
+    "docker:clean": "docker-compose down -v --remove-orphans && docker system prune -f"
   },
   "devDependencies": {
     "@types/node": "^20.8.7",

@@ -1,0 +1,92 @@
+version: '3.8'
+
+services:
+  shell-app:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.shell
+    container_name: mfe-shell
+    ports:
+      - "9000:9000"
+    volumes:
+      - ./packages/shell-app:/app
+      - /app/node_modules
+    environment:
+      - NODE_ENV=development
+    networks:
+      - mfe-network
+    depends_on:
+      - react-mfe
+      - vue-mfe
+      - angular-mfe
+      - shared-library
+
+  react-mfe:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.react
+    container_name: mfe-react
+    ports:
+      - "8081:8081"
+    volumes:
+      - ./packages/react-mfe:/app
+      - /app/node_modules
+    environment:
+      - NODE_ENV=development
+    networks:
+      - mfe-network
+    depends_on:
+      - shared-library
+
+  vue-mfe:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.vue
+    container_name: mfe-vue
+    ports:
+      - "8082:8082"
+    volumes:
+      - ./packages/vue-mfe:/app
+      - /app/node_modules
+    environment:
+      - NODE_ENV=development
+    networks:
+      - mfe-network
+    depends_on:
+      - shared-library
+
+  angular-mfe:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.angular
+    container_name: mfe-angular
+    ports:
+      - "8083:8083"
+    volumes:
+      - ./packages/angular-mfe:/app
+      - /app/node_modules
+    environment:
+      - NODE_ENV=development
+    networks:
+      - mfe-network
+    depends_on:
+      - shared-library
+
+  shared-library:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.shared
+    container_name: mfe-shared
+    ports:
+      - "8084:8084"
+    volumes:
+      - ./packages/shared-library:/app
+      - /app/node_modules
+    environment:
+      - NODE_ENV=development
+    networks:
+      - mfe-network
+
+networks:
+  mfe-network:
+    driver: bridge

@@ -1,0 +1,17 @@
+FROM node:18-alpine
+
+WORKDIR /app
+
+# Install Angular CLI globally
+RUN npm install -g @angular/cli
+
+# Install dependencies
+COPY packages/angular-mfe/package*.json ./
+RUN npm install
+
+# Copy source code
+COPY packages/angular-mfe .
+
+EXPOSE 8083
+
+CMD ["npm", "start"]

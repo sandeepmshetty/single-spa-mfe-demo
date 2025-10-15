@@ -1,0 +1,14 @@
+FROM node:18-alpine
+
+WORKDIR /app
+
+# Install dependencies
+COPY packages/react-mfe/package*.json ./
+RUN npm install
+
+# Copy source code
+COPY packages/react-mfe .
+
+EXPOSE 8081
+
+CMD ["npm", "start"]

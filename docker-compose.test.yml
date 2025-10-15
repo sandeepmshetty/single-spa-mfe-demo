@@ -1,0 +1,66 @@
+version: '3.8'
+
+services:
+  shell-app:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.shell
+    container_name: mfe-shell-test
+    ports:
+      - "9000:9000"
+    volumes:
+      - ./packages/shell-app:/app
+      - /app/node_modules
+    environment:
+      - NODE_ENV=development
+    networks:
+      - mfe-network
+
+  react-mfe:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.react
+    container_name: mfe-react-test
+    ports:
+      - "3001:3001"
+    volumes:
+      - ./packages/react-mfe:/app
+      - /app/node_modules
+    environment:
+      - NODE_ENV=development
+    networks:
+      - mfe-network
+
+  vue-mfe:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.vue
+    container_name: mfe-vue-test
+    ports:
+      - "3002:3002"
+    volumes:
+      - ./packages/vue-mfe:/app
+      - /app/node_modules
+    environment:
+      - NODE_ENV=development
+    networks:
+      - mfe-network
+
+  angular-mfe:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.angular
+    container_name: mfe-angular-test
+    ports:
+      - "3003:3003"
+    volumes:
+      - ./packages/angular-mfe:/app
+      - /app/node_modules
+    environment:
+      - NODE_ENV=development
+    networks:
+      - mfe-network
+
+networks:
+  mfe-network:
+    driver: bridge
