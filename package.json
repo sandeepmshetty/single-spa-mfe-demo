@@ -62,7 +62,19 @@
     "docker:dev:down": "docker-compose -f docker-compose.dev.yml down",
     "docker:prod": "docker-compose up --build -d",
     "docker:logs": "docker-compose logs -f",
-    "docker:clean": "docker-compose down -v --remove-orphans && docker system prune -f"
+    "docker:clean": "docker-compose down -v --remove-orphans && docker system prune -f",
+    "free-stack:start": "docker-compose -f docker-compose.free-stack.yml up -d",
+    "free-stack:stop": "docker-compose -f docker-compose.free-stack.yml down",
+    "free-stack:logs": "docker-compose -f docker-compose.free-stack.yml logs -f",
+    "free-stack:restart": "docker-compose -f docker-compose.free-stack.yml restart",
+    "free-stack:clean": "docker-compose -f docker-compose.free-stack.yml down -v",
+    "cloudflare:deploy": "node scripts/deploy-cloudflare.js --production",
+    "cloudflare:preview": "node scripts/deploy-cloudflare.js",
+    "secrets:pull": "doppler secrets download --no-file --format env > .env.local",
+    "secrets:push": "doppler secrets upload .env.production",
+    "monitor:errors": "start https://sentry.io",
+    "monitor:analytics": "start https://app.posthog.com",
+    "monitor:metrics": "start https://grafana.com"
   },
   "devDependencies": {
     "@types/node": "^20.8.7",
@@ -75,7 +87,11 @@
     "vercel": "^32.4.1"
   },
   "dependencies": {
-    "@supabase/supabase-js": "^2.39.0"
+    "@supabase/supabase-js": "^2.39.0",
+    "@sentry/browser": "^7.85.0",
+    "@sentry/tracing": "^7.85.0",
+    "posthog-js": "^1.96.0",
+    "resend": "^2.0.0"
   },
   "engines": {
     "node": ">=18.0.0",

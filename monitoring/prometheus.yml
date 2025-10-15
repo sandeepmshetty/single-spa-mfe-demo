@@ -1,0 +1,137 @@
+# Prometheus configuration for MFE monitoring
+# Documentation: https://prometheus.io/docs/prometheus/latest/configuration/configuration/
+
+global:
+  scrape_interval: 15s # Scrape metrics every 15 seconds
+  evaluation_interval: 15s # Evaluate rules every 15 seconds
+  external_labels:
+    cluster: 'mfe-cluster'
+    environment: 'production'
+
+# Alertmanager configuration
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets:
+          # - alertmanager:9093
+
+# Load rules once and periodically evaluate them
+rule_files:
+  # - "alerts/*.yml"
+
+# Scrape configurations
+scrape_configs:
+  # Prometheus self-monitoring
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
+        labels:
+          service: 'prometheus'
+
+  # Node Exporter - System metrics
+  - job_name: 'node-exporter'
+    static_configs:
+      - targets: ['node-exporter:9100']
+        labels:
+          service: 'system'
+          type: 'infrastructure'
+
+  # PostgreSQL Exporter (if added)
+  - job_name: 'postgres'
+    static_configs:
+      - targets: ['postgres-exporter:9187']
+        labels:
+          service: 'postgres'
+          type: 'database'
+    # Enable only if you add postgres-exporter to docker-compose
+
+  # Keycloak metrics (built-in)
+  - job_name: 'keycloak'
+    metrics_path: '/metrics'
+    static_configs:
+      - targets: ['keycloak:8080']
+        labels:
+          service: 'keycloak'
+          type: 'auth'
+
+  # GlitchTip metrics (if exposed)
+  - job_name: 'glitchtip'
+    static_configs:
+      - targets: ['glitchtip-web:8000']
+        labels:
+          service: 'glitchtip'
+          type: 'monitoring'
+
+  # Grafana metrics
+  - job_name: 'grafana'
+    static_configs:
+      - targets: ['grafana:3000']
+        labels:
+          service: 'grafana'
+          type: 'monitoring'
+
+  # MFE Applications (custom metrics endpoint)
+  # You'll need to add a /metrics endpoint to each MFE
+  - job_name: 'mfe-shell'
+    metrics_path: '/api/metrics'
+    scrape_interval: 30s
+    static_configs:
+      - targets: ['mfe-shell:9000']
+        labels:
+          service: 'shell-app'
+          type: 'mfe'
+          framework: 'single-spa'
+
+  - job_name: 'mfe-react'
+    metrics_path: '/api/metrics'
+    scrape_interval: 30s
+    static_configs:
+      - targets: ['mfe-react:3001']
+        labels:
+          service: 'react-mfe'
+          type: 'mfe'
+          framework: 'react'
+
+  - job_name: 'mfe-vue'
+    metrics_path: '/api/metrics'
+    scrape_interval: 30s
+    static_configs:
+      - targets: ['mfe-vue:3002']
+        labels:
+          service: 'vue-mfe'
+          type: 'mfe'
+          framework: 'vue'
+
+  - job_name: 'mfe-angular'
+    metrics_path: '/api/metrics'
+    scrape_interval: 30s
+    static_configs:
+      - targets: ['mfe-angular:3003']
+        labels:
+          service: 'angular-mfe'
+          type: 'mfe'
+          framework: 'angular'
+
+  # Nginx metrics (if nginx-prometheus-exporter is added)
+  - job_name: 'nginx'
+    static_configs:
+      - targets: ['nginx-exporter:9113']
+        labels:
+          service: 'nginx'
+          type: 'infrastructure'
+    # Enable only if you add nginx-exporter to docker-compose
+
+# Remote write configuration (for long-term storage)
+# Uncomment if you want to send metrics to external storage
+# remote_write:
+#   - url: https://prometheus-remote-storage.example.com/api/v1/write
+#     basic_auth:
+#       username: user
+#       password: pass
+
+# Remote read configuration
+# remote_read:
+#   - url: https://prometheus-remote-storage.example.com/api/v1/read
+#     basic_auth:
+#       username: user
+#       password: pass

@@ -1,0 +1,361 @@
+version: '3.8'
+
+# 🆓 100% Open Source & Free Infrastructure Stack
+# All services run on Oracle Cloud Free Tier or similar
+
+services:
+  # ═══════════════════════════════════════════════════════════
+  # PostgreSQL - Main Database (Open Source)
+  # ═══════════════════════════════════════════════════════════
+  postgres:
+    image: postgres:15-alpine
+    container_name: mfe-postgres
+    environment:
+      POSTGRES_DB: mfe_app
+      POSTGRES_USER: mfe_user
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-changeme}
+      POSTGRES_INITDB_ARGS: "-E UTF8"
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./scripts/init-db.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U mfe_user"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+    networks:
+      - mfe-network
+
+  # ═══════════════════════════════════════════════════════════
+  # PgAdmin - Database Management UI (Open Source)
+  # ═══════════════════════════════════════════════════════════
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: mfe-pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_EMAIL:-admin@example.com}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_PASSWORD:-admin}
+      PGADMIN_CONFIG_SERVER_MODE: 'False'
+    ports:
+      - "5050:80"
+    depends_on:
+      - postgres
+    restart: unless-stopped
+    networks:
+      - mfe-network
+    profiles:
+      - dev
+
+  # ═══════════════════════════════════════════════════════════
+  # Keycloak - Identity & Access Management (Open Source)
+  # ═══════════════════════════════════════════════════════════
+  keycloak:
+    image: quay.io/keycloak/keycloak:23.0
+    container_name: mfe-keycloak
+    command: start-dev
+    environment:
+      KC_DB: postgres
+      KC_DB_URL: jdbc:postgresql://postgres:5432/keycloak
+      KC_DB_USERNAME: mfe_user
+      KC_DB_PASSWORD: ${POSTGRES_PASSWORD:-changeme}
+      KC_DB_SCHEMA: keycloak
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD:-admin}
+      KC_HTTP_ENABLED: "true"
+      KC_HOSTNAME_STRICT: "false"
+      KC_HOSTNAME_STRICT_HTTPS: "false"
+      KC_PROXY: edge
+    ports:
+      - "8080:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - mfe-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health/ready"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
+
+  # ═══════════════════════════════════════════════════════════
+  # GlitchTip - Error Tracking (Open Source Sentry Alternative)
+  # ═══════════════════════════════════════════════════════════
+  glitchtip-redis:
+    image: redis:7-alpine
+    container_name: mfe-glitchtip-redis
+    restart: unless-stopped
+    networks:
+      - mfe-network
+
+  glitchtip-web:
+    image: glitchtip/glitchtip:latest
+    container_name: mfe-glitchtip
+    depends_on:
+      postgres:
+        condition: service_healthy
+      glitchtip-redis:
+        condition: service_started
+    ports:
+      - "8000:8000"
+    environment:
+      DATABASE_URL: postgres://mfe_user:${POSTGRES_PASSWORD:-changeme}@postgres:5432/glitchtip
+      REDIS_URL: redis://glitchtip-redis:6379
+      SECRET_KEY: ${GLITCHTIP_SECRET_KEY:-please-change-this-secret-key}
+      PORT: 8000
+      EMAIL_URL: ${EMAIL_URL:-console://}
+      GLITCHTIP_DOMAIN: ${GLITCHTIP_DOMAIN:-http://localhost:8000}
+      DEFAULT_FROM_EMAIL: ${DEFAULT_FROM_EMAIL:-noreply@example.com}
+      CELERY_WORKER_AUTOSCALE: ${CELERY_WORKER_AUTOSCALE:-10,3}
+      CELERY_WORKER_MAX_TASKS_PER_CHILD: ${CELERY_WORKER_MAX_TASKS_PER_CHILD:-10000}
+    restart: unless-stopped
+    networks:
+      - mfe-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/_health/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  glitchtip-worker:
+    image: glitchtip/glitchtip:latest
+    container_name: mfe-glitchtip-worker
+    depends_on:
+      postgres:
+        condition: service_healthy
+      glitchtip-redis:
+        condition: service_started
+    environment:
+      DATABASE_URL: postgres://mfe_user:${POSTGRES_PASSWORD:-changeme}@postgres:5432/glitchtip
+      REDIS_URL: redis://glitchtip-redis:6379
+      SECRET_KEY: ${GLITCHTIP_SECRET_KEY:-please-change-this-secret-key}
+      EMAIL_URL: ${EMAIL_URL:-console://}
+      DEFAULT_FROM_EMAIL: ${DEFAULT_FROM_EMAIL:-noreply@example.com}
+      CELERY_WORKER_AUTOSCALE: ${CELERY_WORKER_AUTOSCALE:-10,3}
+      CELERY_WORKER_MAX_TASKS_PER_CHILD: ${CELERY_WORKER_MAX_TASKS_PER_CHILD:-10000}
+    command: ./bin/run-celery-with-beat.sh
+    restart: unless-stopped
+    networks:
+      - mfe-network
+
+  # ═══════════════════════════════════════════════════════════
+  # Prometheus - Metrics Collection (Open Source)
+  # ═══════════════════════════════════════════════════════════
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: mfe-prometheus
+    volumes:
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus-data:/prometheus
+    ports:
+      - "9090:9090"
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/usr/share/prometheus/console_libraries'
+      - '--web.console.templates=/usr/share/prometheus/consoles'
+      - '--storage.tsdb.retention.time=30d'
+    restart: unless-stopped
+    networks:
+      - mfe-network
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:9090/-/healthy"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # ═══════════════════════════════════════════════════════════
+  # Grafana - Metrics Visualization (Open Source)
+  # ═══════════════════════════════════════════════════════════
+  grafana:
+    image: grafana/grafana:latest
+    container_name: mfe-grafana
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_USER=${GRAFANA_ADMIN_USER:-admin}
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_ADMIN_PASSWORD:-admin}
+      - GF_USERS_ALLOW_SIGN_UP=false
+      - GF_SERVER_ROOT_URL=${GRAFANA_ROOT_URL:-http://localhost:3000}
+      - GF_INSTALL_PLUGINS=grafana-clock-panel,grafana-simple-json-datasource
+    volumes:
+      - grafana-data:/var/lib/grafana
+      - ./monitoring/grafana/provisioning:/etc/grafana/provisioning
+      - ./monitoring/grafana/dashboards:/var/lib/grafana/dashboards
+    depends_on:
+      prometheus:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - mfe-network
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:3000/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # ═══════════════════════════════════════════════════════════
+  # Loki - Log Aggregation (Open Source)
+  # ═══════════════════════════════════════════════════════════
+  loki:
+    image: grafana/loki:latest
+    container_name: mfe-loki
+    ports:
+      - "3100:3100"
+    volumes:
+      - ./monitoring/loki-config.yml:/etc/loki/local-config.yaml
+      - loki-data:/loki
+    command: -config.file=/etc/loki/local-config.yaml
+    restart: unless-stopped
+    networks:
+      - mfe-network
+
+  # ═══════════════════════════════════════════════════════════
+  # Promtail - Log Shipper (Open Source)
+  # ═══════════════════════════════════════════════════════════
+  promtail:
+    image: grafana/promtail:latest
+    container_name: mfe-promtail
+    volumes:
+      - /var/log:/var/log:ro
+      - /var/lib/docker/containers:/var/lib/docker/containers:ro
+      - ./monitoring/promtail-config.yml:/etc/promtail/config.yml
+    command: -config.file=/etc/promtail/config.yml
+    depends_on:
+      - loki
+    restart: unless-stopped
+    networks:
+      - mfe-network
+
+  # ═══════════════════════════════════════════════════════════
+  # Node Exporter - System Metrics (Open Source)
+  # ═══════════════════════════════════════════════════════════
+  node-exporter:
+    image: prom/node-exporter:latest
+    container_name: mfe-node-exporter
+    ports:
+      - "9100:9100"
+    command:
+      - '--path.procfs=/host/proc'
+      - '--path.sysfs=/host/sys'
+      - '--collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($$|/)'
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/rootfs:ro
+    restart: unless-stopped
+    networks:
+      - mfe-network
+
+  # ═══════════════════════════════════════════════════════════
+  # Unleash - Feature Flags (Open Source)
+  # ═══════════════════════════════════════════════════════════
+  unleash:
+    image: unleashorg/unleash-server:latest
+    container_name: mfe-unleash
+    ports:
+      - "4242:4242"
+    environment:
+      DATABASE_URL: postgres://mfe_user:${POSTGRES_PASSWORD:-changeme}@postgres:5432/unleash
+      DATABASE_SSL: "false"
+      LOG_LEVEL: info
+      INIT_ADMIN_API_TOKENS: ${UNLEASH_ADMIN_TOKEN:-*:*.unleash-insecure-admin-api-token}
+      INIT_CLIENT_API_TOKENS: ${UNLEASH_CLIENT_TOKEN:-*:development.unleash-insecure-client-api-token}
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - mfe-network
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:4242/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # ═══════════════════════════════════════════════════════════
+  # SonarQube - Code Quality (Open Source)
+  # ═══════════════════════════════════════════════════════════
+  sonarqube:
+    image: sonarqube:community
+    container_name: mfe-sonarqube
+    ports:
+      - "9099:9000"
+    environment:
+      SONAR_JDBC_URL: jdbc:postgresql://postgres:5432/sonarqube
+      SONAR_JDBC_USERNAME: mfe_user
+      SONAR_JDBC_PASSWORD: ${POSTGRES_PASSWORD:-changeme}
+      SONAR_ES_BOOTSTRAP_CHECKS_DISABLE: "true"
+    volumes:
+      - sonarqube-data:/opt/sonarqube/data
+      - sonarqube-extensions:/opt/sonarqube/extensions
+      - sonarqube-logs:/opt/sonarqube/logs
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - mfe-network
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:9000/api/system/status"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 120s
+
+  # ═══════════════════════════════════════════════════════════
+  # Nginx - Reverse Proxy (Open Source)
+  # ═══════════════════════════════════════════════════════════
+  nginx:
+    image: nginx:alpine
+    container_name: mfe-nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./monitoring/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./monitoring/ssl:/etc/nginx/ssl:ro
+    depends_on:
+      - keycloak
+      - glitchtip-web
+      - grafana
+      - unleash
+    restart: unless-stopped
+    networks:
+      - mfe-network
+    profiles:
+      - production
+
+# ═══════════════════════════════════════════════════════════
+# Volumes
+# ═══════════════════════════════════════════════════════════
+volumes:
+  postgres-data:
+    driver: local
+  prometheus-data:
+    driver: local
+  grafana-data:
+    driver: local
+  loki-data:
+    driver: local
+  sonarqube-data:
+    driver: local
+  sonarqube-extensions:
+    driver: local
+  sonarqube-logs:
+    driver: local
+
+# ═══════════════════════════════════════════════════════════
+# Networks
+# ═══════════════════════════════════════════════════════════
+networks:
+  mfe-network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.28.0.0/16

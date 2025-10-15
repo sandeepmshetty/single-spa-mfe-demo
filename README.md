@@ -1,6 +1,32 @@
 # Single-SPA Micro-Frontend Demo
 
-A comprehensive Single-SPA implementation showcasing micro-frontend architecture with React, Vue, and Angular applications deployed separately on Vercel.
+A comprehensive Single-SPA implementation showcasing micro-frontend architecture with React, Vue, and Angular applications. **Production-ready with best-in-class free tools - $0/month.**
+
+## 🚀 Best Free Developer Tools Stack!
+
+This project uses **premium free tier tools** - the same stack used by YC startups:
+
+### **🏆 Premium Free Tier (Recommended)**
+- ✅ **Vercel** (Hosting) - 100GB/month, serverless functions
+- ✅ **Supabase** (Database + Auth) - 500MB DB, 50K MAU, real-time
+- ✅ **Sentry** (Error Tracking) - 5K errors/month, releases, source maps
+- ✅ **PostHog** (Analytics + Flags) - 1M events/month, session replay
+- ✅ **Grafana Cloud** (Monitoring) - 10K metrics, 50GB logs
+- ✅ **Cloudflare** (CDN + DDoS) - Unlimited bandwidth
+- ✅ **GitHub Actions** (CI/CD) - 2000 minutes/month
+
+**👉 [Premium Setup Guide](./PREMIUM_SETUP_GUIDE.md)** ⭐ **RECOMMENDED**
+
+### **🔧 Alternative: Open Source Stack**
+- ✅ **Keycloak** (Auth), **GlitchTip** (Errors), **PostgreSQL** (DB)
+- ✅ **Grafana + Prometheus** (Monitoring), **Unleash** (Flags)
+- ✅ Self-hosted on Oracle Cloud Free Tier or similar
+
+**👉 [Open Source Guide](./FREE_STACK_QUICKSTART.md)**
+
+**Both options cost $0/month!** Choose based on your needs.
+
+---
 
 ## Architecture Overview
 
@@ -13,7 +39,8 @@ This project demonstrates a micro-frontend architecture using Single-SPA where:
 
 ## Repository
 - **GitHub**: https://github.com/sandeepmshetty/single-spa-mfe-demo
-- **Vercel**: https://vercel.com/sandeep-shettys-projects
+- **Infrastructure**: 100% Open Source (Keycloak, GlitchTip, Grafana, PostgreSQL)
+- **Hosting**: Cloudflare Pages (Free Tier)
 
 ## Project Structure
 
@@ -140,21 +167,74 @@ Then redeploy the shell-app.
 ## Available Scripts
 
 ```bash
-# Development
+# ═══════════════════════════════════════════════════════════
+# 🆓 Free Infrastructure
+# ═══════════════════════════════════════════════════════════
+npm run free-stack:start       # Start all free services (Docker)
+npm run free-stack:stop        # Stop all services
+npm run free-stack:logs        # View logs
+npm run free-stack:clean       # Clean up (remove volumes)
+
+# ═══════════════════════════════════════════════════════════
+# 🚀 Development
+# ═══════════════════════════════════════════════════════════
 npm run dev                    # Start all MFEs
 npm run dev:shell              # Start shell only
+npm run dev:react              # Start React MFE only
+npm run dev:vue                # Start Vue MFE only
+npm run dev:angular            # Start Angular MFE only
 
-# Building
+# ═══════════════════════════════════════════════════════════
+# 🔨 Building
+# ═══════════════════════════════════════════════════════════
 npm run build                  # Build all packages
 npm run build:shell            # Build shell only
+npm run build:react            # Build React MFE only
+npm run build:vue              # Build Vue MFE only
+npm run build:angular          # Build Angular MFE only
 
-# Testing
+# ═══════════════════════════════════════════════════════════
+# 🧪 Testing
+# ═══════════════════════════════════════════════════════════
 npm test                       # Run all tests
 npm run test:integration       # Integration tests
+npm run test:coverage          # Test coverage
 
-# Deployment
-npm run deploy:all             # Deploy all to production
-npm run deploy:preview         # Deploy to preview
+# ═══════════════════════════════════════════════════════════
+# ☁️  Deployment (Cloudflare Pages)
+# ═══════════════════════════════════════════════════════════
+npm run cloudflare:deploy      # Deploy all to production
+npm run cloudflare:preview     # Deploy preview version
+
+# ═══════════════════════════════════════════════════════════
+# 📊 Code Quality
+# ═══════════════════════════════════════════════════════════
+npm run sonar:start            # Start SonarQube
+npm run sonar:scan             # Run code analysis
+npm run lint                   # Lint all packages
+```
+
+## 💰 Cost Breakdown
+
+### **Premium Free Tier Stack (Recommended)**
+
+| Service | Traditional Paid | Cost | Premium Free Tier | Value |
+|---------|-----------------|------|-------------------|-------|
+| Hosting | Vercel Pro | $20/mo | Vercel (Hobby) | $0 |
+| Database + Auth | Supabase Pro | $25/mo | Supabase (Free) | $0 |
+| Error Tracking | Sentry Team | $26/mo | Sentry (Developer) | $0 |
+| Analytics + Flags | PostHog + LaunchDarkly | $60/mo | PostHog (Free) | $0 |
+| Monitoring | DataDog | $15/mo | Grafana Cloud (Free) | $0 |
+| CDN + Security | Cloudflare Pro | $20/mo | Cloudflare (Free) | $0 |
+| CI/CD | CircleCI | $15/mo | GitHub Actions | $0 |
+| Email | SendGrid | $10/mo | Resend (Free) | $0 |
+| Secrets | 1Password Teams | $8/mo | Doppler (Free) | $0 |
+| **TOTAL** | | **$199/mo** | **Premium Free Tier** | **$0/mo** |
+
+**Annual Value: $2,388** 🎉  
+**Setup Time: ~1 hour** ⚡
+
+**You get BETTER tools than most paid stacks, completely FREE!**
 
 # Utilities
 npm run clean                  # Clean build artifacts
