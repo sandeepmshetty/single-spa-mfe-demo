@@ -20,13 +20,18 @@
     "useDefineForClassFields": false,
     "lib": [
       "ES2022",
-      "DOM"
+      "DOM",
+      "DOM.Iterable"
     ],
     "paths": {
       "@/*": ["src/*"],
-      "@single-spa-demo/shared-library": ["../shared-library/src/index"]
+      "@single-spa-demo/shared-library": ["../shared-library/src/index"],
+      "@rrweb/types": ["../../node_modules/@rrweb/types"]
     },
-    "types": ["node"]
+    "types": ["node"],
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true
   },
   "angularCompilerOptions": {
     "enableI18nLegacyMessageIdFormat": false,

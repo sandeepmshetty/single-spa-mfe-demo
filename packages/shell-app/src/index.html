@@ -618,12 +618,36 @@
             "vue": "https://cdn.jsdelivr.net/npm/vue@3.3.7/dist/vue.global.prod.js",
             "@angular/core": "https://cdn.jsdelivr.net/npm/@angular/core@17.0.0/bundles/core.umd.min.js",
             "@angular/platform-browser": "https://cdn.jsdelivr.net/npm/@angular/platform-browser@17.0.0/bundles/platform-browser.umd.min.js",
-            "@angular/platform-browser-dynamic": "https://cdn.jsdelivr.net/npm/@angular/platform-browser-dynamic@17.0.0/bundles/platform-browser-dynamic.umd.min.js",
-            "@single-spa-demo/shared-library": "https://shared-library.vercel.app/shared-library.js",
-            "@single-spa-demo/react-mfe": "https://react-mfe-tau.vercel.app/react-mfe.js",
-            "@single-spa-demo/vue-mfe": "https://vue-mfe.vercel.app/vue-mfe.js",
-            "@single-spa-demo/angular-mfe": "https://angular-mfe-indol.vercel.app/main.js"
+            "@angular/platform-browser-dynamic": "https://cdn.jsdelivr.net/npm/@angular/platform-browser-dynamic@17.0.0/bundles/platform-browser-dynamic.umd.min.js"
         }
+    }
+    </script>
+
+    <!-- Update import map based on environment -->
+    <script>
+        (function() {
+            const isDevelopment = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+            const importMapScript = document.querySelector('script[type="systemjs-importmap"]');
+            const importMap = JSON.parse(importMapScript.textContent);
+            
+            if (isDevelopment) {
+                // Development URLs
+                importMap.imports['@single-spa-demo/shared-library'] = 'http://localhost:9000/shared-library.js';
+                importMap.imports['@single-spa-demo/react-mfe'] = 'http://localhost:3001/react-mfe.js';
+                importMap.imports['@single-spa-demo/vue-mfe'] = 'http://localhost:3002/vue-mfe.js';
+                importMap.imports['@single-spa-demo/angular-mfe'] = 'http://localhost:3003/main.js';
+            } else {
+                // Production URLs
+                importMap.imports['@single-spa-demo/shared-library'] = 'https://shared-library.vercel.app/shared-library.js';
+                importMap.imports['@single-spa-demo/react-mfe'] = 'https://react-mfe-tau.vercel.app/react-mfe.js';
+                importMap.imports['@single-spa-demo/vue-mfe'] = 'https://vue-mfe.vercel.app/vue-mfe.js';
+                importMap.imports['@single-spa-demo/angular-mfe'] = 'https://angular-mfe-indol.vercel.app/main.js';
+            }
+            
+            importMapScript.textContent = JSON.stringify(importMap, null, 2);
+            console.log('🔧 Import map configured for:', isDevelopment ? 'DEVELOPMENT' : 'PRODUCTION');
+        })();
+    </script>
     }
     </script>
 

@@ -30,7 +30,31 @@ async function initializeSharedServices(): Promise<SharedServices> {
       counterState: sharedLib.counterState,
       counterActions: sharedLib.counterActions,
       userState: sharedLib.userState,
-      userActions: sharedLib.userActions
+      userActions: sharedLib.userActions,
+      // Premium services - Supabase
+      supabase: sharedLib.supabase,
+      supabaseAuthService: sharedLib.supabaseAuthService,
+      getCurrentSession: sharedLib.getCurrentSession,
+      getCurrentUser: sharedLib.getCurrentUser,
+      supabaseSignOut: sharedLib.supabaseSignOut,
+      isSupabaseConfigured: sharedLib.isSupabaseConfigured,
+      // Premium services - Sentry
+      initSentry: sharedLib.initSentry,
+      captureError: sharedLib.captureError,
+      captureMessage: sharedLib.captureMessage,
+      setUserContext: sharedLib.setUserContext,
+      clearUserContext: sharedLib.clearUserContext,
+      addBreadcrumb: sharedLib.addBreadcrumb,
+      isSentryEnabled: sharedLib.isSentryEnabled,
+      // Premium services - PostHog
+      initPostHog: sharedLib.initPostHog,
+      trackEvent: sharedLib.trackEvent,
+      identifyUser: sharedLib.identifyUser,
+      resetUser: sharedLib.resetUser,
+      isFeatureEnabled: sharedLib.isFeatureEnabled,
+      getFeatureFlag: sharedLib.getFeatureFlag,
+      analytics: sharedLib.analytics,
+      isPostHogEnabled: sharedLib.isPostHogEnabled
     };
     
     // Make services globally available with type safety

@@ -58,6 +58,19 @@ module.exports = (env, argv) => {
         },
         minify: false,
       }),
+      new CopyWebpackPlugin({
+        patterns: [
+          {
+            from: path.resolve(__dirname, '../shared-library/dist/shared-library.js'),
+            to: 'shared-library.js',
+          },
+          {
+            from: path.resolve(__dirname, '../shared-library/dist/shared-library.js.map'),
+            to: 'shared-library.js.map',
+            noErrorOnMissing: true,
+          },
+        ],
+      }),
       new (require('webpack')).DefinePlugin({
         'process.env.NODE_ENV': JSON.stringify(isProduction ? 'production' : 'development'),
       }),
@@ -73,8 +86,20 @@ module.exports = (env, argv) => {
         'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, PATCH, OPTIONS',
         'Access-Control-Allow-Headers': 'X-Requested-With, content-type, Authorization',
       },
-      static: {
-        directory: path.join(__dirname, 'dist'),
+      static: [
+        {
+          directory: path.join(__dirname, 'dist'),
+        },
+        {
+          directory: path.resolve(__dirname, '../shared-library/dist'),
+          publicPath: '/',
+        },
+      ],
+      devMiddleware: {
+        writeToDisk: (filePath) => {
+          // Write shared-library.js to disk so it can be served
+          return /shared-library\.js/.test(filePath);
+        },
       },
     },
     

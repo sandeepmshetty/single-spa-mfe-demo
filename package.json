@@ -14,7 +14,8 @@
     "test:integration": "cd tests && npm test",
     "test:integration:watch": "cd tests && npm run test:watch",
     "test:integration:coverage": "cd tests && npm run test:coverage",
-    "dev": "concurrently \"npm run dev:shared\" \"npm run dev:react\" \"npm run dev:vue\" \"npm run dev:angular\" \"npm run dev:shell\"",
+    "dev": "concurrently \"npm run dev:shared\" \"npm run dev:react\" \"npm run dev:vue\" \"npm run dev:shell\"",
+    "dev:all": "concurrently \"npm run dev:shared\" \"npm run dev:react\" \"npm run dev:vue\" \"npm run dev:angular\" \"npm run dev:shell\"",
     "dev:shell": "npm run start --workspace=packages/shell-app",
     "dev:react": "npm run start --workspace=packages/react-mfe",
     "dev:vue": "npm run start --workspace=packages/vue-mfe",
@@ -74,22 +75,27 @@
     "secrets:push": "doppler secrets upload .env.production",
     "monitor:errors": "start https://sentry.io",
     "monitor:analytics": "start https://app.posthog.com",
-    "monitor:metrics": "start https://grafana.com"
+    "monitor:metrics": "start https://grafana.com",
+    "setup:verify": "node scripts/verify-setup.js",
+    "setup:help": "type YOUR_NEXT_STEPS.md"
   },
   "devDependencies": {
-    "@types/node": "^20.8.7",
+    "@rrweb/types": "^2.0.0-alpha.18",
+    "@types/node": "^20.19.21",
     "@types/systemjs": "^6.15.3",
     "@vercel/node": "^3.0.0",
     "concurrently": "^8.2.2",
+    "dotenv": "^17.2.3",
     "lerna": "^7.4.2",
+    "process": "^0.11.10",
     "rimraf": "^5.0.5",
     "typescript": "^5.2.2",
     "vercel": "^32.4.1"
   },
   "dependencies": {
-    "@supabase/supabase-js": "^2.39.0",
     "@sentry/browser": "^7.85.0",
     "@sentry/tracing": "^7.85.0",
+    "@supabase/supabase-js": "^2.39.0",
     "posthog-js": "^1.96.0",
     "resend": "^2.0.0"
   },
@@ -110,6 +116,6 @@
     "vercel",
     "microservices"
   ],
-  "author": "Your Name",
+  "author": "Sandeep Shetty",
   "license": "MIT"
 }
