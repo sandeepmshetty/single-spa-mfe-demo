@@ -1,4 +1,33 @@
 {
+  "version": 2,
+  "name": "angular-mfe",
+  "builds": [
+    {
+      "src": "package.json",
+      "use": "@vercel/static-build",
+      "config": {
+        "distDir": "dist/angular-mfe"
+      }
+    }
+  ],
+  "routes": [
+    {
+      "src": "/main.js",
+      "headers": {
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Methods": "GET, OPTIONS",
+        "Access-Control-Allow-Headers": "Content-Type"
+      },
+      "dest": "/main.js"
+    },
+    {
+      "src": "/(.*)",
+      "headers": {
+        "Access-Control-Allow-Origin": "*"
+      },
+      "dest": "/$1"
+    }
+  ],
   "headers": [
     {
       "source": "/(.*)",
@@ -13,15 +42,9 @@
         },
         {
           "key": "Access-Control-Allow-Headers",
-          "value": "Content-Type, Authorization"
+          "value": "X-Requested-With, Content-Type, Accept"
         }
       ]
     }
-  ],
-  "env": {
-    "NODE_ENV": "production",
-    "NG_MFE_NAME": "angular-dashboard"
-  },
-  "buildCommand": "npm run build -- --configuration=single-spa",
-  "outputDirectory": "dist"
+  ]
 }

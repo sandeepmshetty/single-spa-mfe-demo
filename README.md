@@ -28,16 +28,41 @@ A comprehensive Single-SPA implementation showcasing micro-frontend architecture
 - ✅ **Zero Cost**: All services on generous free tiers
 - ✅ **Production Ready**: 2.2MB bundle with all dependencies included
 
-### **� Try It Now**
-```bash
-npm run dev                          # Start all MFEs
-# Open http://localhost:9000 in browser
+### **🎓 Try It Now**
 
-# Test in console:
-window.sharedServices.getCurrentUser()        # Check auth
-window.sharedServices.captureError(new Error('test'))  # Send to Sentry
-window.sharedServices.trackEvent('test')      # Track in PostHog
+#### Windows PowerShell (Recommended)
+```powershell
+# One command to start everything
+.\start-all.ps1
+
+# Or manually start each service (see START_ALL_SERVICES.md)
 ```
+
+#### macOS/Linux or Manual Start
+```bash
+# 1. Build shared library (first time only)
+cd packages/shared-library && npm run build && cd ../..
+
+# 2. Start services in separate terminals
+cd packages/shared-library && npx serve dist -p 9000 --cors  # Terminal 1
+cd packages/shell-app && npm start                            # Terminal 2
+cd packages/react-mfe && npm start                            # Terminal 3
+cd packages/vue-mfe && npm start                              # Terminal 4
+cd packages/angular-mfe && npm start                          # Terminal 5
+
+# Open http://localhost:9999 in browser
+```
+
+#### Test Premium Services
+```javascript
+// Open browser console at http://localhost:9999
+window.sharedServices.getCurrentUser()        // Check Supabase auth
+window.sharedServices.captureError(new Error('test'))  // Send to Sentry
+window.sharedServices.trackEvent('test')      // Track in PostHog
+```
+
+**📖 Detailed Instructions**: See [START_ALL_SERVICES.md](./START_ALL_SERVICES.md)  
+**❌ Stop All Services**: Run `.\stop-all.ps1` (Windows)
 
 **Next**: Build login UI → See [NEXT_STEPS.md](./NEXT_STEPS.md)
 

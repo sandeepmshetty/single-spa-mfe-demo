@@ -263,7 +263,7 @@ registerApplication({
   }),
   activeWhen: (location: Location) => location.pathname.startsWith('/dashboard'),
   customProps: () => ({
-    domElement: () => document.getElementById('single-spa-application:angular-mfe'),
+    domElementGetter: () => document.getElementById('single-spa-application:angular-mfe'),
     ...sharedServices
   })
 });

@@ -616,6 +616,7 @@
             "react": "https://cdn.jsdelivr.net/npm/react@18.2.0/umd/react.production.min.js",
             "react-dom": "https://cdn.jsdelivr.net/npm/react-dom@18.2.0/umd/react-dom.production.min.js",
             "vue": "https://cdn.jsdelivr.net/npm/vue@3.3.7/dist/vue.global.prod.js",
+            "zone.js": "@empty",
             "@angular/core": "https://cdn.jsdelivr.net/npm/@angular/core@17.0.0/bundles/core.umd.min.js",
             "@angular/platform-browser": "https://cdn.jsdelivr.net/npm/@angular/platform-browser@17.0.0/bundles/platform-browser.umd.min.js",
             "@angular/platform-browser-dynamic": "https://cdn.jsdelivr.net/npm/@angular/platform-browser-dynamic@17.0.0/bundles/platform-browser-dynamic.umd.min.js"
@@ -647,8 +648,6 @@
             importMapScript.textContent = JSON.stringify(importMap, null, 2);
             console.log('🔧 Import map configured for:', isDevelopment ? 'DEVELOPMENT' : 'PRODUCTION');
         })();
-    </script>
-    }
     </script>
 
     <!-- SystemJS (must load before single-spa) -->

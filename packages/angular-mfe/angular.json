@@ -1,6 +1,10 @@
 {
   "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
   "version": 1,
+  "cli": {
+    "packageManager": "npm",
+    "analytics": "df4f09e2-a6c1-43a4-998c-dac542c32e9e"
+  },
   "newProjectRoot": "projects",
   "projects": {
     "angular-mfe": {
@@ -17,13 +21,12 @@
         "build": {
           "builder": "@angular-builders/custom-webpack:browser",
           "options": {
-            "customWebpackConfig": {
-              "path": "./webpack.config.js"
-            },
-            "outputPath": "dist",
+            "outputPath": "dist/angular-mfe",
             "index": "src/index.html",
             "main": "src/main.single-spa.ts",
-            "polyfills": "src/polyfills.ts",
+            "polyfills": [
+              "zone.js"
+            ],
             "tsConfig": "tsconfig.app.json",
             "inlineStyleLanguage": "scss",
             "assets": [
@@ -33,7 +36,10 @@
             "styles": [
               "src/styles.scss"
             ],
-            "scripts": []
+            "scripts": [],
+            "customWebpackConfig": {
+              "path": "extra-webpack.config.js"
+            }
           },
           "configurations": {
             "production": {
@@ -45,33 +51,16 @@
                 },
                 {
                   "type": "anyComponentStyle",
-                  "maximumWarning": "4kb",
-                  "maximumError": "6kb"
+                  "maximumWarning": "2kb",
+                  "maximumError": "4kb"
                 }
               ],
-              "fileReplacements": [
-                {
-                  "replace": "src/environments/environment.ts",
-                  "with": "src/environments/environment.prod.ts"
-                }
-              ],
-              "outputHashing": "all"
+              "outputHashing": "none"
             },
             "development": {
-              "buildOptimizer": false,
               "optimization": false,
-              "vendorChunk": true,
               "extractLicenses": false,
               "sourceMap": true,
-              "namedChunks": true
-            },
-            "single-spa": {
-              "buildOptimizer": false,
-              "optimization": false,
-              "vendorChunk": false,
-              "extractLicenses": false,
-              "sourceMap": true,
-              "namedChunks": true,
               "outputHashing": "none"
             }
           },
@@ -79,19 +68,12 @@
         },
         "serve": {
           "builder": "@angular-builders/custom-webpack:dev-server",
-          "options": {
-            "port": 3003,
-            "host": "localhost"
-          },
           "configurations": {
             "production": {
               "buildTarget": "angular-mfe:build:production"
             },
             "development": {
               "buildTarget": "angular-mfe:build:development"
-            },
-            "single-spa": {
-              "buildTarget": "angular-mfe:build:single-spa"
             }
           },
           "defaultConfiguration": "development"
@@ -105,10 +87,12 @@
         "test": {
           "builder": "@angular-devkit/build-angular:karma",
           "options": {
-            "main": "src/test.ts",
-            "polyfills": "src/polyfills.ts",
+            "polyfills": [
+              "zone.js",
+              "zone.js/testing"
+            ],
             "tsConfig": "tsconfig.spec.json",
-            "karmaConfig": "karma.conf.js",
+            "inlineStyleLanguage": "scss",
             "assets": [
               "src/favicon.ico",
               "src/assets"
@@ -118,20 +102,8 @@
             ],
             "scripts": []
           }
-        },
-        "lint": {
-          "builder": "@angular-eslint/builder:lint",
-          "options": {
-            "lintFilePatterns": [
-              "src/**/*.ts",
-              "src/**/*.html"
-            ]
-          }
         }
       }
     }
-  },
-  "cli": {
-    "analytics": false
   }
 }

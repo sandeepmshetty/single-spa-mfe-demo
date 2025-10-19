@@ -17,6 +17,9 @@ module.exports = (env, argv) => {
         {
           test: /\.vue$/,
           loader: 'vue-loader',
+          options: {
+            hotReload: false,
+          },
         },
         {
           test: /\.tsx?$/,
@@ -63,7 +66,6 @@ module.exports = (env, argv) => {
       extensions: ['.tsx', '.ts', '.js', '.vue'],
       alias: {
         '@': path.resolve(__dirname, 'src'),
-        'vue': '@vue/runtime-dom',
       },
     },
     
@@ -97,7 +99,8 @@ module.exports = (env, argv) => {
     devServer: {
       port: 3002,
       historyApiFallback: true,
-      hot: true,
+      hot: false,
+      liveReload: true,
       headers: {
         'Access-Control-Allow-Origin': '*',
         'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, PATCH, OPTIONS',
@@ -108,9 +111,11 @@ module.exports = (env, argv) => {
       },
     },
     
-    externals: {
+    externals: isProduction ? {
       '@single-spa-demo/shared-library': '@single-spa-demo/shared-library',
       'vue': 'vue',
+    } : {
+      '@single-spa-demo/shared-library': '@single-spa-demo/shared-library',
     },
     
     optimization: {
