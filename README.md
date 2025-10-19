@@ -281,13 +281,50 @@ npm run clean                  # Clean build artifacts
 npm run lint                   # Lint all packages
 ```
 
-## Documentation
+## 📚 Documentation
 
-- **[Phase 1 Implementation](./docs/README.md)** - Standard MFE architecture components
-- **[Quick Start Guide](./docs/PHASE1_QUICK_START.md)** - Integration instructions
+### Quick Links
+- 📊 **[Current Status](./STATUS.md)** - Project progress and next steps
+- 🚀 **[Start Services](./START_ALL_SERVICES.md)** - How to run all MFEs
+- 🎯 **[Next Steps](./NEXT_STEPS.md)** - What to build next (Phase 2)
+- 🗺️ **[Implementation Roadmap](./docs/03-implementation/roadmap.md)** - Complete 6-phase plan
+- 📋 **[Implementation Checklist](./docs/03-implementation/checklist.md)** - Track progress
+
+### Documentation Structure
+
+#### 🏗️ Architecture
+- **[Architecture Overview](./docs/02-architecture/architecture-diagram.md)** - System design
+- **[Navigation Guide](./docs/02-architecture/navigation.md)** - Routing strategies
+- **[Communication](./docs/02-architecture/communication.md)** - Inter-MFE messaging
+
+#### 📝 Implementation Phases
+- **[Phase 1: Foundation](./docs/03-implementation/phase1/)** - Error handling, auth, performance (47% complete)
+  - [Authentication](./docs/03-implementation/phase1/PHASE1_AUTHENTICATION.md)
+  - [Error Boundaries](./docs/03-implementation/phase1/PHASE1_ERROR_BOUNDARIES.md)
+  - [Performance Monitoring](./docs/03-implementation/phase1/PHASE1_PERFORMANCE_MONITORING.md)
+  - [Summary](./docs/03-implementation/phase1/PHASE1_SUMMARY.md)
+- **[Phase 2: Security](./docs/03-implementation/phase2/)** - OAuth, security hardening (Ready to start)
+
+#### 🎯 Features & Setup
+- **[Premium Services](./PREMIUM_SERVICES_INTEGRATION.md)** - Supabase, Sentry, PostHog setup
+- **[Credentials Guide](./CREDENTIAL_COLLECTION_GUIDE.md)** - Environment variables
+- **[Docker Setup](./DOCKER_SETUP.md)** - Container configuration
+- **[Vercel Deployment](./VERCEL_DEPLOYMENT.md)** - Production deployment
+- **[SonarQube Setup](./SONARQUBE_SETUP.md)** - Code quality
+
+#### 📖 Reference
 - **[Development Guidelines](./.amazonq/rules/memory-bank/guidelines.md)** - Coding standards
 - **[Tech Stack](./.amazonq/rules/memory-bank/tech.md)** - Technology details
 
-## License
+### 📦 Historical Documentation
+Archived session logs and fix documentation: **[archive/](./archive/)** (17 files)
+
+---
+
+## 🤝 Contributing
+
+We welcome contributions! Please see our documentation structure in `docs/` for guidelines.
+
+## 📄 License
 
 MIT
