@@ -11,7 +11,7 @@
     "build:types": "tsc --emitDeclarationOnly --outDir dist/types",
     "test": "jest",
     "lint": "eslint src --ext .ts,.js",
-    "clean": "node ../../scripts/rm-paths.cjs dist",
+    "clean": "node ../../scripts/utils/rm-paths.cjs dist",
     "prepublishOnly": "npm run build"
   },
   "files": [

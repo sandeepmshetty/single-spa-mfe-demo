@@ -17,9 +17,10 @@ A comprehensive Single-SPA implementation showcasing micro-frontend architecture
 | **Cloudflare** | 🔧 Ready | CDN + Security | Unlimited bandwidth |
 
 ### **📚 Documentation**
-- 🎯 **[Quick Start: Premium Services](./PREMIUM_SERVICES_INTEGRATION.md)** - Complete setup guide
-- 📊 **[Progress Log](./PROGRESS_LOG.md)** - What we built today (10 hours, 1200+ lines)
-- 🚀 **[Next Steps](./NEXT_STEPS.md)** - Actionable tasks with code examples
+- 🎯 **[Premium Services Integration](./docs/04-features/premium-services-integration.md)** - Complete setup guide
+- � **[Current Status](./docs/03-implementation/current-status.md)** - Project progress and achievements
+- 🚀 **[Next Steps](./docs/03-implementation/next-steps.md)** - Actionable tasks with code examples
+- 📖 **[Full Documentation Index](./docs/INDEX.md)** - Browse all guides
 
 ### **🎓 What You Get**
 - ✅ **Authentication**: Email/password + OAuth (Google, GitHub) via Supabase
@@ -35,7 +36,7 @@ A comprehensive Single-SPA implementation showcasing micro-frontend architecture
 # One command to start everything
 .\start-all.ps1
 
-# Or manually start each service (see START_ALL_SERVICES.md)
+# Or manually start each service (see docs/01-getting-started/start-all-services.md)
 ```
 
 #### macOS/Linux or Manual Start
@@ -61,10 +62,10 @@ window.sharedServices.captureError(new Error('test'))  // Send to Sentry
 window.sharedServices.trackEvent('test')      // Track in PostHog
 ```
 
-**📖 Detailed Instructions**: See [START_ALL_SERVICES.md](./START_ALL_SERVICES.md)  
+**📖 Detailed Instructions**: See [Start All Services Guide](./docs/01-getting-started/start-all-services.md)  
 **❌ Stop All Services**: Run `.\stop-all.ps1` (Windows)
 
-**Next**: Build login UI → See [NEXT_STEPS.md](./NEXT_STEPS.md)
+**Next**: Build login UI → See [Next Steps Guide](./docs/03-implementation/next-steps.md)
 
 ---
 
@@ -191,7 +192,7 @@ Then redeploy the shell-app.
 - ✅ **Performance Monitoring**: Core Web Vitals tracking
 - ⏳ **Module Federation**: Planned migration from SystemJS
 
-📚 **[View Phase 1 Documentation](./docs/README.md)**
+📚 **[View Phase 1 Documentation](./docs/INDEX.md)**
 
 ## Technology Stack
 

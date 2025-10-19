@@ -4,14 +4,14 @@ Welcome to the Single-SPA Micro-Frontend documentation! This guide helps you nav
 
 ---
 
-## � Quick Start
+## 🏁 Quick Start
 
 **New to the project?** Start here:
 
-1. **[Current Status](../STATUS.md)** - See what's accomplished and what's next
-2. **[Start Services](../START_ALL_SERVICES.md)** - Get the app running locally
-3. **[Phase 1 Summary](./03-implementation/phase1/PHASE1_SUMMARY.md)** - Current implementation
-4. **[Next Steps](../NEXT_STEPS.md)** - Build new features
+1. **[Current Status](./03-implementation/current-status.md)** - See what's accomplished and what's next
+2. **[Start All Services](./01-getting-started/start-all-services.md)** - Get the app running locally
+3. **[Premium Setup Guide](./01-getting-started/premium-setup-guide.md)** - Set up premium services
+4. **[Next Steps](./03-implementation/next-steps.md)** - Build new features
 
 ---
 
@@ -21,8 +21,15 @@ Welcome to the Single-SPA Micro-Frontend documentation! This guide helps you nav
 - **[Architecture Diagram](./02-architecture/architecture-diagram.md)** - Visual system overview
 - **[Navigation Guide](./02-architecture/navigation.md)** - Routing strategies
 - **[Communication](./02-architecture/communication.md)** - Inter-MFE messaging
+- **[Module Federation](./02-architecture/module-federation.md)** - Module Federation considerations
+- **[Sharing Services](./02-architecture/sharing-services.md)** - Code sharing approaches
 
 ### 📝 Implementation (6 Phases)
+
+#### Getting Started
+- **[Quick Start Guide](./01-getting-started/quick-start.md)** - Fast integration and setup
+- **[Start All Services](./01-getting-started/start-all-services.md)** - How to run the project
+- **[Premium Setup Guide](./01-getting-started/premium-setup-guide.md)** - Premium services setup
 
 #### Phase 1: Foundation & Migration (47% Complete) 🟡
 - **[Phase 1 Summary](./03-implementation/phase1/PHASE1_SUMMARY.md)** - Overall progress (47%)
@@ -30,7 +37,6 @@ Welcome to the Single-SPA Micro-Frontend documentation! This guide helps you nav
 - **[Error Boundaries](./03-implementation/phase1/PHASE1_ERROR_BOUNDARIES.md)** - Error handling (55%)
 - **[Performance Monitoring](./03-implementation/phase1/PHASE1_PERFORMANCE_MONITORING.md)** - Web Vitals (42%)
 - **[Module Federation Guide](./03-implementation/phase1/PHASE1_MODULE_FEDERATION_GUIDE.md)** - Migration plan
-- **[Quick Start](./PHASE1_QUICK_START.md)** - Integration guide
 - **[Checklist](./03-implementation/phase1/PHASE1_CHECKLIST.md)** - Task tracking
 - **[Visual Summary](./03-implementation/phase1/PHASE1_VISUAL_SUMMARY.md)** - Diagrams
 
@@ -40,26 +46,28 @@ Welcome to the Single-SPA Micro-Frontend documentation! This guide helps you nav
 #### All Phases
 - **[Implementation Roadmap](./03-implementation/roadmap.md)** - Complete 6-phase plan
 - **[Implementation Checklist](./03-implementation/checklist.md)** - Task tracking across all phases
+- **[Current Status](./03-implementation/current-status.md)** - Project progress overview
+- **[Next Steps](./03-implementation/next-steps.md)** - Upcoming tasks and features
 
-### 🎯 Premium Services ($649/month value for $0!)
-- **[Premium Services Integration](../PREMIUM_SERVICES_INTEGRATION.md)** - Supabase, Sentry, PostHog
-- **[Premium Setup Guide](../PREMIUM_SETUP_GUIDE.md)** - Step-by-step setup
-- **[Credentials Guide](../CREDENTIAL_COLLECTION_GUIDE.md)** - Environment variables
-- **[Free Tier Strategy](./PREMIUM_FREE_TIER_STRATEGY.md)** - Cost optimization
+### 🎯 Features & Services
+
+#### Premium Services ($649/month value for $0!)
+- **[Premium Services Integration](./04-features/premium-services-integration.md)** - Complete technical guide
+- **[Premium Setup Guide](./01-getting-started/premium-setup-guide.md)** - Step-by-step setup
+- **[Credentials Guide](./07-reference/credentials-guide.md)** - Environment variables
+- **[Premium Free Tier Strategy](./04-features/premium-free-tier.md)** - Cost optimization
+- **[Free Stack Summary](./04-features/free-stack-summary.md)** - Complete free stack overview
 
 ### 🚀 Deployment
-- **[Docker Setup](../DOCKER_SETUP.md)** - Container configuration
-- **[Vercel Deployment](../VERCEL_DEPLOYMENT.md)** - Cloud deployment
-- **[Infrastructure Setup](./INFRASTRUCTURE_SETUP.md)** - Self-hosted services
+- **[Docker Setup](./05-deployment/docker-setup.md)** - Container configuration
+- **[Vercel Deployment](./05-deployment/vercel-deployment.md)** - Cloud deployment
+- **[Infrastructure Setup](./05-deployment/infrastructure-setup.md)** - Self-hosted services
+- **[Open Source Stack](./05-deployment/open-source-stack.md)** - OSS alternatives
 
-### 🔍 Code Quality
-- **[SonarQube Setup](../SONARQUBE_SETUP.md)** - Code analysis
-- **[Custom Rules Guide](./CUSTOM_RULES_GUIDE.md)** - Quality rules
-- **[Rules Implementation](./RULES_IMPLEMENTATION_SUMMARY.md)** - Rule details
-
-### 🤝 Patterns & Best Practices
-- **[Module Federation Note](./MODULE_FEDERATION_NOTE.md)** - MF considerations
-- **[Sharing Services](./SHARING_SERVICES_APPROACHES.md)** - Code sharing patterns
+### 🔍 Code Quality & Reference
+- **[SonarQube Setup](./07-reference/sonarqube-setup.md)** - Code analysis
+- **[Custom Rules Guide](./07-reference/custom-rules.md)** - Quality rules
+- **[Rules Implementation](./07-reference/rules-implementation.md)** - Rule details
 
 ---
 
@@ -67,17 +75,19 @@ Welcome to the Single-SPA Micro-Frontend documentation! This guide helps you nav
 
 ### For Developers 👨‍💻
 1. [Architecture Overview](./02-architecture/architecture-diagram.md)
-2. [Start Services](../START_ALL_SERVICES.md)
-3. [Phase 1 Summary](./03-implementation/phase1/PHASE1_SUMMARY.md)
-4. [Next Steps](../NEXT_STEPS.md)
+2. [Quick Start Guide](./01-getting-started/quick-start.md)
+3. [Start All Services](./01-getting-started/start-all-services.md)
+4. [Phase 1 Summary](./03-implementation/phase1/PHASE1_SUMMARY.md)
+5. [Next Steps](./03-implementation/next-steps.md)
 
 ### For DevOps 🚀
-1. [Docker Setup](../DOCKER_SETUP.md)
-2. [Infrastructure Setup](./INFRASTRUCTURE_SETUP.md)
-3. [Vercel Deployment](../VERCEL_DEPLOYMENT.md)
+1. [Docker Setup](./05-deployment/docker-setup.md)
+2. [Infrastructure Setup](./05-deployment/infrastructure-setup.md)
+3. [Open Source Stack](./05-deployment/open-source-stack.md)
+4. [Vercel Deployment](./05-deployment/vercel-deployment.md)
 
 ### For Project Managers 📋
-1. [Current Status](../STATUS.md)
+1. [Current Status](./03-implementation/current-status.md)
 2. [Implementation Checklist](./03-implementation/checklist.md)
 3. [Roadmap](./03-implementation/roadmap.md)
 
@@ -87,13 +97,13 @@ Welcome to the Single-SPA Micro-Frontend documentation! This guide helps you nav
 
 ```
 docs/
-├── 01-getting-started/     # Setup guides (coming soon)
-├── 02-architecture/        # System design (3 files)
-├── 03-implementation/      # Phases & roadmap (12 files)
-├── 04-features/           # Feature docs (coming in Phase 2)
-├── 05-deployment/         # Deployment guides (coming soon)
-├── 06-troubleshooting/    # Common issues (coming soon)
-└── 07-reference/          # API docs (coming soon)
+├── 01-getting-started/     # Setup guides (3 files)
+├── 02-architecture/        # System design (5 files)
+├── 03-implementation/      # Phases & roadmap (4 files + phase1/ 7 files + phase2/ 1 file)
+├── 04-features/           # Feature docs (3 files)
+├── 05-deployment/         # Deployment guides (4 files)
+├── 06-troubleshooting/    # Common issues (empty)
+└── 07-reference/          # API docs (4 files)
 ```
 
 ---

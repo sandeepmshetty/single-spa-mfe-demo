@@ -13,7 +13,7 @@
     "lint": "eslint src --ext .js,.vue,.ts",
     "lint:fix": "eslint src --ext .js,.vue,.ts --fix",
     "type-check": "vue-tsc --noEmit",
-    "clean": "node ../../scripts/rm-paths.cjs dist",
+    "clean": "node ../../scripts/utils/rm-paths.cjs dist",
     "serve": "serve dist -p 3002"
   },
   "dependencies": {
