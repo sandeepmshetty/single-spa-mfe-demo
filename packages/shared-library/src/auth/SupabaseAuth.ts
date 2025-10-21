@@ -46,9 +46,10 @@ class SupabaseAuthService {
       if (error) throw error;
 
       // Create user profile in profiles table
-      if (authData.user) {
-        await this.createUserProfile(authData.user.id, data.email, data.fullName);
-      }
+      // Commented out for now - profiles table needs to be created in Supabase
+      // if (authData.user) {
+      //   await this.createUserProfile(authData.user.id, data.email, data.fullName);
+      // }
 
       return {
         user: authData.user,
@@ -159,6 +160,38 @@ class SupabaseAuthService {
     } catch (error) {
       console.error('Get user error:', error);
       return null;
+    }
+  }
+
+  /**
+   * Get current user with session (for AuthStateManager)
+   */
+  async getCurrentUser(): Promise<AuthResponse> {
+    try {
+      const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+      
+      if (sessionError) throw sessionError;
+      
+      if (!session) {
+        return {
+          user: null,
+          session: null,
+          error: null,
+        };
+      }
+
+      return {
+        user: session.user,
+        session,
+        error: null,
+      };
+    } catch (error) {
+      console.error('Get current user error:', error);
+      return {
+        user: null,
+        session: null,
+        error: error as AuthError,
+      };
     }
   }
 

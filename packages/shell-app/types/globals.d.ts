@@ -8,6 +8,12 @@ interface SharedServices {
     onAll: (callback: (payload: any) => void) => () => void;
   };
   authService: any;
+  authStateManager?: {
+    subscribe: (callback: (state: any) => void) => () => void;
+    getUser: () => any;
+    getSession: () => any;
+    initialize: () => Promise<void>;
+  };
   storageService: any;
   apiClient: any;
   logger: any;
@@ -27,6 +33,7 @@ interface SharedServices {
   };
   userState: any;
   userActions: any;
+  supabaseAuthService?: any;
 }
 
 declare global {

@@ -1,12 +1,18 @@
 ﻿import React, { useState, useEffect } from 'react';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { AuthProvider } from './components/AuthProvider';
+import { ProtectedRoute } from './components/ProtectedRoute';
+import { AuthPage } from './pages/AuthPage';
+import { Dashboard } from './pages/Dashboard';
 
-const App: React.FC = () => {
+const UsersDashboard: React.FC = () => {
   const [counter, setCounter] = useState(0);
   const [lastSource, setLastSource] = useState<string>('');
+  const [user, setUser] = useState<any>(null);
 
   useEffect(() => {
-    // Access shared services from window (provided by shell)
-    const sharedServices = (window as any).sharedServices;
+    // Access shared services from globalThis (provided by shell)
+    const sharedServices = (globalThis as any).sharedServices;
     const counterActions = sharedServices?.counterActions;
     const eventBus = sharedServices?.eventBus;
 
@@ -24,6 +30,17 @@ const App: React.FC = () => {
         if (payload.type.startsWith('counter-')) {
           setLastSource(payload.source);
         }
+        // Listen for auth events
+        if (payload.type === 'auth:login' || payload.type === 'auth:register') {
+          setUser(payload.payload?.user);
+        }
+      });
+
+      // Get current user if authenticated
+      sharedServices.supabaseAuthService?.getCurrentUser().then((result: any) => {
+        if (result.user) {
+          setUser(result.user);
+        }
       });
 
       return () => {
@@ -36,23 +53,35 @@ const App: React.FC = () => {
   }, []);
 
   const handleIncrement = () => {
-    const counterActions = (window as any).sharedServices?.counterActions;
+    const counterActions = (globalThis as any).sharedServices?.counterActions;
     if (counterActions) {
       counterActions.increment('react-mfe');
     }
   };
 
   const handleDecrement = () => {
-    const counterActions = (window as any).sharedServices?.counterActions;
+    const counterActions = (globalThis as any).sharedServices?.counterActions;
     if (counterActions) {
       counterActions.decrement('react-mfe');
     }
   };
 
   const handleReset = () => {
-    const counterActions = (window as any).sharedServices?.counterActions;
+    const counterActions = (globalThis as any).sharedServices?.counterActions;
     if (counterActions) {
       counterActions.reset('react-mfe');
+    }
+  };
+
+  const handleLogout = async () => {
+    const sharedServices = (globalThis as any).sharedServices;
+    const result = await sharedServices.supabaseAuthService?.signOut();
+    
+    if (!result?.error) {
+      // EventBus.emit takes (type, data, source) not an object
+      sharedServices.eventBus?.emit('auth:logout', {}, 'react-mfe');
+      setUser(null);
+      globalThis.location.href = '/login';
     }
   };
 
@@ -60,17 +89,44 @@ const App: React.FC = () => {
     <div style={{ 
       padding: '20px', 
       fontFamily: 'Arial, sans-serif',
-      backgroundColor: '#f0f8ff'
+      backgroundColor: '#f0f8ff',
+      minHeight: '100vh'
     }}>
       <header style={{ 
         marginBottom: '30px',
         padding: '20px',
         backgroundColor: '#007bff',
         color: 'white',
-        borderRadius: '8px'
+        borderRadius: '8px',
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center'
       }}>
-        <h1 style={{ margin: 0 }}>React MFE - User Management</h1>
-        <p style={{ margin: '10px 0 0 0' }}>Single-SPA React Micro-Frontend</p>
+        <div>
+          <h1 style={{ margin: 0 }}>React MFE - User Management</h1>
+          <p style={{ margin: '10px 0 0 0' }}>Single-SPA React Micro-Frontend</p>
+        </div>
+        {user && (
+          <div style={{ textAlign: 'right' }}>
+            <p style={{ margin: '0 0 10px 0', fontSize: '14px' }}>
+              Welcome, <strong>{user.email}</strong>
+            </p>
+            <button
+              onClick={handleLogout}
+              style={{
+                padding: '8px 16px',
+                fontSize: '14px',
+                backgroundColor: '#dc3545',
+                color: 'white',
+                border: 'none',
+                borderRadius: '4px',
+                cursor: 'pointer'
+              }}
+            >
+              Logout
+            </button>
+          </div>
+        )}
       </header>
       
       <main>
@@ -86,6 +142,18 @@ const App: React.FC = () => {
             This is the React micro-frontend responsible for user authentication, 
             user profiles, and session management within the Single-SPA ecosystem.
           </p>
+          {user && (
+            <div style={{ 
+              marginTop: '15px', 
+              padding: '12px', 
+              backgroundColor: '#d4edda', 
+              color: '#155724',
+              borderRadius: '4px',
+              border: '1px solid #c3e6cb'
+            }}>
+              ✅ You are authenticated and can access protected features!
+            </div>
+          )}
         </div>
 
         {/* Cross-MFE Communication Demo */}
@@ -184,6 +252,27 @@ const App: React.FC = () => {
         </div>
       </main>
     </div>
+  );
+};
+
+const App: React.FC = () => {
+  return (
+    <AuthProvider>
+      <BrowserRouter basename="/users">
+        <Routes>
+          <Route path="/login" element={<AuthPage />} />
+          <Route 
+            path="/" 
+            element={
+              <ProtectedRoute>
+                <Dashboard />
+              </ProtectedRoute>
+            } 
+          />
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
+      </BrowserRouter>
+    </AuthProvider>
   );
 };
 

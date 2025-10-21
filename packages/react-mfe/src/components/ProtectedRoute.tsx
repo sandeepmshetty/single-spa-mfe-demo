@@ -3,7 +3,7 @@
  */
 import React from 'react';
 import { Navigate } from 'react-router-dom';
-import { useAuth } from './AuthProvider';
+import useAuth from '../hooks/useAuth';
 
 interface IProtectedRouteProps {
   children: React.ReactNode;
@@ -16,15 +16,22 @@ export const ProtectedRoute: React.FC<IProtectedRouteProps> = ({
   requiredRoles = [],
   redirectTo = '/login'
 }) => {
-  const { isAuthenticated, hasRole } = useAuth();
+  const { isAuthenticated, loading } = useAuth();
+
+  // Show loading state while checking authentication
+  if (loading) {
+    return (
+      <div style={{ padding: '20px', textAlign: 'center' }}>
+        <p>Loading...</p>
+      </div>
+    );
+  }
 
   if (!isAuthenticated) {
+    console.log('🔒 ProtectedRoute: Not authenticated, redirecting to login');
     return <Navigate to={redirectTo} replace />;
   }
 
-  if (requiredRoles.length > 0 && !requiredRoles.some(role => hasRole(role))) {
-    return <Navigate to="/unauthorized" replace />;
-  }
-
+  console.log('✅ ProtectedRoute: Authenticated, rendering protected content');
   return <>{children}</>;
 };

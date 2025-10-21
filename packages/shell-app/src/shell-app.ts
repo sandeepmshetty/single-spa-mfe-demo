@@ -34,6 +34,7 @@ async function initializeSharedServices(): Promise<SharedServices> {
       // Premium services - Supabase
       supabase: sharedLib.supabase,
       supabaseAuthService: sharedLib.supabaseAuthService,
+      authStateManager: sharedLib.authStateManager, // ✨ NEW: Centralized auth state
       getCurrentSession: sharedLib.getCurrentSession,
       getCurrentUser: sharedLib.getCurrentUser,
       supabaseSignOut: sharedLib.supabaseSignOut,
@@ -342,12 +343,28 @@ function updateNavigationState(pathname: string) {
 function updateAuthState(authState: any) {
   const authStatus = document.getElementById('auth-status');
   const userAvatar = document.getElementById('user-avatar');
+  const userMenuEmail = document.getElementById('user-menu-email');
+  const userMenuId = document.getElementById('user-menu-id');
   
   if (authStatus && userAvatar) {
     if (authState?.isAuthenticated && authState?.user) {
-      authStatus.textContent = authState.user.name;
-      userAvatar.textContent = authState.user.name.charAt(0).toUpperCase();
+      // Use email or user metadata name
+      const displayName = authState.user.user_metadata?.full_name || authState.user.email || 'User';
+      const initials = displayName.includes('@') 
+        ? displayName.charAt(0).toUpperCase() 
+        : displayName.split(' ').map((n: string) => n[0]).join('').toUpperCase().slice(0, 2);
+      
+      authStatus.textContent = displayName.split('@')[0]; // Show username part of email
+      userAvatar.textContent = initials;
       userAvatar.style.background = 'rgba(16, 185, 129, 0.2)';
+      
+      // Update dropdown menu info
+      if (userMenuEmail && authState.user.email) {
+        userMenuEmail.textContent = authState.user.email;
+      }
+      if (userMenuId && authState.user.id) {
+        userMenuId.textContent = `ID: ${authState.user.id.slice(0, 8)}...`;
+      }
     } else {
       authStatus.textContent = 'Sign In';
       userAvatar.textContent = '👤';
@@ -388,6 +405,22 @@ async function performHealthCheck() {
 
 // Event Listeners Setup
 function setupEventListeners() {
+  // Track current auth state
+  let currentAuthState: { isAuthenticated: boolean; user: any } = {
+    isAuthenticated: false,
+    user: null
+  };
+  
+  // Update tracking when auth state changes
+  if ((sharedServices as any).authStateManager) {
+    (sharedServices as any).authStateManager.subscribe((authState: any) => {
+      currentAuthState = {
+        isAuthenticated: authState.isAuthenticated,
+        user: authState.user
+      };
+    });
+  }
+  
   // Navigation clicks
   document.addEventListener('click', (event) => {
     const target = event.target as HTMLElement;
@@ -400,20 +433,57 @@ function setupEventListeners() {
     }
   });
   
-  // Auth status click
-  const authStatus = document.getElementById('auth-status');
-  if (authStatus) {
-    authStatus.addEventListener('click', () => {
-      if (sharedServices.authService?.isAuthenticated()) {
-        // Show user menu or logout
-        if (confirm('Do you want to sign out?')) {
-          sharedServices.authService.logout();
+  // User Menu Dropdown Management
+  const userMenuTrigger = document.getElementById('user-menu-trigger');
+  const userMenuDropdown = document.getElementById('user-menu-dropdown');
+  const logoutButton = document.getElementById('logout-button');
+  
+  let isDropdownOpen = false;
+  
+  // Toggle dropdown on click
+  if (userMenuTrigger && userMenuDropdown) {
+    userMenuTrigger.addEventListener('click', (e) => {
+      e.stopPropagation();
+      
+      if (currentAuthState.isAuthenticated && currentAuthState.user) {
+        // User is logged in - toggle dropdown
+        isDropdownOpen = !isDropdownOpen;
+        if (isDropdownOpen) {
+          userMenuDropdown.classList.add('show');
+        } else {
+          userMenuDropdown.classList.remove('show');
         }
       } else {
-        // Navigate to login or show login modal
-        navigateToUrl('/users');
+        // User is not logged in - navigate to login
+        navigateToUrl('/users/login');
       }
     });
+    
+    // Close dropdown when clicking outside
+    document.addEventListener('click', (e) => {
+      if (isDropdownOpen && !userMenuDropdown.contains(e.target as Node)) {
+        isDropdownOpen = false;
+        userMenuDropdown.classList.remove('show');
+      }
+    });
+    
+    // Handle logout button click
+    if (logoutButton) {
+      logoutButton.addEventListener('click', async (e) => {
+        e.stopPropagation();
+        try {
+          await (sharedServices as any).supabaseAuthService.signOut();
+          // Close dropdown
+          isDropdownOpen = false;
+          userMenuDropdown.classList.remove('show');
+          console.log('✅ Logged out successfully');
+          navigateToUrl('/');
+        } catch (error) {
+          console.error('Logout error:', error);
+          alert('Failed to logout. Please try again.');
+        }
+      });
+    }
   }
   
   // Theme toggle
@@ -494,10 +564,16 @@ async function initializeApplication() {
     // Initialize shared services
     await initializeSharedServices();
     
-    // Set up authentication state listener
-    if (sharedServices.authService) {
-      sharedServices.authService.onAuthChange(updateAuthState);
-      updateAuthState(sharedServices.authService.getAuthState());
+    // Set up authentication state listener with AuthStateManager
+    if (sharedServices.authStateManager) {
+      // Subscribe to auth state changes
+      sharedServices.authStateManager.subscribe((authState: any) => {
+        console.log('🔐 Auth state updated in shell:', authState.isAuthenticated, authState.user?.email);
+        updateAuthState(authState);
+      });
+      
+      // Note: Initial state will be set by the subscribe callback when AuthStateManager 
+      // finishes initialization and emits the first state update
     }
     
     // Set up event listeners

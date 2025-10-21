@@ -16,6 +16,7 @@ export { performanceMonitor, sentryIntegration, type IPerformanceMetric, type IS
 // Premium Free Tier Integrations
 export { supabase, isSupabaseConfigured, getCurrentSession, getCurrentUser, signOut as supabaseSignOut } from './config/supabase';
 export { authService as supabaseAuthService } from './auth/SupabaseAuth';
+export { AuthStateManager, type AuthState, type AuthStateChangeCallback } from './auth/AuthStateManager';
 export { 
   initSentry, 
   captureError, 
@@ -63,9 +64,27 @@ console.log('🔍 Premium services loaded:', {
   supabaseAuthService: typeof supabaseAuthService
 });
 
+// Initialize AuthStateManager
+import { AuthStateManager } from './auth/AuthStateManager';
+const authStateManager = new AuthStateManager(supabaseAuthService, eventBus);
+
+console.log('🔍 authStateManager created:', !!authStateManager, typeof authStateManager);
+
+// Export singleton instance
+export { authStateManager };
+
+// Initialize on load (in browser environment)
+if (globalThis.window !== undefined) {
+  authStateManager.initialize().catch((error: Error) => {
+    console.error('Failed to initialize AuthStateManager:', error);
+  });
+}
+
 // Make services globally available for Single-SPA
-if (typeof window !== 'undefined') {
-  (window as any).sharedServices = {
+if (globalThis.window !== undefined) {
+  console.log('🔍 Before assignment - authStateManager:', !!authStateManager, typeof authStateManager);
+  
+  (globalThis as any).sharedServices = {
     version: VERSION,
     versionInfo,
     eventBus,
@@ -86,6 +105,7 @@ if (typeof window !== 'undefined') {
     // Premium services - Supabase
     supabase,
     supabaseAuthService,
+    authStateManager, // ✨ NEW: Centralized auth state
     getCurrentSession,
     getCurrentUser,
     supabaseSignOut,
@@ -109,5 +129,6 @@ if (typeof window !== 'undefined') {
     isPostHogEnabled
   };
   
-  console.log('✅ window.sharedServices initialized with', Object.keys((window as any).sharedServices).length, 'properties');
+  console.log('✅ globalThis.sharedServices initialized with', Object.keys((globalThis as any).sharedServices).length, 'properties');
+  console.log('🔍 After assignment - sharedServices.authStateManager:', !!(globalThis as any).sharedServices.authStateManager);
 }
