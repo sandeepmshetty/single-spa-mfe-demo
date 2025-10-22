@@ -381,16 +381,11 @@ async function performHealthCheck() {
   if (!healthDot || !healthStatus) return;
   
   try {
-    const checks = await Promise.allSettled([
-      fetch('/api/health', { method: 'HEAD' }).then(r => r.ok),
-      Promise.resolve(System.has('@single-spa-demo/shared-library')),
-    ]);
+    // Simple check - verify shared library is loaded
+    const sharedLibLoaded = System.has('@single-spa-demo/shared-library');
+    const supabaseConfigured = (sharedServices as any).isSupabaseConfigured?.() ?? false;
     
-    const allHealthy = checks.every(check => 
-      check.status === 'fulfilled' && check.value === true
-    );
-    
-    if (allHealthy) {
+    if (sharedLibLoaded && supabaseConfigured) {
       healthDot.className = 'health-dot';
       healthStatus.textContent = 'All Systems Operational';
     } else {
