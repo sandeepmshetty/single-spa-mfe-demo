@@ -1,13 +1,13 @@
-import { Subject, BehaviorSubject } from 'rxjs';
+import { Subject } from 'rxjs';
 import { IEventPayload, EventType } from './types';
-import { EVENT_TYPES, MFE_NAMES } from './constants';
+import { MFE_NAMES } from './constants';
 
 /**
  * Centralized event bus for communication between micro-frontends
  * Uses RxJS for reactive event handling
  */
 export class EventBus {
-  private eventSubject = new Subject<IEventPayload>();
+  private readonly eventSubject = new Subject<IEventPayload>();
   private debugMode = false;
 
   constructor(debug = false) {
@@ -34,8 +34,8 @@ export class EventBus {
     this.eventSubject.next(payload);
 
     // Also emit as DOM custom event for broader compatibility
-    if (typeof window !== 'undefined') {
-      window.dispatchEvent(new CustomEvent(`mfe:${type}`, { 
+    if (globalThis.window !== undefined) {
+      globalThis.dispatchEvent(new CustomEvent(`mfe:${type}`, { 
         detail: payload 
       }));
     }
@@ -80,26 +80,37 @@ export class EventBus {
    * Initialize global DOM event listener for cross-MFE communication
    */
   private initializeGlobalListener(): void {
-    if (typeof window !== 'undefined') {
-      // Listen for events from other MFEs that might not use this event bus
-      window.addEventListener('message', (event) => {
-        if (event.data && event.data.type && event.data.type.startsWith('mfe:')) {
-          const type = event.data.type.replace('mfe:', '') as EventType;
-          this.emit(type, event.data.payload, event.data.source);
-        }
-      });
+    if (globalThis.window === undefined) {
+      return;
     }
+    
+    // Listen for events from other MFEs that might not use this event bus
+    globalThis.addEventListener('message', (event) => {
+      // Security: Verify the origin is from the same origin
+      // For cross-origin MFE communication, you would need to maintain an allowlist
+      // Security: Verify the origin is from the same origin
+      if (event.origin !== globalThis.location.origin) {
+        // Allow same origin only for security
+        // If you need cross-origin communication, add specific origins to an allowlist
+        return;
+      }
+      
+      if (event.data?.type?.startsWith('mfe:')) {
+        const type = event.data.type.replace('mfe:', '') as EventType;
+        this.emit(type, event.data.payload, event.data.source);
+      }
+    });
   }
 
   /**
    * Get current micro-frontend name
    */
   private getCurrentMFE(): string {
-    if (typeof window === 'undefined') {
+    if (globalThis.window === undefined) {
       return 'server';
     }
     
-    const hostname = window.location.hostname;
+    const hostname = globalThis.location.hostname;
     
     if (hostname.includes('react')) {
       return MFE_NAMES.REACT;
@@ -115,7 +126,7 @@ export class EventBus {
     }
     
     // Check for localhost development
-    const port = window.location.port;
+    const port = globalThis.location.port;
     switch (port) {
     case '9000': return MFE_NAMES.SHELL;
     case '3001': return MFE_NAMES.REACT;
@@ -143,6 +154,6 @@ export class EventBus {
 
 // Create and export singleton instance
 export const eventBus = new EventBus(
-  typeof window !== 'undefined' && 
-  (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+  globalThis.window !== undefined && 
+  (globalThis.location.hostname === 'localhost' || globalThis.location.hostname === '127.0.0.1')
 );

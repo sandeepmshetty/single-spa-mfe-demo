@@ -1,4 +1,4 @@
-import React, { Component, ErrorInfo, ReactNode } from 'react';
+import { Component, ErrorInfo, ReactNode } from 'react';
 import { errorLogger } from '@single-spa-demo/shared-library';
 
 interface IProps {
@@ -58,7 +58,7 @@ export class ErrorBoundary extends Component<IProps, IState> {
             </pre>
           </details>
           <button
-            onClick={() => window.location.reload()}
+            onClick={() => globalThis.location.reload()}
             style={{
               marginTop: '15px',
               padding: '10px 20px',

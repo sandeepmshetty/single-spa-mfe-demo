@@ -6,7 +6,7 @@ export interface IErrorBoundaryConfig {
 }
 
 export class MFEErrorBoundary {
-  private config: IErrorBoundaryConfig;
+  private readonly config: IErrorBoundaryConfig;
   private container: HTMLElement | null = null;
 
   constructor(config: IErrorBoundaryConfig) {
@@ -31,8 +31,8 @@ export class MFEErrorBoundary {
       this.config.onError(error);
     }
 
-    if (window.sharedServices?.logger) {
-      window.sharedServices.logger.error(`MFE Load Error: ${this.config.name}`, {
+    if (globalThis.sharedServices?.logger) {
+      globalThis.sharedServices.logger.error(`MFE Load Error: ${this.config.name}`, {
         error: error.message,
         stack: error.stack
       });

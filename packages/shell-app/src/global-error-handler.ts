@@ -6,12 +6,12 @@ export class GlobalErrorHandler {
   private initialized = false;
 
   init(): void {
-    if (this.initialized || typeof window === 'undefined') {
+    if (this.initialized || globalThis === undefined) {
       return;
     }
 
     // Handle uncaught errors
-    window.addEventListener('error', (event) => {
+    globalThis.addEventListener('error', (event) => {
       console.error('🚨 [Shell] Uncaught error:', event.error);
       // Log to API
       fetch('/api/errors/log', {
@@ -27,7 +27,7 @@ export class GlobalErrorHandler {
     });
 
     // Handle unhandled promise rejections
-    window.addEventListener('unhandledrejection', (event) => {
+    globalThis.addEventListener('unhandledrejection', (event) => {
       console.error('🚨 [Shell] Unhandled rejection:', event.reason);
       fetch('/api/errors/log', {
         method: 'POST',
@@ -42,7 +42,7 @@ export class GlobalErrorHandler {
     });
 
     // Handle Single-SPA errors
-    window.addEventListener('single-spa:routing-event', (event: any) => {
+    globalThis.addEventListener('single-spa:routing-event', (event: any) => {
       if (event.detail?.error) {
         console.error('🚨 [Shell] Routing error:', event.detail.error);
         fetch('/api/errors/log', {

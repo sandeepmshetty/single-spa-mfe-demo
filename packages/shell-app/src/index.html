@@ -729,7 +729,7 @@
     <!-- Update import map based on environment -->
     <script>
         (function() {
-            const isDevelopment = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+            const isDevelopment = globalThis.location.hostname === 'localhost' || globalThis.location.hostname === '127.0.0.1';
             const importMapScript = document.querySelector('script[type="systemjs-importmap"]');
             const importMap = JSON.parse(importMapScript.textContent);
             

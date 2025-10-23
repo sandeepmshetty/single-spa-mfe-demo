@@ -1,8 +1,8 @@
 // Application constants
 
 // Browser-compatible environment detection
-const isDevelopment = typeof window !== 'undefined' && 
-  (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1');
+const isDevelopment = globalThis.window !== undefined && 
+  (globalThis.location.hostname === 'localhost' || globalThis.location.hostname === '127.0.0.1');
 
 export const APP_CONSTANTS = {
   APP_NAME: 'Single-SPA Micro-Frontend Demo',
@@ -168,7 +168,7 @@ export const MFE_NAMES = {
 // Environment detection
 export const IS_DEVELOPMENT = isDevelopment;
 export const IS_PRODUCTION = !isDevelopment;
-export const IS_BROWSER = typeof window !== 'undefined';
+export const IS_BROWSER = globalThis.window !== undefined;
 
 // Default configuration
 export const DEFAULT_CONFIG = {

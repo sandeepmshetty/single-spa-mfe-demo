@@ -2,13 +2,15 @@ import { registerApplication, start, navigateToUrl } from 'single-spa';
 import { MFEErrorBoundary } from './error-boundary';
 import { globalErrorHandler } from './global-error-handler';
 
-// Import shared services type
-type SharedServices = Window['sharedServices'];
+// Declare global type for shared services
+declare global {
+  var sharedServices: any;
+}
 
-let sharedServices: SharedServices | Record<string, any> = {} as any;
+let sharedServices: Record<string, any> = {} as any;
 
 // Initialize shared services
-async function initializeSharedServices(): Promise<SharedServices> {
+async function initializeSharedServices(): Promise<Record<string, any>> {
   try {
     const sharedLib = await System.import('@single-spa-demo/shared-library');
     
@@ -59,10 +61,10 @@ async function initializeSharedServices(): Promise<SharedServices> {
     };
     
     // Make services globally available with type safety
-    window.sharedServices = sharedServices as SharedServices;
+    globalThis.sharedServices = sharedServices;
     
     console.log(`🔗 Shared services v${sharedLib.VERSION} initialized:`, Object.keys(sharedServices));
-    return sharedServices as SharedServices;
+    return sharedServices;
   } catch (error) {
     console.error('Failed to initialize shared services:', error);
     throw error;
@@ -111,15 +113,6 @@ function updateImportMap() {
 //   </single-spa-router>
 // `);
 
-// const applications = constructApplications({
-//   routes,
-//   loadApp({ name }: { name: string }) {
-//     console.log(`🔄 Loading application: ${name}`);
-//     return System.import(`@single-spa-demo/${name}`);
-//   },
-// });
-
-// const layoutEngine = constructLayoutEngine({ routes, applications });
 
 // Welcome application (home page)
 registerApplication({
@@ -281,7 +274,7 @@ function showLoadingState(message = 'Loading...') {
   
   const mfeContainer = document.getElementById('mfe-container');
   if (mfeContainer) {
-    mfeContainer.setAttribute('data-loading', 'true');
+    mfeContainer.dataset.loading = 'true';
   }
 }
 
@@ -293,7 +286,7 @@ function hideLoadingState() {
   
   const mfeContainer = document.getElementById('mfe-container');
   if (mfeContainer) {
-    mfeContainer.removeAttribute('data-loading');
+    delete mfeContainer.dataset.loading;
   }
 }
 
@@ -323,11 +316,11 @@ function showErrorState(message: string) {
 // Navigation Management
 function updateNavigationState(pathname: string) {
   const navItems = document.querySelectorAll('.nav-item');
-  navItems.forEach(item => {
+  for (const item of navItems) {
     const element = item as HTMLElement;
     element.classList.remove('active');
     
-    const route = element.getAttribute('data-route');
+    const route = element.dataset.route;
     if (
       (route === 'home' && pathname === '/') ||
       (route === 'users' && pathname.startsWith('/users')) ||
@@ -336,40 +329,58 @@ function updateNavigationState(pathname: string) {
     ) {
       element.classList.add('active');
     }
-  });
+  }
 }
 
-// Authentication State Management
+// Authentication State Management - Helper Functions
+function getDisplayName(user: any): string {
+  return user.user_metadata?.full_name || user.email || 'User';
+}
+
+function getInitials(displayName: string): string {
+  if (displayName.includes('@')) {
+    return displayName.charAt(0).toUpperCase();
+  }
+  return displayName.split(' ').map((n: string) => n[0]).join('').toUpperCase().slice(0, 2);
+}
+
+function updateAuthenticatedState(authStatus: HTMLElement, userAvatar: HTMLElement, user: any) {
+  const displayName = getDisplayName(user);
+  const initials = getInitials(displayName);
+  
+  authStatus.textContent = displayName.split('@')[0]; // Show username part of email
+  userAvatar.textContent = initials;
+  userAvatar.style.background = 'rgba(16, 185, 129, 0.2)';
+}
+
+function updateUnauthenticatedState(authStatus: HTMLElement, userAvatar: HTMLElement) {
+  authStatus.textContent = 'Sign In';
+  userAvatar.textContent = '👤';
+  userAvatar.style.background = 'rgba(255, 255, 255, 0.2)';
+}
+
+function updateDropdownMenu(userMenuEmail: HTMLElement | null, userMenuId: HTMLElement | null, user: any) {
+  if (userMenuEmail && user.email) {
+    userMenuEmail.textContent = user.email;
+  }
+  if (userMenuId && user.id) {
+    userMenuId.textContent = `ID: ${user.id.slice(0, 8)}...`;
+  }
+}
+
 function updateAuthState(authState: any) {
   const authStatus = document.getElementById('auth-status');
   const userAvatar = document.getElementById('user-avatar');
   const userMenuEmail = document.getElementById('user-menu-email');
   const userMenuId = document.getElementById('user-menu-id');
   
-  if (authStatus && userAvatar) {
-    if (authState?.isAuthenticated && authState?.user) {
-      // Use email or user metadata name
-      const displayName = authState.user.user_metadata?.full_name || authState.user.email || 'User';
-      const initials = displayName.includes('@') 
-        ? displayName.charAt(0).toUpperCase() 
-        : displayName.split(' ').map((n: string) => n[0]).join('').toUpperCase().slice(0, 2);
-      
-      authStatus.textContent = displayName.split('@')[0]; // Show username part of email
-      userAvatar.textContent = initials;
-      userAvatar.style.background = 'rgba(16, 185, 129, 0.2)';
-      
-      // Update dropdown menu info
-      if (userMenuEmail && authState.user.email) {
-        userMenuEmail.textContent = authState.user.email;
-      }
-      if (userMenuId && authState.user.id) {
-        userMenuId.textContent = `ID: ${authState.user.id.slice(0, 8)}...`;
-      }
-    } else {
-      authStatus.textContent = 'Sign In';
-      userAvatar.textContent = '👤';
-      userAvatar.style.background = 'rgba(255, 255, 255, 0.2)';
-    }
+  if (!authStatus || !userAvatar) return;
+  
+  if (authState?.isAuthenticated && authState?.user) {
+    updateAuthenticatedState(authStatus, userAvatar, authState.user);
+    updateDropdownMenu(userMenuEmail, userMenuId, authState.user);
+  } else {
+    updateUnauthenticatedState(authStatus, userAvatar);
   }
 }
 
@@ -393,6 +404,7 @@ async function performHealthCheck() {
       healthStatus.textContent = 'Some Issues Detected';
     }
   } catch (error) {
+    console.error('Health check failed:', error);
     healthDot.className = 'health-dot error';
     healthStatus.textContent = 'System Issues';
   }
@@ -500,9 +512,9 @@ function setupEventListeners() {
 
 // Single-SPA Event Handlers
 function setupSingleSpaEventHandlers() {
-  window.addEventListener('single-spa:routing-event', (event) => {
-    console.log('🧭 Route change:', window.location.pathname);
-    updateNavigationState(window.location.pathname);
+  globalThis.addEventListener('single-spa:routing-event', (event) => {
+    console.log('🧭 Route change:', globalThis.location.pathname);
+    updateNavigationState(globalThis.location.pathname);
     hideLoadingState();
     
     // Toggle welcome section and MFE container based on route
@@ -510,7 +522,7 @@ function setupSingleSpaEventHandlers() {
     const mfeContainer = document.getElementById('mfe-container');
     
     if (welcomeElement && mfeContainer) {
-      if (window.location.pathname === '/') {
+      if (globalThis.location.pathname === '/') {
         welcomeElement.style.display = 'block';
         mfeContainer.style.display = 'none';
       } else {
@@ -520,7 +532,7 @@ function setupSingleSpaEventHandlers() {
     }
   });
 
-  window.addEventListener('single-spa:app-change', (event: any) => {
+  globalThis.addEventListener('single-spa:app-change', (event: any) => {
     console.log('📱 App change:', event.detail);
     
     const { appsByNewStatus } = event.detail;
@@ -536,7 +548,7 @@ function setupSingleSpaEventHandlers() {
     }
   });
 
-  window.addEventListener('single-spa:before-routing-event', () => {
+  globalThis.addEventListener('single-spa:before-routing-event', () => {
     // Clear any existing errors when navigating
     const errorContainer = document.getElementById('error-container');
     if (errorContainer) {
@@ -585,7 +597,7 @@ async function initializeApplication() {
     });
     
     // Initial navigation state
-    updateNavigationState(window.location.pathname);
+    updateNavigationState(globalThis.location.pathname);
     
     // Start health checks
     performHealthCheck();
@@ -600,7 +612,7 @@ async function initializeApplication() {
 }
 
 // Global error handlers
-window.addEventListener('error', (event) => {
+globalThis.addEventListener('error', (event) => {
   console.error('Global error:', event.error);
   showErrorState('An unexpected error occurred');
   
@@ -614,7 +626,7 @@ window.addEventListener('error', (event) => {
   }
 });
 
-window.addEventListener('unhandledrejection', (event) => {
+globalThis.addEventListener('unhandledrejection', (event) => {
   console.error('Unhandled promise rejection:', event.reason);
   showErrorState('A system error occurred');
   
@@ -631,9 +643,9 @@ if (document.readyState === 'loading') {
 }
 
 // Export for debugging
-window.shellApp = {
+(globalThis as any).shellApp = {
   navigateToUrl,
-  sharedServices: () => sharedServices as SharedServices,
+  sharedServices: () => sharedServices,
   performHealthCheck,
   showLoadingState,
   hideLoadingState,

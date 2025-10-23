@@ -2,7 +2,6 @@
 import { createRoot, Root } from 'react-dom/client';
 import App from './App';
 import { ErrorBoundary } from './components/ErrorBoundary';
-import { AuthProvider } from './components/AuthProvider';
 import { performanceMonitor } from '@single-spa-demo/shared-library';
 
 // Custom Single-SPA React 18 implementation
@@ -41,9 +40,7 @@ export async function mount(props: any) {
   root = createRoot(domElement);
   root.render(
     <ErrorBoundary mfeName="react-mfe">
-      <AuthProvider>
-        <App {...props} />
-      </AuthProvider>
+      <App {...props} />
     </ErrorBoundary>
   );
   

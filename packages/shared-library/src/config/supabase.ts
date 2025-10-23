@@ -32,7 +32,7 @@ export const supabase: SupabaseClient = new Proxy({} as SupabaseClient, {
           autoRefreshToken: true,
           persistSession: true,
           detectSessionInUrl: true,
-          storage: typeof window !== 'undefined' ? window.localStorage : undefined,
+          storage: globalThis.window === undefined ? undefined : globalThis.localStorage,
         },
         db: {
           schema: 'public',
@@ -156,7 +156,7 @@ export const signOut = async () => {
 };
 
 // Log configuration status
-if (typeof window !== 'undefined') {
+if (globalThis.window !== undefined) {
   console.log('✅ Supabase client initialized:', {
     url: SUPABASE_URL,
     configured: isSupabaseConfigured(),

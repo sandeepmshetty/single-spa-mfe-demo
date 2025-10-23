@@ -14,7 +14,7 @@ export interface IErrorLog {
 
 class ErrorLoggerService {
   private logs: IErrorLog[] = [];
-  private maxLogs = 100;
+  private readonly maxLogs = 100;
   private listeners: Array<(log: IErrorLog) => void> = [];
 
   logError(error: Error, mfeName: string, severity: IErrorLog['severity'] = 'high', metadata?: Record<string, any>) {

@@ -41,9 +41,9 @@ export class AuthStateManager {
     isAuthenticated: false,
   };
 
-  private subscribers = new Set<AuthStateChangeCallback>();
-  private supabaseAuthService: any; // Will be properly typed
-  private eventBus?: EventBus;
+  private readonly subscribers = new Set<AuthStateChangeCallback>();
+  private readonly supabaseAuthService: any; // Will be properly typed
+  private readonly eventBus?: EventBus;
   private refreshTimer?: NodeJS.Timeout;
   private isInitialized = false;
 
