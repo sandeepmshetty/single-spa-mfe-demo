@@ -22,11 +22,39 @@
 
 ---
 
+## 🔥 NEW: Decoupling Priority Work (Weeks 0-6)
+
+**Goal:** Reduce MFE coupling from 73/100 to 90/100 for production readiness
+
+**See:** [Decoupling Priority Doc](./DECOUPLING_PRIORITY.md) | [Quick Checklist](./DECOUPLING_CHECKLIST.md)
+
+### Week 0: Quick Wins (1-2 days)
+- [ ] **0.1** Add shared library versioning
+- [ ] **0.2** Add per-MFE error boundaries
+- [ ] **0.3** Add API contract validation
+
+### Week 1-2: Medium Improvements
+- [ ] **0.4** Migrate to Module Federation
+- [ ] **0.5** Implement versioned APIs
+- [ ] **0.6** Add circuit breakers
+
+### Week 3-6: Long Term
+- [ ] **0.7** Move state to backend
+- [ ] **0.8** Implement MFE registry
+- [ ] **0.9** Add BFF pattern
+
+**Deliverables:**
+- Reduced coupling score to 90/100
+- Independent MFE deployments verified
+- Backward compatibility maintained
+
+---
+
 ## 🎯 Phase 1: Foundation & Migration (Weeks 1-4)
 
 **Goal:** Modernize core architecture and establish solid foundation
 
-### Week 1: Module Federation Setup
+### Week 1: Module Federation Setup (SEE DECOUPLING P2.1)
 - [ ] **1.1** Install Webpack 5 Module Federation plugin
 - [ ] **1.2** Configure shell-app as host
 - [ ] **1.3** Configure React MFE as remote
@@ -39,6 +67,7 @@
 **Deliverables:**
 - Working Module Federation setup locally
 - Migration guide document
+- **Note:** This aligns with Decoupling P2.1
 
 ### Week 2: Routing & Navigation
 - [ ] **2.1** Implement centralized routing strategy

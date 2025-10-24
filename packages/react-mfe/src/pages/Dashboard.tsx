@@ -1,10 +1,10 @@
-﻿import React, { useState, useEffect } from 'react';
+﻿import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import { theme } from '../styles/theme';
 import { Button, Card, LoadingSpinner, Alert } from '../components/common';
 import useAuth from '../hooks/useAuth';
-import { getCounterActions, getEventBus } from '../types/global';
+import { useCounter } from '../hooks/useCounter';
 
 const PageContainer = styled.div`
   padding: ${theme.spacing.lg};
@@ -94,53 +94,7 @@ const InfoRow = styled.p`
 export const Dashboard: React.FC = () => {
   const { user, isAuthenticated, loading, logout } = useAuth();
   const navigate = useNavigate();
-  const [counter, setCounter] = useState(0);
-  const [lastSource, setLastSource] = useState<string>('');
-
-  useEffect(() => {
-    const counterActions = getCounterActions();
-    const eventBus = getEventBus();
-
-    if (counterActions && eventBus) {
-      setCounter(counterActions.getValue());
-
-      const unsubscribe = counterActions.subscribe((value: number) => {
-        setCounter(value);
-      });
-
-      const unsubscribeEvents = eventBus.onAll((payload: any) => {
-        if (payload.type.startsWith('counter-')) {
-          setLastSource(payload.source);
-        }
-      });
-
-      return () => {
-        unsubscribe();
-        unsubscribeEvents();
-      };
-    }
-  }, []);
-
-  const handleIncrement = () => {
-    const counterActions = getCounterActions();
-    if (counterActions) {
-      counterActions.increment('react-mfe');
-    }
-  };
-
-  const handleDecrement = () => {
-    const counterActions = getCounterActions();
-    if (counterActions) {
-      counterActions.decrement('react-mfe');
-    }
-  };
-
-  const handleReset = () => {
-    const counterActions = getCounterActions();
-    if (counterActions) {
-      counterActions.reset('react-mfe');
-    }
-  };
+  const { counter, lastSource, increment, decrement, reset } = useCounter('react-mfe');
 
   const handleLogout = async () => {
     console.log(' Logging out...');
@@ -208,13 +162,13 @@ export const Dashboard: React.FC = () => {
         )}
 
         <ButtonGroup>
-          <Button onClick={handleIncrement} variant="success" size="lg">
+          <Button onClick={increment} variant="success" size="lg">
              Increment
           </Button>
-          <Button onClick={handleDecrement} size="lg" style={{ backgroundColor: theme.colors.warning, borderColor: theme.colors.warning }}>
+          <Button onClick={decrement} size="lg" style={{ backgroundColor: theme.colors.warning, borderColor: theme.colors.warning }}>
              Decrement
           </Button>
-          <Button onClick={handleReset} variant="secondary" size="lg">
+          <Button onClick={reset} variant="secondary" size="lg">
              Reset
           </Button>
         </ButtonGroup>

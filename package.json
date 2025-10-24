@@ -15,7 +15,7 @@
     "test:integration": "cd tests && npm test",
     "test:integration:watch": "cd tests && npm run test:watch",
     "test:integration:coverage": "cd tests && npm run test:coverage",
-    "dev:all": "concurrently \"npm run dev:shared\" \"npm run dev:react\" \"npm run dev:vue\" \"npm run dev:angular\" \"npm run dev:shell\"",
+    "dev": "concurrently \"npm run dev:shared\" \"npm run dev:react\" \"npm run dev:vue\" \"npm run dev:angular\" \"npm run dev:shell\"",
     "dev:shell": "npm run start --workspace=packages/shell-app",
     "dev:react": "npm run start --workspace=packages/react-mfe",
     "dev:vue": "npm run start --workspace=packages/vue-mfe",

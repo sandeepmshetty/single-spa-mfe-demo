@@ -2,7 +2,23 @@
 
 A comprehensive Single-SPA implementation showcasing micro-frontend architecture with React, Vue, and Angular applications. **Production-ready with enterprise-grade services - $0/month cost.**
 
-## 🚀 Premium Services Integration ✅
+## � Priority: Reducing MFE Coupling (NEW!)
+
+**Current Coupling Score:** 73/100 (Loosely Coupled) | **Target:** 90/100 (Production-Ready)
+
+**Quick Start:**
+- 📊 [Full Coupling Analysis](./docs/03-implementation/DECOUPLING_SUMMARY.md) - Understand the current state
+- 📋 [Priority Work Plan](./docs/03-implementation/DECOUPLING_PRIORITY.md) - Detailed implementation guide
+- ✅ [Task Checklist](./docs/03-implementation/DECOUPLING_CHECKLIST.md) - Track your progress
+
+**This Week (7-9 hours):**
+1. ✅ Add shared library versioning (2-3h)
+2. ✅ Add per-MFE error boundaries (3-4h)  
+3. ✅ Add API contract validation (2-3h)
+
+---
+
+## �🚀 Premium Services Integration ✅
 
 **Status**: 3/6 services fully integrated and tested (October 2025)
 

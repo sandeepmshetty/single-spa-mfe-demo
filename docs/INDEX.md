@@ -43,8 +43,12 @@ Welcome to the Single-SPA Micro-Frontend documentation! This guide helps you nav
 #### Phase 2: Security & Performance (Ready to Start) ⚪
 - **[Phase 2 Infrastructure](./03-implementation/phase2/PHASE2_INFRASTRUCTURE.md)** - Production setup plan
 
+#### 🔥 Priority: Decoupling Work
+- **[Decoupling Priority](./03-implementation/DECOUPLING_PRIORITY.md)** - ⭐ Priority improvements (73→90/100 coupling score)
+- **[Decoupling Checklist](./03-implementation/DECOUPLING_CHECKLIST.md)** - Quick reference tasks
+
 #### All Phases
-- **[Implementation Roadmap](./03-implementation/roadmap.md)** - Complete 6-phase plan
+- **[Implementation Roadmap](./03-implementation/roadmap.md)** - Complete 6-phase plan (updated with decoupling)
 - **[Implementation Checklist](./03-implementation/checklist.md)** - Task tracking across all phases
 - **[Current Status](./03-implementation/current-status.md)** - Project progress overview
 - **[Next Steps](./03-implementation/next-steps.md)** - Upcoming tasks and features
