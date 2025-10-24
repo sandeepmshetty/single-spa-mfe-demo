@@ -8,7 +8,7 @@ export class Logger {
   private logLevel: keyof ILogLevel = 'INFO';
   private logs: ILogEntry[] = [];
   private maxLogs = 1000;
-  private source: string;
+  private readonly source: string;
 
   constructor(source = 'unknown', logLevel: keyof ILogLevel = 'INFO') {
     this.source = source;
@@ -109,7 +109,7 @@ export class Logger {
     // Datadog, LogRocket, Sentry, etc.
 
     // For now, we'll just store in sessionStorage for debugging
-    if (typeof window !== 'undefined' && entry.level === 'ERROR') {
+    if (globalThis.window !== undefined && entry.level === 'ERROR') {
       try {
         const errorLogs = sessionStorage.getItem('mfe-error-logs');
         const logs = errorLogs ? JSON.parse(errorLogs) : [];
@@ -204,8 +204,8 @@ export class Logger {
 // Create and export singleton instance
 export const logger = new Logger(
   'shared-library',
-  typeof window !== 'undefined' &&
-  (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+  globalThis.window !== undefined &&
+  (globalThis.window.location.hostname === 'localhost' || globalThis.window.location.hostname === '127.0.0.1')
     ? 'DEBUG'
     : 'INFO'
 );

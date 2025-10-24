@@ -7,11 +7,11 @@ import { EVENT_TYPES } from './constants';
  * Uses RxJS BehaviorSubject for real-time synchronization
  */
 export class SharedState<T> {
-  private state$: BehaviorSubject<T>;
+  private readonly state$: BehaviorSubject<T>;
 
   constructor(
     initialValue: T,
-    private stateName: string
+    private readonly stateName: string
   ) {
     this.state$ = new BehaviorSubject<T>(initialValue);
   }
@@ -29,7 +29,7 @@ export class SharedState<T> {
   setValue(value: T, source?: string): void {
     this.state$.next(value);
 
-    // Emit event for MFEs that don't subscribe to observables
+    //// Emit event for MFEs that don't subscribe to observables
     eventBus.emit(`${this.stateName}-update`, value, source);
   }
 

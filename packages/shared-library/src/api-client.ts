@@ -1,5 +1,5 @@
 import { IApiResponse } from './types';
-import { API_ENDPOINTS, HTTP_STATUS } from './constants';
+import { API_ENDPOINTS } from './constants';
 
 /**
  * HTTP client for API calls with authentication and error handling
@@ -137,7 +137,7 @@ export class ApiClient {
   private getAuthToken(): string | null {
     // In a real implementation, this would get the token from the auth service
     // For now, we'll check local storage directly
-    if (typeof window !== 'undefined') {
+    if (globalThis.window !== undefined) {
       return localStorage.getItem('mfe-auth-token');
     }
     return null;

@@ -3,9 +3,9 @@
  * Provides a unified interface for localStorage, sessionStorage, and memory storage
  */
 export class StorageService {
-  private memoryStore = new Map<string, string>();
+  private readonly memoryStore = new Map<string, string>();
 
-  constructor(private useMemoryFallback = true) {}
+  constructor(private readonly useMemoryFallback = true) {}
 
   /**
    * Set item in storage
@@ -205,9 +205,9 @@ export class StorageService {
    * Storage event listener for cross-tab synchronization
    */
   onStorageChange(callback: (event: StorageEvent) => void): () => void {
-    if (typeof window !== 'undefined') {
-      window.addEventListener('storage', callback);
-      return () => window.removeEventListener('storage', callback);
+    if (globalThis.window !== undefined) {
+      globalThis.window.addEventListener('storage', callback);
+      return () => globalThis.window.removeEventListener('storage', callback);
     }
     return () => {};
   }
