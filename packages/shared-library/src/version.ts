@@ -17,6 +17,6 @@ export const versionInfo: IVersionInfo = {
 };
 
 // Expose version globally
-if (typeof window !== 'undefined') {
-  (window as any).__SHARED_LIBRARY_VERSION__ = VERSION;
+if (globalThis.window !== undefined) {
+  (globalThis.window as any).__SHARED_LIBRARY_VERSION__ = VERSION;
 }

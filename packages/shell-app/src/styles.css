@@ -81,6 +81,12 @@ body {
     font-weight: 700;
 }
 
+.app-header .app-title h1 {
+    color: white !important;
+    margin: 0;
+    font-size: 1.5rem;
+}
+
 .app-logo {
     font-size: 2rem;
 }
@@ -89,6 +95,7 @@ body {
     font-size: 0.875rem;
     opacity: 0.9;
     margin-top: 0.25rem;
+    color: white;
 }
 
 /* Navigation Styles */

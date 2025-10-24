@@ -1,6 +1,95 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import styled from 'styled-components';
+import { theme } from '../styles/theme';
+import { Button, Card, LoadingSpinner, Alert } from '../components/common';
 import useAuth from '../hooks/useAuth';
+import { getCounterActions, getEventBus } from '../types/global';
+
+const PageContainer = styled.div`
+  padding: ${theme.spacing.lg};
+  background-color: ${theme.colors.backgroundAlt};
+  min-height: 100vh;
+`;
+
+const Header = styled.header`
+  margin-bottom: ${theme.spacing.xl};
+  padding: ${theme.spacing.lg};
+  background-color: ${theme.colors.primary};
+  color: ${theme.colors.white};
+  border-radius: ${theme.borderRadius.md};
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: ${theme.spacing.md};
+`;
+
+const HeaderContent = styled.div`
+  flex: 1;
+  min-width: 200px;
+`;
+
+const Title = styled.h1`
+  margin: 0;
+  font-size: ${theme.fontSize.xxl};
+  color: ${theme.colors.white} !important;
+`;
+
+const Subtitle = styled.p`
+  margin: ${theme.spacing.sm} 0 0 0;
+  font-size: ${theme.fontSize.md};
+  opacity: 0.9;
+  color: ${theme.colors.white} !important;
+`;
+
+const UserInfo = styled.div`
+  text-align: right;
+  min-width: 200px;
+`;
+
+const UserEmail = styled.p`
+  margin: 0 0 ${theme.spacing.xs} 0;
+  font-size: ${theme.fontSize.sm};
+  font-weight: ${theme.fontWeight.medium};
+`;
+
+const UserId = styled.p`
+  margin: 0 0 ${theme.spacing.sm} 0;
+  font-size: ${theme.fontSize.xs};
+  opacity: 0.8;
+`;
+
+const CounterDisplay = styled.div`
+  font-size: 48px;
+  font-weight: ${theme.fontWeight.bold};
+  text-align: center;
+  margin: ${theme.spacing.xl} 0;
+  color: ${theme.colors.primary};
+`;
+
+const LastSourceInfo = styled.div`
+  text-align: center;
+  margin-bottom: ${theme.spacing.lg};
+  padding: ${theme.spacing.sm};
+  background-color: ${theme.colors.primaryLight};
+  border-radius: ${theme.borderRadius.sm};
+  font-size: ${theme.fontSize.sm};
+  color: ${theme.colors.primary};
+`;
+
+const ButtonGroup = styled.div`
+  display: flex;
+  gap: ${theme.spacing.sm};
+  justify-content: center;
+  flex-wrap: wrap;
+`;
+
+const InfoRow = styled.p`
+  margin-bottom: ${theme.spacing.sm};
+  font-size: ${theme.fontSize.sm};
+  color: ${theme.colors.textSecondary};
+`;
 
 export const Dashboard: React.FC = () => {
   const { user, isAuthenticated, loading, logout } = useAuth();
@@ -9,21 +98,16 @@ export const Dashboard: React.FC = () => {
   const [lastSource, setLastSource] = useState<string>('');
 
   useEffect(() => {
-    // Access shared services from globalThis
-    const sharedServices = (globalThis as any).sharedServices;
-    const counterActions = sharedServices?.counterActions;
-    const eventBus = sharedServices?.eventBus;
+    const counterActions = getCounterActions();
+    const eventBus = getEventBus();
 
     if (counterActions && eventBus) {
-      // Initialize with current value
       setCounter(counterActions.getValue());
 
-      // Subscribe to counter changes
       const unsubscribe = counterActions.subscribe((value: number) => {
         setCounter(value);
       });
 
-      // Listen to event bus for source tracking
       const unsubscribeEvents = eventBus.onAll((payload: any) => {
         if (payload.type.startsWith('counter-')) {
           setLastSource(payload.source);
@@ -38,260 +122,126 @@ export const Dashboard: React.FC = () => {
   }, []);
 
   const handleIncrement = () => {
-    const counterActions = (globalThis as any).sharedServices?.counterActions;
+    const counterActions = getCounterActions();
     if (counterActions) {
       counterActions.increment('react-mfe');
     }
   };
 
   const handleDecrement = () => {
-    const counterActions = (globalThis as any).sharedServices?.counterActions;
+    const counterActions = getCounterActions();
     if (counterActions) {
       counterActions.decrement('react-mfe');
     }
   };
 
   const handleReset = () => {
-    const counterActions = (globalThis as any).sharedServices?.counterActions;
+    const counterActions = getCounterActions();
     if (counterActions) {
       counterActions.reset('react-mfe');
     }
   };
 
   const handleLogout = async () => {
-    console.log('🔓 Logging out...');
+    console.log(' Logging out...');
     const result = await logout();
     if (result.success) {
-      console.log('✅ Logout successful, redirecting...');
+      console.log(' Logout successful, redirecting...');
       navigate('/login');
     } else {
-      console.error('❌ Logout failed:', result.error);
+      console.error(' Logout failed:', result.error);
     }
   };
 
   if (loading) {
     return (
-      <div
-        style={{
-          padding: '20px',
-          textAlign: 'center',
-          fontFamily: 'Arial, sans-serif',
-        }}
-      >
-        <h2>Loading...</h2>
-      </div>
+      <PageContainer>
+        <LoadingSpinner fullScreen message="Loading dashboard..." />
+      </PageContainer>
     );
   }
 
   if (!isAuthenticated) {
     return (
-      <div
-        style={{
-          padding: '20px',
-          textAlign: 'center',
-          fontFamily: 'Arial, sans-serif',
-        }}
-      >
-        <h2>Not authenticated</h2>
-        <button onClick={() => navigate('/login')}>Go to Login</button>
-      </div>
+      <PageContainer>
+        <Card padding="xl">
+          <Title>Not Authenticated</Title>
+          <p>Please log in to access the dashboard.</p>
+          <Button onClick={() => navigate('/login')} variant="primary">
+            Go to Login
+          </Button>
+        </Card>
+      </PageContainer>
     );
   }
 
   return (
-    <div
-      style={{
-        padding: '20px',
-        fontFamily: 'Arial, sans-serif',
-        backgroundColor: '#f0f8ff',
-        minHeight: '100vh',
-      }}
-    >
-      <header
-        style={{
-          marginBottom: '30px',
-          padding: '20px',
-          backgroundColor: '#007bff',
-          color: 'white',
-          borderRadius: '8px',
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-        }}
-      >
-        <div>
-          <h1 style={{ margin: 0 }}>React MFE - User Management</h1>
-          <p style={{ margin: '10px 0 0 0' }}>Single-SPA React Micro-Frontend</p>
-        </div>
-        <div style={{ textAlign: 'right' }}>
-          <p style={{ margin: '0 0 10px 0', fontSize: '14px' }}>
+    <PageContainer>
+      <Header>
+        <HeaderContent>
+          <Title>React MFE - User Management</Title>
+          <Subtitle>Single-SPA React Micro-Frontend</Subtitle>
+        </HeaderContent>
+        <UserInfo>
+          <UserEmail>
             Welcome, <strong>{user?.email}</strong>
-          </p>
-          <p style={{ margin: '0 0 10px 0', fontSize: '12px', opacity: 0.9 }}>
-            User ID: {user?.id?.substring(0, 8)}...
-          </p>
-          <button
-            onClick={handleLogout}
-            style={{
-              padding: '8px 16px',
-              fontSize: '14px',
-              backgroundColor: '#dc3545',
-              color: 'white',
-              border: 'none',
-              borderRadius: '4px',
-              cursor: 'pointer',
-              fontWeight: 'bold',
-            }}
-          >
-            🔓 Logout
-          </button>
-        </div>
-      </header>
+          </UserEmail>
+          <UserId>User ID: {user?.id?.substring(0, 8)}...</UserId>
+          <Button onClick={handleLogout} variant="error" size="sm">
+             Logout
+          </Button>
+        </UserInfo>
+      </Header>
 
-      <div
-        style={{
-          backgroundColor: 'white',
-          padding: '30px',
-          borderRadius: '8px',
-          boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
-          marginBottom: '20px',
-        }}
-      >
-        <h2 style={{ marginTop: 0, color: '#007bff' }}>🎯 Shared Counter Demo</h2>
-        <p style={{ color: '#666', marginBottom: '20px' }}>
+      <Card padding="xl">
+        <h2 style={{ marginTop: 0, color: theme.colors.primary }}> Shared Counter Demo</h2>
+        <p style={{ color: theme.colors.textSecondary, marginBottom: theme.spacing.lg }}>
           This counter is shared across all micro-frontends using the shared state library.
         </p>
 
-        <div
-          style={{
-            fontSize: '48px',
-            fontWeight: 'bold',
-            textAlign: 'center',
-            margin: '30px 0',
-            color: '#007bff',
-          }}
-        >
-          {counter}
-        </div>
+        <CounterDisplay>{counter}</CounterDisplay>
 
         {lastSource && (
-          <div
-            style={{
-              textAlign: 'center',
-              marginBottom: '20px',
-              padding: '10px',
-              backgroundColor: '#e7f3ff',
-              borderRadius: '4px',
-              fontSize: '14px',
-              color: '#004085',
-            }}
-          >
+          <LastSourceInfo>
             Last updated by: <strong>{lastSource}</strong>
-          </div>
+          </LastSourceInfo>
         )}
 
-        <div
-          style={{
-            display: 'flex',
-            gap: '10px',
-            justifyContent: 'center',
-            flexWrap: 'wrap',
-          }}
-        >
-          <button
-            onClick={handleIncrement}
-            style={{
-              padding: '12px 24px',
-              fontSize: '16px',
-              backgroundColor: '#28a745',
-              color: 'white',
-              border: 'none',
-              borderRadius: '4px',
-              cursor: 'pointer',
-              fontWeight: 'bold',
-              minWidth: '120px',
-            }}
-          >
-            ➕ Increment
-          </button>
+        <ButtonGroup>
+          <Button onClick={handleIncrement} variant="success" size="lg">
+             Increment
+          </Button>
+          <Button onClick={handleDecrement} size="lg" style={{ backgroundColor: theme.colors.warning, borderColor: theme.colors.warning }}>
+             Decrement
+          </Button>
+          <Button onClick={handleReset} variant="secondary" size="lg">
+             Reset
+          </Button>
+        </ButtonGroup>
+      </Card>
 
-          <button
-            onClick={handleDecrement}
-            style={{
-              padding: '12px 24px',
-              fontSize: '16px',
-              backgroundColor: '#ffc107',
-              color: '#333',
-              border: 'none',
-              borderRadius: '4px',
-              cursor: 'pointer',
-              fontWeight: 'bold',
-              minWidth: '120px',
-            }}
-          >
-            ➖ Decrement
-          </button>
+      <Card padding="lg" style={{ marginTop: theme.spacing.lg }}>
+        <h3 style={{ marginTop: 0, color: theme.colors.primary }}> Session Information</h3>
+        <InfoRow>
+          <strong>Authentication Status:</strong>{' '}
+          {isAuthenticated ? ' Authenticated' : ' Not Authenticated'}
+        </InfoRow>
+        <InfoRow>
+          <strong>Email:</strong> {user?.email}
+        </InfoRow>
+        <InfoRow>
+          <strong>User ID:</strong> {user?.id}
+        </InfoRow>
+        <InfoRow>
+          <strong>Created:</strong>{' '}
+          {user?.created_at ? new Date(user.created_at).toLocaleString() : 'N/A'}
+        </InfoRow>
+      </Card>
 
-          <button
-            onClick={handleReset}
-            style={{
-              padding: '12px 24px',
-              fontSize: '16px',
-              backgroundColor: '#6c757d',
-              color: 'white',
-              border: 'none',
-              borderRadius: '4px',
-              cursor: 'pointer',
-              fontWeight: 'bold',
-              minWidth: '120px',
-            }}
-          >
-            🔄 Reset
-          </button>
-        </div>
-      </div>
-
-      <div
-        style={{
-          backgroundColor: 'white',
-          padding: '20px',
-          borderRadius: '8px',
-          boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
-        }}
-      >
-        <h3 style={{ marginTop: 0, color: '#007bff' }}>📊 Session Information</h3>
-        <div style={{ fontSize: '14px', color: '#666' }}>
-          <p>
-            <strong>Authentication Status:</strong>{' '}
-            {isAuthenticated ? '✅ Authenticated' : '❌ Not Authenticated'}
-          </p>
-          <p>
-            <strong>Email:</strong> {user?.email}
-          </p>
-          <p>
-            <strong>User ID:</strong> {user?.id}
-          </p>
-          <p>
-            <strong>Created:</strong>{' '}
-            {user?.created_at ? new Date(user.created_at).toLocaleString() : 'N/A'}
-          </p>
-        </div>
-      </div>
-
-      <div
-        style={{
-          marginTop: '20px',
-          padding: '15px',
-          backgroundColor: '#fff3cd',
-          borderRadius: '4px',
-          border: '1px solid #ffc107',
-        }}
-      >
-        <p style={{ margin: 0, fontSize: '14px', color: '#856404' }}>
-          💡 <strong>Tip:</strong> Try refreshing the page (F5) - your session will persist! The
-          AuthStateManager automatically restores your authentication state.
-        </p>
-      </div>
-    </div>
+      <Alert variant="info" style={{ marginTop: theme.spacing.lg }}>
+         <strong>Tip:</strong> Try refreshing the page (F5) - your session will persist! The
+        AuthStateManager automatically restores your authentication state.
+      </Alert>
+    </PageContainer>
   );
 };
