@@ -1,16 +1,16 @@
-﻿import { createRouter, createWebHistory } from 'vue-router'
+﻿import { createRouter, createWebHistory } from 'vue-router';
 
 const routes = [
   {
     path: '/',
     name: 'Home',
-    component: { template: '<div>Vue MFE Running</div>' }
-  }
-]
+    component: { template: '<div>Vue MFE Running</div>' },
+  },
+];
 
 const router = createRouter({
   history: createWebHistory(),
-  routes
-})
+  routes,
+});
 
-export default router
+export default router;

@@ -80,7 +80,7 @@ export interface IDashboardMetric {
 }
 
 // Event type definitions
-export type EventType = 
+export type EventType =
   | 'auth-changed'
   | 'auth-login'
   | 'auth-logout'
@@ -104,7 +104,7 @@ export type EventType =
   | string; // Allow dynamic state updates
 
 // Storage keys
-export type StorageKey = 
+export type StorageKey =
   | 'auth-token'
   | 'refresh-token'
   | 'user-preferences'

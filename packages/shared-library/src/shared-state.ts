@@ -8,8 +8,11 @@ import { EVENT_TYPES } from './constants';
  */
 export class SharedState<T> {
   private state$: BehaviorSubject<T>;
-  
-  constructor(initialValue: T, private stateName: string) {
+
+  constructor(
+    initialValue: T,
+    private stateName: string
+  ) {
     this.state$ = new BehaviorSubject<T>(initialValue);
   }
 
@@ -25,7 +28,7 @@ export class SharedState<T> {
    */
   setValue(value: T, source?: string): void {
     this.state$.next(value);
-    
+
     // Emit event for MFEs that don't subscribe to observables
     eventBus.emit(`${this.stateName}-update`, value, source);
   }
@@ -75,26 +78,26 @@ export const counterActions = {
     counterState.setValue(newValue, source);
     eventBus.emit(EVENT_TYPES.COUNTER_INCREMENT, newValue, source);
   },
-  
+
   decrement: (source?: string) => {
     const newValue = counterState.getValue() - 1;
     counterState.setValue(newValue, source);
     eventBus.emit(EVENT_TYPES.COUNTER_DECREMENT, newValue, source);
   },
-  
+
   reset: (source?: string) => {
     counterState.setValue(0, source);
     eventBus.emit(EVENT_TYPES.COUNTER_RESET, 0, source);
   },
-  
+
   setValue: (value: number, source?: string) => {
     counterState.setValue(value, source);
     eventBus.emit(EVENT_TYPES.COUNTER_SYNC, value, source);
   },
-  
+
   getValue: () => counterState.getValue(),
-  
-  subscribe: (callback: (value: number) => void) => counterState.subscribe(callback)
+
+  subscribe: (callback: (value: number) => void) => counterState.subscribe(callback),
 };
 
 /**
@@ -112,7 +115,7 @@ export const userState = new SharedState<IUserState>(
     id: null,
     name: null,
     email: null,
-    isAuthenticated: false
+    isAuthenticated: false,
   },
   'user'
 );
@@ -122,24 +125,27 @@ export const userActions = {
     userState.setValue({ ...user, isAuthenticated: true }, source);
     eventBus.emit(EVENT_TYPES.AUTH_LOGIN, user, source);
   },
-  
+
   logout: (source?: string) => {
-    userState.setValue({
-      id: null,
-      name: null,
-      email: null,
-      isAuthenticated: false
-    }, source);
+    userState.setValue(
+      {
+        id: null,
+        name: null,
+        email: null,
+        isAuthenticated: false,
+      },
+      source
+    );
     eventBus.emit(EVENT_TYPES.AUTH_LOGOUT, null, source);
   },
-  
+
   updateProfile: (updates: Partial<IUserState>, source?: string) => {
     const current = userState.getValue();
     userState.setValue({ ...current, ...updates }, source);
     eventBus.emit(EVENT_TYPES.USER_PROFILE_UPDATE, updates, source);
   },
-  
+
   getUser: () => userState.getValue(),
-  
-  subscribe: (callback: (user: IUserState) => void) => userState.subscribe(callback)
+
+  subscribe: (callback: (user: IUserState) => void) => userState.subscribe(callback),
 };

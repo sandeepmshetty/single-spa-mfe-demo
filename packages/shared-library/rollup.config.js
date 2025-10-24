@@ -42,14 +42,26 @@ export default defineConfig({
   plugins: [
     replace({
       preventAssignment: true,
-      'process.env.NEXT_PUBLIC_SUPABASE_URL': JSON.stringify(process.env.NEXT_PUBLIC_SUPABASE_URL || ''),
-      'process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY': JSON.stringify(process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || ''),
-      'process.env.NEXT_PUBLIC_SENTRY_DSN': JSON.stringify(process.env.NEXT_PUBLIC_SENTRY_DSN || ''),
-      'process.env.NEXT_PUBLIC_SENTRY_ENVIRONMENT': JSON.stringify(process.env.NEXT_PUBLIC_SENTRY_ENVIRONMENT || 'development'),
-      'process.env.NEXT_PUBLIC_POSTHOG_KEY': JSON.stringify(process.env.NEXT_PUBLIC_POSTHOG_KEY || ''),
-      'process.env.NEXT_PUBLIC_POSTHOG_HOST': JSON.stringify(process.env.NEXT_PUBLIC_POSTHOG_HOST || 'https://app.posthog.com'),
-      'process.env.RESEND_API_KEY': JSON.stringify(process.env.RESEND_API_KEY || ''),
-      'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'development')
+      delimiters: ['', ''],
+      values: {
+        // Support both dot and bracket notation with any quote style
+        "process.env['NEXT_PUBLIC_SUPABASE_URL']": JSON.stringify(process.env.NEXT_PUBLIC_SUPABASE_URL || ''),
+        'process.env["NEXT_PUBLIC_SUPABASE_URL"]': JSON.stringify(process.env.NEXT_PUBLIC_SUPABASE_URL || ''),
+        "process.env['NEXT_PUBLIC_SUPABASE_ANON_KEY']": JSON.stringify(process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || ''),
+        'process.env["NEXT_PUBLIC_SUPABASE_ANON_KEY"]': JSON.stringify(process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || ''),
+        "process.env['NEXT_PUBLIC_SENTRY_DSN']": JSON.stringify(process.env.NEXT_PUBLIC_SENTRY_DSN || ''),
+        'process.env["NEXT_PUBLIC_SENTRY_DSN"]': JSON.stringify(process.env.NEXT_PUBLIC_SENTRY_DSN || ''),
+        "process.env['NEXT_PUBLIC_SENTRY_ENVIRONMENT']": JSON.stringify(process.env.NEXT_PUBLIC_SENTRY_ENVIRONMENT || 'development'),
+        'process.env["NEXT_PUBLIC_SENTRY_ENVIRONMENT"]': JSON.stringify(process.env.NEXT_PUBLIC_SENTRY_ENVIRONMENT || 'development'),
+        "process.env['NEXT_PUBLIC_POSTHOG_KEY']": JSON.stringify(process.env.NEXT_PUBLIC_POSTHOG_KEY || ''),
+        'process.env["NEXT_PUBLIC_POSTHOG_KEY"]': JSON.stringify(process.env.NEXT_PUBLIC_POSTHOG_KEY || ''),
+        "process.env['NEXT_PUBLIC_POSTHOG_HOST']": JSON.stringify(process.env.NEXT_PUBLIC_POSTHOG_HOST || 'https://app.posthog.com'),
+        'process.env["NEXT_PUBLIC_POSTHOG_HOST"]': JSON.stringify(process.env.NEXT_PUBLIC_POSTHOG_HOST || 'https://app.posthog.com'),
+        "process.env['RESEND_API_KEY']": JSON.stringify(process.env.RESEND_API_KEY || ''),
+        'process.env["RESEND_API_KEY"]': JSON.stringify(process.env.RESEND_API_KEY || ''),
+        "process.env['NODE_ENV']": JSON.stringify(process.env.NODE_ENV || 'development'),
+        'process.env["NODE_ENV"]': JSON.stringify(process.env.NODE_ENV || 'development')
+      }
     }),
     resolve({
       browser: true,

@@ -25,7 +25,7 @@ export class ErrorBoundary extends Component<IProps, IState> {
   componentDidCatch(error: Error, errorInfo: ErrorInfo) {
     const mfeName = this.props.mfeName || 'react-mfe';
     errorLogger.logError(error, mfeName, 'critical', {
-      componentStack: errorInfo.componentStack
+      componentStack: errorInfo.componentStack,
     });
   }
 
@@ -36,24 +36,28 @@ export class ErrorBoundary extends Component<IProps, IState> {
       }
 
       return (
-        <div style={{
-          padding: '20px',
-          margin: '20px',
-          border: '2px solid #ff4444',
-          borderRadius: '8px',
-          backgroundColor: '#fff5f5'
-        }}>
+        <div
+          style={{
+            padding: '20px',
+            margin: '20px',
+            border: '2px solid #ff4444',
+            borderRadius: '8px',
+            backgroundColor: '#fff5f5',
+          }}
+        >
           <h2 style={{ color: '#cc0000' }}>⚠️ Something went wrong</h2>
           <p>The application encountered an error. Please try refreshing the page.</p>
           <details style={{ marginTop: '10px' }}>
             <summary style={{ cursor: 'pointer', color: '#666' }}>Error details</summary>
-            <pre style={{
-              marginTop: '10px',
-              padding: '10px',
-              backgroundColor: '#f5f5f5',
-              borderRadius: '4px',
-              overflow: 'auto'
-            }}>
+            <pre
+              style={{
+                marginTop: '10px',
+                padding: '10px',
+                backgroundColor: '#f5f5f5',
+                borderRadius: '4px',
+                overflow: 'auto',
+              }}
+            >
               {this.state.error?.message}
             </pre>
           </details>
@@ -66,7 +70,7 @@ export class ErrorBoundary extends Component<IProps, IState> {
               color: 'white',
               border: 'none',
               borderRadius: '4px',
-              cursor: 'pointer'
+              cursor: 'pointer',
             }}
           >
             Reload Page

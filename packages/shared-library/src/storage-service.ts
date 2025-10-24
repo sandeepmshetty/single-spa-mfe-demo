@@ -4,7 +4,7 @@
  */
 export class StorageService {
   private memoryStore = new Map<string, string>();
-  
+
   constructor(private useMemoryFallback = true) {}
 
   /**

@@ -24,12 +24,14 @@ export class SentryIntegration {
       // Dynamic import to avoid bundling if not used
       const Sentry: any = await import('@sentry/browser' as any).catch(() => null);
       const tracingModule: any = await import('@sentry/tracing' as any).catch(() => null);
-      
+
       if (!Sentry || !tracingModule) {
-        console.warn('⚠️ Sentry packages not installed. Run: npm install @sentry/browser @sentry/tracing');
+        console.warn(
+          '⚠️ Sentry packages not installed. Run: npm install @sentry/browser @sentry/tracing'
+        );
         return;
       }
-      
+
       const { BrowserTracing } = tracingModule;
 
       Sentry.init({
@@ -38,7 +40,7 @@ export class SentryIntegration {
         release: config.release,
         integrations: [new BrowserTracing()],
         tracesSampleRate: config.tracesSampleRate || 0.1,
-        beforeSend: config.beforeSend
+        beforeSend: config.beforeSend,
       });
 
       this.sentry = Sentry;
@@ -55,7 +57,7 @@ export class SentryIntegration {
     }
 
     this.sentry.captureException(error, {
-      extra: context
+      extra: context,
     });
   }
 
@@ -75,7 +77,12 @@ export class SentryIntegration {
     this.sentry.setUser(user);
   }
 
-  addBreadcrumb(breadcrumb: { message: string; category?: string; level?: string; data?: any }): void {
+  addBreadcrumb(breadcrumb: {
+    message: string;
+    category?: string;
+    level?: string;
+    data?: any;
+  }): void {
     if (!this.initialized || !this.sentry) {
       return;
     }

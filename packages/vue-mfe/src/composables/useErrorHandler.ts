@@ -11,7 +11,7 @@ export function useErrorHandler(mfeName = 'vue-mfe') {
 
     errorLogger.logError(err, mfeName, 'critical', {
       componentInfo: info,
-      instance: instance?.$options.name
+      instance: instance?.$options.name,
     });
 
     return false;
@@ -25,6 +25,6 @@ export function useErrorHandler(mfeName = 'vue-mfe') {
   return {
     error,
     hasError,
-    resetError
+    resetError,
   };
 }

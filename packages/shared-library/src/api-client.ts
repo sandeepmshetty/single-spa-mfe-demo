@@ -63,7 +63,7 @@ export class ApiClient {
       const config: RequestInit = {
         method,
         headers: this.getHeaders(),
-        signal: AbortSignal.timeout(this.defaultTimeout)
+        signal: AbortSignal.timeout(this.defaultTimeout),
       };
 
       if (data && method !== 'GET') {
@@ -71,28 +71,27 @@ export class ApiClient {
       }
 
       const response = await fetch(url, config);
-      
+
       if (!response.ok) {
         throw new Error(`HTTP ${response.status}: ${response.statusText}`);
       }
 
       const responseData = await response.json();
-      
+
       return {
         data: responseData,
         success: true,
         message: 'Request successful',
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       };
-
     } catch (error) {
       console.error(`API Request failed [${method} ${endpoint}]:`, error);
-      
+
       return {
         data: null,
         success: false,
         message: error instanceof Error ? error.message : 'Unknown error',
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       };
     }
   }
@@ -102,7 +101,7 @@ export class ApiClient {
    */
   private buildURL(endpoint: string, params?: Record<string, any>): string {
     const url = new URL(endpoint.startsWith('http') ? endpoint : `${this.baseURL}${endpoint}`);
-    
+
     if (params) {
       Object.entries(params).forEach(([key, value]) => {
         if (value !== null && value !== undefined) {
@@ -110,7 +109,7 @@ export class ApiClient {
         }
       });
     }
-    
+
     return url.toString();
   }
 
@@ -120,7 +119,7 @@ export class ApiClient {
   private getHeaders(): Record<string, string> {
     const headers: Record<string, string> = {
       'Content-Type': 'application/json',
-      'Accept': 'application/json'
+      Accept: 'application/json',
     };
 
     // Add authentication header if token exists
@@ -168,11 +167,15 @@ export class ApiClient {
   /**
    * Upload file
    */
-  async uploadFile<T = any>(endpoint: string, file: File, additionalData?: Record<string, any>): Promise<IApiResponse<T>> {
+  async uploadFile<T = any>(
+    endpoint: string,
+    file: File,
+    additionalData?: Record<string, any>
+  ): Promise<IApiResponse<T>> {
     try {
       const formData = new FormData();
       formData.append('file', file);
-      
+
       if (additionalData) {
         Object.entries(additionalData).forEach(([key, value]) => {
           formData.append(key, String(value));
@@ -180,7 +183,7 @@ export class ApiClient {
       }
 
       const headers: Record<string, string> = {};
-      
+
       // Add authentication header if token exists
       const token = this.getAuthToken();
       if (token) {
@@ -191,7 +194,7 @@ export class ApiClient {
         method: 'POST',
         headers,
         body: formData,
-        signal: AbortSignal.timeout(this.defaultTimeout)
+        signal: AbortSignal.timeout(this.defaultTimeout),
       });
 
       if (!response.ok) {
@@ -199,22 +202,21 @@ export class ApiClient {
       }
 
       const responseData = await response.json();
-      
+
       return {
         data: responseData,
         success: true,
         message: 'File uploaded successfully',
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       };
-
     } catch (error) {
       console.error(`File upload failed [${endpoint}]:`, error);
-      
+
       return {
         data: null,
         success: false,
         message: error instanceof Error ? error.message : 'Upload failed',
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       };
     }
   }

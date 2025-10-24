@@ -1,20 +1,26 @@
 import { BehaviorSubject } from 'rxjs';
 import { IAuthState, IUser } from './types';
-import { STORAGE_KEYS, EVENT_TYPES, API_ENDPOINTS } from './constants';
+import { STORAGE_KEYS, EVENT_TYPES } from './constants';
 import { eventBus } from './event-bus';
 import { storageService } from './storage-service';
-import { apiClient } from './api-client';
 
 /**
+ * @deprecated This service is deprecated. Use SupabaseAuth instead.
+ * This legacy AuthService is maintained for backward compatibility only.
+ *
+ * Migration guide:
+ * - Replace `authService` with `supabaseAuthService`
+ * - Use `authStateManager` for centralized auth state management
+ *
  * Centralized authentication service for all micro-frontends
  */
 export class AuthService {
-  private authState$ = new BehaviorSubject<IAuthState>({
+  private readonly authState$ = new BehaviorSubject<IAuthState>({
     isAuthenticated: false,
     user: null,
     token: null,
     refreshToken: null,
-    expiresAt: null
+    expiresAt: null,
   });
 
   constructor() {
@@ -66,23 +72,23 @@ export class AuthService {
     try {
       // Mock authentication - replace with real API call
       const response = await this.mockLogin(email, password);
-      
+
       if (response.success) {
         const authState: IAuthState = {
           isAuthenticated: true,
           user: response.user,
           token: response.token,
           refreshToken: response.refreshToken,
-          expiresAt: Date.now() + (24 * 60 * 60 * 1000) // 24 hours
+          expiresAt: Date.now() + 24 * 60 * 60 * 1000, // 24 hours
         };
 
         this.updateAuthState(authState);
         this.persistAuthState(authState);
-        
+
         eventBus.emit(EVENT_TYPES.AUTH_LOGIN, { user: response.user });
         return true;
       }
-      
+
       return false;
     } catch (error) {
       console.error('Login failed:', error);
@@ -98,18 +104,18 @@ export class AuthService {
     try {
       // Call logout API if needed
       // await apiClient.post(API_ENDPOINTS.AUTH.LOGOUT);
-      
+
       const clearedState: IAuthState = {
         isAuthenticated: false,
         user: null,
         token: null,
         refreshToken: null,
-        expiresAt: null
+        expiresAt: null,
       };
 
       this.updateAuthState(clearedState);
       this.clearPersistedAuth();
-      
+
       eventBus.emit(EVENT_TYPES.AUTH_LOGOUT, {});
     } catch (error) {
       console.error('Logout failed:', error);
@@ -128,21 +134,21 @@ export class AuthService {
 
       // Mock token refresh - replace with real API call
       const response = await this.mockTokenRefresh(currentState.refreshToken);
-      
+
       if (response.success) {
         const updatedState: IAuthState = {
           ...currentState,
           token: response.token,
-          expiresAt: Date.now() + (24 * 60 * 60 * 1000)
+          expiresAt: Date.now() + 24 * 60 * 60 * 1000,
         };
 
         this.updateAuthState(updatedState);
         this.persistAuthState(updatedState);
-        
+
         eventBus.emit(EVENT_TYPES.AUTH_TOKEN_REFRESH, { token: response.token });
         return true;
       }
-      
+
       return false;
     } catch (error) {
       console.error('Token refresh failed:', error);
@@ -163,15 +169,15 @@ export class AuthService {
 
       // Mock profile update - replace with real API call
       const updatedUser = { ...currentState.user, ...userData };
-      
+
       const updatedState: IAuthState = {
         ...currentState,
-        user: updatedUser
+        user: updatedUser,
       };
 
       this.updateAuthState(updatedState);
       this.persistAuthState(updatedState);
-      
+
       eventBus.emit(EVENT_TYPES.USER_PROFILE_UPDATE, { user: updatedUser });
       return true;
     } catch (error) {
@@ -195,7 +201,7 @@ export class AuthService {
           user: JSON.parse(userData),
           token,
           refreshToken,
-          expiresAt: this.getTokenExpiry(token)
+          expiresAt: this.getTokenExpiry(token),
         };
 
         this.updateAuthState(authState);
@@ -273,7 +279,7 @@ export class AuthService {
     try {
       // In a real app, decode JWT token to get expiry
       // For mock, return 24 hours from now
-      return Date.now() + (24 * 60 * 60 * 1000);
+      return Date.now() + 24 * 60 * 60 * 1000;
     } catch {
       return null;
     }
@@ -293,17 +299,18 @@ export class AuthService {
         id: '1',
         name: 'John Doe',
         email: email,
-        avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&h=100&fit=crop&crop=face',
+        avatar:
+          'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&h=100&fit=crop&crop=face',
         roles: ['user'],
         preferences: {
           theme: 'light',
           language: 'en',
           notifications: true,
-          timezone: 'UTC'
-        }
+          timezone: 'UTC',
+        },
       },
       token: 'mock-jwt-token-' + Date.now(),
-      refreshToken: 'mock-refresh-token-' + Date.now()
+      refreshToken: 'mock-refresh-token-' + Date.now(),
     };
   }
 
@@ -312,10 +319,10 @@ export class AuthService {
    */
   private async mockTokenRefresh(refreshToken: string): Promise<any> {
     await new Promise(resolve => setTimeout(resolve, 500));
-    
+
     return {
       success: true,
-      token: 'mock-refreshed-jwt-token-' + Date.now()
+      token: 'mock-refreshed-jwt-token-' + Date.now(),
     };
   }
 }

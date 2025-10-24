@@ -28,10 +28,25 @@ if (fs.existsSync(packagesDir)) {
     const packageRoot = path.join(packagesDir, entry.name);
     const packageNodeModules = path.join(packageRoot, 'node_modules');
     const packageLock = path.join(packageRoot, 'package-lock.json');
+    
+    // Add build cache folders
+    const angularCache = path.join(packageRoot, '.angular');
+    const nextCache = path.join(packageRoot, '.next');
+    const turboCache = path.join(packageRoot, '.turbo');
+    const viteCache = path.join(packageRoot, '.vite');
 
-    targets.push(packageNodeModules, packageLock);
+    targets.push(packageNodeModules, packageLock, angularCache, nextCache, turboCache, viteCache);
   }
 }
+
+// Add root-level cache folders
+targets.push(
+  path.join(rootDir, '.angular'),
+  path.join(rootDir, '.next'),
+  path.join(rootDir, '.turbo'),
+  path.join(rootDir, '.vite'),
+  path.join(rootDir, 'node_modules', '@angular-devkit', 'build-angular', 'node_modules')
+);
 
 const formatTarget = (dir) => path.relative(rootDir, dir) || '.';
 

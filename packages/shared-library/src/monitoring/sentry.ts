@@ -1,6 +1,6 @@
 /**
  * Sentry Error Tracking Configuration
- * 
+ *
  * Provides error tracking, performance monitoring, and user context
  * across all micro-frontends.
  */
@@ -8,9 +8,9 @@
 import * as Sentry from '@sentry/browser';
 import { BrowserTracing } from '@sentry/tracing';
 
-// Environment variables
-const SENTRY_DSN = process.env.NEXT_PUBLIC_SENTRY_DSN || '';
-const ENVIRONMENT = process.env.NODE_ENV || 'development';
+// Environment variables - injected at build time via rollup replace plugin
+const SENTRY_DSN = process.env['NEXT_PUBLIC_SENTRY_DSN'] || '';
+const ENVIRONMENT = process.env['NODE_ENV'] || 'development';
 
 // Check if Sentry is configured
 const isSentryConfigured = Boolean(SENTRY_DSN);
@@ -42,20 +42,20 @@ export const initSentry = (options?: {
           ],
         }),
       ],
-      
+
       // Performance Monitoring
       tracesSampleRate: options?.tracesSampleRate ?? (ENVIRONMENT === 'production' ? 0.1 : 1.0),
-      
+
       // Release tracking
       release: options?.release || 'mfe@1.0.0',
-      
+
       // Tag which MFE this is
       initialScope: {
         tags: {
           mfe: options?.mfeName || 'shared-library',
         },
       },
-      
+
       // Filter out noise
       beforeSend(event, hint) {
         // Don't send errors in development unless explicitly enabled
@@ -63,7 +63,7 @@ export const initSentry = (options?: {
           console.log('[Sentry] Would send in production:', event);
           return null;
         }
-        
+
         // Filter out common browser extension errors
         if (event.exception) {
           const error = hint.originalException;
@@ -78,10 +78,10 @@ export const initSentry = (options?: {
             }
           }
         }
-        
+
         return event;
       },
-      
+
       // Don't capture console logs as breadcrumbs in production
       beforeBreadcrumb(breadcrumb, hint) {
         if (ENVIRONMENT === 'production' && breadcrumb.category === 'console') {
@@ -111,7 +111,9 @@ export const captureError = (
     extra?: Record<string, any>;
   }
 ) => {
-  if (!isSentryConfigured) return;
+  if (!isSentryConfigured) {
+    return;
+  }
 
   Sentry.captureException(error, {
     level: context?.level || 'error',
@@ -123,11 +125,10 @@ export const captureError = (
 /**
  * Capture a message manually
  */
-export const captureMessage = (
-  message: string,
-  level: Sentry.SeverityLevel = 'info'
-) => {
-  if (!isSentryConfigured) return;
+export const captureMessage = (message: string, level: Sentry.SeverityLevel = 'info') => {
+  if (!isSentryConfigured) {
+    return;
+  }
   Sentry.captureMessage(message, level);
 };
 
@@ -140,8 +141,10 @@ export const setUserContext = (user: {
   username?: string;
   [key: string]: any;
 }) => {
-  if (!isSentryConfigured) return;
-  
+  if (!isSentryConfigured) {
+    return;
+  }
+
   const { id, email, username, ...extraFields } = user;
   Sentry.setUser({
     id,
@@ -155,7 +158,9 @@ export const setUserContext = (user: {
  * Clear user context (on logout)
  */
 export const clearUserContext = () => {
-  if (!isSentryConfigured) return;
+  if (!isSentryConfigured) {
+    return;
+  }
   Sentry.setUser(null);
 };
 
@@ -168,8 +173,10 @@ export const addBreadcrumb = (breadcrumb: {
   level?: Sentry.SeverityLevel;
   data?: Record<string, any>;
 }) => {
-  if (!isSentryConfigured) return;
-  
+  if (!isSentryConfigured) {
+    return;
+  }
+
   Sentry.addBreadcrumb({
     message: breadcrumb.message,
     category: breadcrumb.category || 'custom',
@@ -182,12 +189,11 @@ export const addBreadcrumb = (breadcrumb: {
 /**
  * Start a new transaction for performance monitoring
  */
-export const startTransaction = (
-  name: string,
-  operation: string = 'navigation'
-) => {
-  if (!isSentryConfigured) return null;
-  
+export const startTransaction = (name: string, operation: string = 'navigation') => {
+  if (!isSentryConfigured) {
+    return null;
+  }
+
   return Sentry.startTransaction({
     name,
     op: operation,
@@ -198,7 +204,9 @@ export const startTransaction = (
  * Set tag for filtering errors
  */
 export const setTag = (key: string, value: string) => {
-  if (!isSentryConfigured) return;
+  if (!isSentryConfigured) {
+    return;
+  }
   Sentry.setTag(key, value);
 };
 
@@ -206,7 +214,9 @@ export const setTag = (key: string, value: string) => {
  * Set extra context data
  */
 export const setExtra = (key: string, value: any) => {
-  if (!isSentryConfigured) return;
+  if (!isSentryConfigured) {
+    return;
+  }
   Sentry.setExtra(key, value);
 };
 

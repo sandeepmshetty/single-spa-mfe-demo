@@ -13,17 +13,17 @@ interface MockUser {
 }
 
 class MockAuthService {
-  private users: Map<string, { email: string; password: string; user: MockUser }> = new Map();
+  private readonly users: Map<string, { email: string; password: string; user: MockUser }> = new Map();
   private currentUser: MockUser | null = null;
 
   async signUp(email: string, password: string, options?: any) {
     console.log('🔨 Mock: Signing up user:', email);
-    
+
     // Check if user already exists
     if (this.users.has(email)) {
       return {
         data: { user: null },
-        error: { message: 'User already registered' }
+        error: { message: 'User already registered' },
       };
     }
 
@@ -33,8 +33,8 @@ class MockAuthService {
       email,
       created_at: new Date().toISOString(),
       user_metadata: {
-        full_name: options?.data?.full_name || ''
-      }
+        full_name: options?.data?.full_name || '',
+      },
     };
 
     // Store user
@@ -44,26 +44,26 @@ class MockAuthService {
 
     return {
       data: { user },
-      error: null
+      error: null,
     };
   }
 
   async signIn(email: string, password: string) {
     console.log('🔨 Mock: Signing in user:', email);
-    
+
     const userData = this.users.get(email);
-    
+
     if (!userData) {
       return {
         data: { user: null },
-        error: { message: 'Invalid login credentials' }
+        error: { message: 'Invalid login credentials' },
       };
     }
 
     if (userData.password !== password) {
       return {
         data: { user: null },
-        error: { message: 'Invalid login credentials' }
+        error: { message: 'Invalid login credentials' },
       };
     }
 
@@ -72,7 +72,7 @@ class MockAuthService {
 
     return {
       data: { user: userData.user },
-      error: null
+      error: null,
     };
   }
 
@@ -82,7 +82,7 @@ class MockAuthService {
     localStorage.removeItem('mock_auth_user');
 
     return {
-      error: null
+      error: null,
     };
   }
 
@@ -94,7 +94,7 @@ class MockAuthService {
 
     return {
       data: { user: this.currentUser },
-      error: null
+      error: null,
     };
   }
 
@@ -110,7 +110,7 @@ export const mockAuthService = new MockAuthService();
 export const enableMockAuth = () => {
   console.warn('⚠️  MOCK AUTH MODE ENABLED - For testing only!');
   console.log('To use real Supabase, enable Email auth in your Supabase dashboard');
-  
+
   const sharedServices = (globalThis as any).sharedServices;
   if (sharedServices) {
     // Replace real service with mock

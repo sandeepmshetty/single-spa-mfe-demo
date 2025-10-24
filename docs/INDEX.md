@@ -110,7 +110,10 @@ docs/
 
 ## 📦 Historical Documentation
 
-Old session logs and fixes preserved in: **[../archive/](../archive/)** (17 files)
+
+## 📚 Archive
+
+Historical documentation from previous development sessions: **[../archive/](../archive/)**
 
 ---
 

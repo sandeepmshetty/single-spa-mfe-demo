@@ -198,7 +198,7 @@ if (allGood && issues.length === 0) {
 }
 
 console.log('\n' + '='.repeat(60));
-console.log('\n💬 Need help? Check YOUR_NEXT_STEPS.md\n');
+console.log('\n💬 Need help? Check docs/03-implementation/next-steps.md\n');
 
 // Exit with error code if issues found
 process.exit(allGood ? 0 : 1);

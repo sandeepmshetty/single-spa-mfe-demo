@@ -23,7 +23,7 @@ export class EventBus {
       type,
       data,
       source: source || this.getCurrentMFE(),
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     };
 
     if (this.debugMode) {
@@ -35,9 +35,11 @@ export class EventBus {
 
     // Also emit as DOM custom event for broader compatibility
     if (globalThis.window !== undefined) {
-      globalThis.dispatchEvent(new CustomEvent(`mfe:${type}`, { 
-        detail: payload 
-      }));
+      globalThis.dispatchEvent(
+        new CustomEvent(`mfe:${type}`, {
+          detail: payload,
+        })
+      );
     }
   }
 
@@ -45,7 +47,7 @@ export class EventBus {
    * Subscribe to specific event types
    */
   on(eventType: EventType, callback: (payload: IEventPayload) => void): () => void {
-    const subscription = this.eventSubject.subscribe((payload) => {
+    const subscription = this.eventSubject.subscribe(payload => {
       if (payload.type === eventType) {
         callback(payload);
       }
@@ -67,7 +69,7 @@ export class EventBus {
    * Subscribe to events from a specific micro-frontend
    */
   onFromSource(source: string, callback: (payload: IEventPayload) => void): () => void {
-    const subscription = this.eventSubject.subscribe((payload) => {
+    const subscription = this.eventSubject.subscribe(payload => {
       if (payload.source === source) {
         callback(payload);
       }
@@ -83,9 +85,9 @@ export class EventBus {
     if (globalThis.window === undefined) {
       return;
     }
-    
+
     // Listen for events from other MFEs that might not use this event bus
-    globalThis.addEventListener('message', (event) => {
+    globalThis.addEventListener('message', event => {
       // Security: Verify the origin is from the same origin
       // For cross-origin MFE communication, you would need to maintain an allowlist
       // Security: Verify the origin is from the same origin
@@ -94,7 +96,7 @@ export class EventBus {
         // If you need cross-origin communication, add specific origins to an allowlist
         return;
       }
-      
+
       if (event.data?.type?.startsWith('mfe:')) {
         const type = event.data.type.replace('mfe:', '') as EventType;
         this.emit(type, event.data.payload, event.data.source);
@@ -109,9 +111,9 @@ export class EventBus {
     if (globalThis.window === undefined) {
       return 'server';
     }
-    
+
     const hostname = globalThis.location.hostname;
-    
+
     if (hostname.includes('react')) {
       return MFE_NAMES.REACT;
     }
@@ -124,16 +126,22 @@ export class EventBus {
     if (hostname.includes('shared')) {
       return MFE_NAMES.SHARED;
     }
-    
+
     // Check for localhost development
     const port = globalThis.location.port;
     switch (port) {
-    case '9000': return MFE_NAMES.SHELL;
-    case '3001': return MFE_NAMES.REACT;
-    case '3002': return MFE_NAMES.VUE;
-    case '3003': return MFE_NAMES.ANGULAR;
-    case '3004': return MFE_NAMES.SHARED;
-    default: return MFE_NAMES.SHELL;
+      case '9000':
+        return MFE_NAMES.SHELL;
+      case '3001':
+        return MFE_NAMES.REACT;
+      case '3002':
+        return MFE_NAMES.VUE;
+      case '3003':
+        return MFE_NAMES.ANGULAR;
+      case '3004':
+        return MFE_NAMES.SHARED;
+      default:
+        return MFE_NAMES.SHELL;
     }
   }
 
@@ -154,6 +162,6 @@ export class EventBus {
 
 // Create and export singleton instance
 export const eventBus = new EventBus(
-  globalThis.window !== undefined && 
-  (globalThis.location.hostname === 'localhost' || globalThis.location.hostname === '127.0.0.1')
+  globalThis.window !== undefined &&
+    (globalThis.location.hostname === 'localhost' || globalThis.location.hostname === '127.0.0.1')
 );

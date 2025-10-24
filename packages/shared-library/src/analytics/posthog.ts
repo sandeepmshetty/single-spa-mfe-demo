@@ -1,16 +1,16 @@
 /**
  * PostHog Analytics Configuration
- * 
+ *
  * Provides product analytics, feature flags, and session replay
  * across all micro-frontends.
  */
 
 import posthog, { PostHog } from 'posthog-js';
 
-// Environment variables
-const POSTHOG_KEY = process.env.NEXT_PUBLIC_POSTHOG_KEY || '';
-const POSTHOG_HOST = process.env.NEXT_PUBLIC_POSTHOG_HOST || 'https://app.posthog.com';
-const ENVIRONMENT = process.env.NODE_ENV || 'development';
+// Environment variables - injected at build time via rollup replace plugin
+const POSTHOG_KEY = process.env['NEXT_PUBLIC_POSTHOG_KEY'] || '';
+const POSTHOG_HOST = process.env['NEXT_PUBLIC_POSTHOG_HOST'] || 'https://app.posthog.com';
+const ENVIRONMENT = process.env['NODE_ENV'] || 'development';
 
 // Check if PostHog is configured
 const isPostHogConfigured = Boolean(POSTHOG_KEY);
@@ -40,36 +40,36 @@ export const initPostHog = (options?: {
   try {
     posthog.init(POSTHOG_KEY, {
       api_host: POSTHOG_HOST,
-      
+
       // Capture settings
       autocapture: options?.enableAutocapture ?? true,
       capture_pageview: true,
       capture_pageleave: true,
-      
+
       // Session recording
-      disable_session_recording: !(options?.enableSessionRecording ?? (ENVIRONMENT === 'production')),
+      disable_session_recording: !(options?.enableSessionRecording ?? ENVIRONMENT === 'production'),
       session_recording: {
         maskAllInputs: true,
         maskTextSelector: '[data-private]',
       },
-      
+
       // Privacy settings
       mask_all_text: false,
       mask_all_element_attributes: false,
-      
+
       // Performance
-      loaded: (posthog) => {
+      loaded: posthog => {
         if (ENVIRONMENT === 'development') {
           posthog.debug(false); // Set to true for debugging
         }
       },
-      
+
       // Persistence
       persistence: 'localStorage+cookie',
-      
+
       // Cross-subdomain tracking
       cross_subdomain_cookie: true,
-      
+
       // Set properties
       property_blacklist: ['$initial_referrer', '$initial_referring_domain'],
     });
@@ -106,12 +106,11 @@ export const getPostHog = (): PostHog | null => {
 /**
  * Track a custom event
  */
-export const trackEvent = (
-  eventName: string,
-  properties?: Record<string, any>
-) => {
-  if (!isPostHogConfigured) return;
-  
+export const trackEvent = (eventName: string, properties?: Record<string, any>) => {
+  if (!isPostHogConfigured) {
+    return;
+  }
+
   try {
     posthog.capture(eventName, properties);
   } catch (error) {
@@ -122,12 +121,11 @@ export const trackEvent = (
 /**
  * Identify a user
  */
-export const identifyUser = (
-  userId: string,
-  properties?: Record<string, any>
-) => {
-  if (!isPostHogConfigured) return;
-  
+export const identifyUser = (userId: string, properties?: Record<string, any>) => {
+  if (!isPostHogConfigured) {
+    return;
+  }
+
   try {
     posthog.identify(userId, properties);
   } catch (error) {
@@ -139,8 +137,10 @@ export const identifyUser = (
  * Reset user identity (on logout)
  */
 export const resetUser = () => {
-  if (!isPostHogConfigured) return;
-  
+  if (!isPostHogConfigured) {
+    return;
+  }
+
   try {
     posthog.reset();
   } catch (error) {
@@ -152,8 +152,10 @@ export const resetUser = () => {
  * Set user properties
  */
 export const setUserProperties = (properties: Record<string, any>) => {
-  if (!isPostHogConfigured) return;
-  
+  if (!isPostHogConfigured) {
+    return;
+  }
+
   try {
     posthog.people.set(properties);
   } catch (error) {
@@ -165,8 +167,10 @@ export const setUserProperties = (properties: Record<string, any>) => {
  * Check if a feature flag is enabled
  */
 export const isFeatureEnabled = (flagKey: string): boolean => {
-  if (!isPostHogConfigured) return false;
-  
+  if (!isPostHogConfigured) {
+    return false;
+  }
+
   try {
     return posthog.isFeatureEnabled(flagKey) ?? false;
   } catch (error) {
@@ -179,8 +183,10 @@ export const isFeatureEnabled = (flagKey: string): boolean => {
  * Get feature flag value (for multivariate flags)
  */
 export const getFeatureFlag = (flagKey: string): string | boolean | undefined => {
-  if (!isPostHogConfigured) return undefined;
-  
+  if (!isPostHogConfigured) {
+    return undefined;
+  }
+
   try {
     return posthog.getFeatureFlag(flagKey);
   } catch (error) {
@@ -193,8 +199,10 @@ export const getFeatureFlag = (flagKey: string): string | boolean | undefined =>
  * Reload feature flags
  */
 export const reloadFeatureFlags = async (): Promise<void> => {
-  if (!isPostHogConfigured) return;
-  
+  if (!isPostHogConfigured) {
+    return;
+  }
+
   try {
     await posthog.reloadFeatureFlags();
   } catch (error) {
@@ -206,8 +214,10 @@ export const reloadFeatureFlags = async (): Promise<void> => {
  * Listen for feature flag changes
  */
 export const onFeatureFlagsChange = (callback: () => void) => {
-  if (!isPostHogConfigured) return () => {};
-  
+  if (!isPostHogConfigured) {
+    return () => {};
+  }
+
   try {
     posthog.onFeatureFlags(callback);
     return () => {
@@ -223,8 +233,10 @@ export const onFeatureFlagsChange = (callback: () => void) => {
  * Track page view manually
  */
 export const trackPageView = (pageName?: string, properties?: Record<string, any>) => {
-  if (!isPostHogConfigured) return;
-  
+  if (!isPostHogConfigured) {
+    return;
+  }
+
   try {
     if (pageName) {
       posthog.capture('$pageview', { page: pageName, ...properties });
@@ -240,8 +252,10 @@ export const trackPageView = (pageName?: string, properties?: Record<string, any
  * Start session recording
  */
 export const startSessionRecording = () => {
-  if (!isPostHogConfigured) return;
-  
+  if (!isPostHogConfigured) {
+    return;
+  }
+
   try {
     posthog.startSessionRecording();
   } catch (error) {
@@ -253,8 +267,10 @@ export const startSessionRecording = () => {
  * Stop session recording
  */
 export const stopSessionRecording = () => {
-  if (!isPostHogConfigured) return;
-  
+  if (!isPostHogConfigured) {
+    return;
+  }
+
   try {
     posthog.stopSessionRecording();
   } catch (error) {
@@ -270,8 +286,10 @@ export const groupIdentify = (
   groupKey: string,
   properties?: Record<string, any>
 ) => {
-  if (!isPostHogConfigured) return;
-  
+  if (!isPostHogConfigured) {
+    return;
+  }
+
   try {
     posthog.group(groupType, groupKey, properties);
   } catch (error) {
@@ -294,22 +312,26 @@ export const analytics = {
   buttonClick: (buttonName: string, context?: Record<string, any>) => {
     trackEvent('button_clicked', { button_name: buttonName, ...context });
   },
-  
+
   // Navigation
   navigate: (from: string, to: string) => {
     trackEvent('navigation', { from, to });
   },
-  
+
   // Forms
   formSubmit: (formName: string, success: boolean, context?: Record<string, any>) => {
     trackEvent('form_submitted', { form_name: formName, success, ...context });
   },
-  
+
   // Errors
   error: (errorType: string, errorMessage: string, context?: Record<string, any>) => {
-    trackEvent('error_occurred', { error_type: errorType, error_message: errorMessage, ...context });
+    trackEvent('error_occurred', {
+      error_type: errorType,
+      error_message: errorMessage,
+      ...context,
+    });
   },
-  
+
   // Feature usage
   featureUsed: (featureName: string, context?: Record<string, any>) => {
     trackEvent('feature_used', { feature_name: featureName, ...context });

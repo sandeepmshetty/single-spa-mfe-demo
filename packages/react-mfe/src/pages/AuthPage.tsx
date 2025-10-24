@@ -20,27 +20,33 @@ export const AuthPage: React.FC = () => {
   };
 
   return (
-    <div style={{
-      minHeight: '100vh',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      backgroundColor: '#f5f5f5',
-      padding: '20px'
-    }}>
-      <div style={{
-        backgroundColor: 'white',
-        borderRadius: '8px',
-        boxShadow: '0 2px 10px rgba(0,0,0,0.1)',
-        width: '100%',
-        maxWidth: '480px',
-        overflow: 'hidden'
-      }}>
+    <div
+      style={{
+        minHeight: '100vh',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: '#f5f5f5',
+        padding: '20px',
+      }}
+    >
+      <div
+        style={{
+          backgroundColor: 'white',
+          borderRadius: '8px',
+          boxShadow: '0 2px 10px rgba(0,0,0,0.1)',
+          width: '100%',
+          maxWidth: '480px',
+          overflow: 'hidden',
+        }}
+      >
         {/* Tabs */}
-        <div style={{
-          display: 'flex',
-          borderBottom: '2px solid #f0f0f0'
-        }}>
+        <div
+          style={{
+            display: 'flex',
+            borderBottom: '2px solid #f0f0f0',
+          }}
+        >
           <button
             onClick={() => setActiveView('login')}
             style={{
@@ -53,7 +59,7 @@ export const AuthPage: React.FC = () => {
               border: 'none',
               borderBottom: activeView === 'login' ? '2px solid #007bff' : '2px solid transparent',
               cursor: 'pointer',
-              transition: 'all 0.2s'
+              transition: 'all 0.2s',
             }}
           >
             Login
@@ -68,9 +74,10 @@ export const AuthPage: React.FC = () => {
               backgroundColor: activeView === 'register' ? 'white' : '#fafafa',
               color: activeView === 'register' ? '#28a745' : '#666',
               border: 'none',
-              borderBottom: activeView === 'register' ? '2px solid #28a745' : '2px solid transparent',
+              borderBottom:
+                activeView === 'register' ? '2px solid #28a745' : '2px solid transparent',
               cursor: 'pointer',
-              transition: 'all 0.2s'
+              transition: 'all 0.2s',
             }}
           >
             Sign Up

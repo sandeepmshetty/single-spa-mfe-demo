@@ -13,11 +13,11 @@ export interface IPerformanceMetric {
 }
 
 class PerformanceMonitorService {
-  private metrics: IPerformanceMetric[] = [];
+  private readonly metrics: IPerformanceMetric[] = [];
   private observers: PerformanceObserver[] = [];
 
   init(mfeName: string): void {
-    if (typeof window === 'undefined') {
+    if (globalThis.window === undefined) {
       return;
     }
 
@@ -29,94 +29,98 @@ class PerformanceMonitorService {
 
   private observeLCP(mfeName: string): void {
     try {
-      const observer = new PerformanceObserver((list) => {
+      const observer = new PerformanceObserver(list => {
         const entries = list.getEntries();
-        const lastEntry = entries[entries.length - 1] as any;
-        
+        const lastEntry = entries.at(-1) as any;
+
         this.recordMetric({
           name: 'LCP',
           value: lastEntry.renderTime || lastEntry.loadTime,
           rating: this.rateLCP(lastEntry.renderTime || lastEntry.loadTime),
           mfeName,
-          timestamp: Date.now()
+          timestamp: Date.now(),
         });
       });
-      
+
       observer.observe({ entryTypes: ['largest-contentful-paint'] });
       this.observers.push(observer);
     } catch (e) {
-      console.warn('LCP observation not supported');
+      // LCP observation not supported in this browser
+      console.debug('LCP observation not supported:', e);
     }
   }
 
   private observeFID(mfeName: string): void {
     try {
-      const observer = new PerformanceObserver((list) => {
+      const observer = new PerformanceObserver(list => {
         const entries = list.getEntries();
-        entries.forEach((entry: any) => {
+        for (const entry of entries) {
           this.recordMetric({
             name: 'FID',
-            value: entry.processingStart - entry.startTime,
-            rating: this.rateFID(entry.processingStart - entry.startTime),
+            value: (entry as any).processingStart - entry.startTime,
+            rating: this.rateFID((entry as any).processingStart - entry.startTime),
             mfeName,
-            timestamp: Date.now()
+            timestamp: Date.now(),
           });
-        });
+        }
       });
-      
+
       observer.observe({ entryTypes: ['first-input'] });
       this.observers.push(observer);
     } catch (e) {
-      console.warn('FID observation not supported');
+      // FID observation not supported in this browser
+      console.debug('FID observation not supported:', e);
     }
   }
 
   private observeCLS(mfeName: string): void {
     try {
       let clsValue = 0;
-      const observer = new PerformanceObserver((list) => {
+      const observer = new PerformanceObserver(list => {
         const entries = list.getEntries();
-        entries.forEach((entry: any) => {
-          if (!entry.hadRecentInput) {
-            clsValue += entry.value;
+        for (const entry of entries) {
+          if (!(entry as any).hadRecentInput) {
+            clsValue += (entry as any).value;
           }
-        });
-        
+        }
+
         this.recordMetric({
           name: 'CLS',
           value: clsValue,
           rating: this.rateCLS(clsValue),
           mfeName,
-          timestamp: Date.now()
+          timestamp: Date.now(),
         });
       });
-      
+
       observer.observe({ entryTypes: ['layout-shift'] });
       this.observers.push(observer);
     } catch (e) {
-      console.warn('CLS observation not supported');
+      // CLS observation not supported in this browser
+      console.debug('CLS observation not supported:', e);
     }
   }
 
   private observeFCP(mfeName: string): void {
     try {
-      const observer = new PerformanceObserver((list) => {
+      const observer = new PerformanceObserver(list => {
         const entries = list.getEntries();
-        entries.forEach((entry: any) => {
+        for (const entry of entries) {
           this.recordMetric({
             name: 'FCP',
             value: entry.startTime,
             rating: this.rateFCP(entry.startTime),
             mfeName,
-            timestamp: Date.now()
+            timestamp: Date.now(),
           });
-        });
+        }
       });
-      
+
       observer.observe({ entryTypes: ['paint'] });
       this.observers.push(observer);
     } catch (e) {
-      console.warn('FCP observation not supported');
+      // FCP observation not supported in this browser
+      console.debug('FCP observation not supported:', e);
     }
   }
 
@@ -126,15 +130,27 @@ class PerformanceMonitorService {
       value,
       rating: 'good',
       mfeName,
-      timestamp: Date.now()
+      timestamp: Date.now(),
     });
   }
 
   private recordMetric(metric: IPerformanceMetric): void {
     this.metrics.push(metric);
-    console.log(`📊 [${metric.mfeName}] ${metric.name}: ${metric.value.toFixed(2)}ms (${metric.rating})`);
-    
-    // TODO: Send to monitoring service (Sentry, DataDog, etc.)
+    // Use console.log for performance metrics to avoid circular dependencies
+    // eslint-disable-next-line no-console
+    console.log(
+      `📊 [${metric.mfeName}] ${metric.name}: ${metric.value.toFixed(2)}ms (${metric.rating})`
+    );
+
+    // Send to Sentry for performance monitoring if available
+    if (typeof globalThis !== 'undefined' && (globalThis as any).sharedServices?.trackEvent) {
+      (globalThis as any).sharedServices.trackEvent('performance_metric', {
+        metric_name: metric.name,
+        value: metric.value,
+        rating: metric.rating,
+        mfe: metric.mfeName,
+      });
+    }
   }
 
   private rateLCP(value: number): PerformanceRating {
@@ -182,7 +198,9 @@ class PerformanceMonitorService {
   }
 
   cleanup(): void {
-    this.observers.forEach(observer => observer.disconnect());
+    for (const observer of this.observers) {
+      observer.disconnect();
+    }
     this.observers = [];
   }
 }

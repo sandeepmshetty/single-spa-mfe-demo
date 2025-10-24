@@ -17,14 +17,19 @@ class ErrorLoggerService {
   private readonly maxLogs = 100;
   private listeners: Array<(log: IErrorLog) => void> = [];
 
-  logError(error: Error, mfeName: string, severity: IErrorLog['severity'] = 'high', metadata?: Record<string, any>) {
+  logError(
+    error: Error,
+    mfeName: string,
+    severity: IErrorLog['severity'] = 'high',
+    metadata?: Record<string, any>
+  ) {
     const errorLog: IErrorLog = {
       message: error.message,
       stack: error.stack,
       mfeName,
       timestamp: Date.now(),
       severity,
-      metadata
+      metadata,
     };
 
     this.logs.push(errorLog);
@@ -44,20 +49,33 @@ class ErrorLoggerService {
   }
 
   private notifyListeners(log: IErrorLog) {
-    this.listeners.forEach(listener => {
+    for (const listener of this.listeners) {
       try {
         listener(log);
       } catch (e) {
         console.error('Error in error logger listener:', e);
       }
-    });
+    }
   }
 
   private sendToMonitoring(log: IErrorLog) {
-    // TODO: Integrate with monitoring service (Sentry, DataDog, etc.)
+    // Log to console for development
     console.error(`[${log.mfeName}] ${log.severity.toUpperCase()}:`, log.message);
     if (log.stack) {
       console.error(log.stack);
+    }
+
+    // Send to Sentry if available (integrated via sharedServices)
+    if (typeof globalThis !== 'undefined' && (globalThis as any).sharedServices?.captureError) {
+      const error = new Error(log.message);
+      error.stack = log.stack;
+      (globalThis as any).sharedServices.captureError(error, {
+        level: log.severity,
+        tags: {
+          mfe: log.mfeName,
+        },
+        extra: log.metadata,
+      });
     }
   }
 

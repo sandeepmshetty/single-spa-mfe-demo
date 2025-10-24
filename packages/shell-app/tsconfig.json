@@ -10,15 +10,24 @@
     "allowSyntheticDefaultImports": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
-    "declaration": true,
+    "declaration": false,
     "outDir": "./dist",
     "rootDir": "./src",
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": false,
     "types": ["systemjs", "node", "webpack-env"],
+    "baseUrl": "./src",
     "paths": {
-      "@single-spa-demo/shared-library": ["../shared-library/src/index"]
+      "@single-spa-demo/shared-library": ["../shared-library/src/index"],
+      "@/types": ["types/index"],
+      "@/types/*": ["types/*"],
+      "@/core": ["core/index"],
+      "@/core/*": ["core/*"],
+      "@/ui": ["ui/index"],
+      "@/ui/*": ["ui/*"],
+      "@/services": ["services/index"],
+      "@/services/*": ["services/*"]
     }
   },
   "include": ["src/**/*", "types/**/*"],

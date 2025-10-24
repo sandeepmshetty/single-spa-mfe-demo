@@ -1,25 +1,25 @@
 /**
  * Authentication Service using Supabase
- * 
+ *
  * Provides authentication methods for all micro-frontends
  */
 
 import { supabase } from '../config/supabase';
 import type { User, Session, AuthError } from '@supabase/supabase-js';
 
-export interface AuthResponse {
+export interface IAuthResponse {
   user: User | null;
   session: Session | null;
   error: AuthError | Error | null;
 }
 
-export interface SignUpData {
+export interface ISignUpData {
   email: string;
   password: string;
   fullName?: string;
 }
 
-export interface SignInData {
+export interface ISignInData {
   email: string;
   password: string;
 }
@@ -31,7 +31,7 @@ class SupabaseAuthService {
   /**
    * Sign up a new user with email and password
    */
-  async signUp(data: SignUpData): Promise<AuthResponse> {
+  async signUp(data: ISignUpData): Promise<IAuthResponse> {
     try {
       const { data: authData, error } = await supabase.auth.signUp({
         email: data.email,
@@ -43,7 +43,9 @@ class SupabaseAuthService {
         },
       });
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       // Create user profile in profiles table
       // Commented out for now - profiles table needs to be created in Supabase
@@ -69,14 +71,16 @@ class SupabaseAuthService {
   /**
    * Sign in with email and password
    */
-  async signIn(data: SignInData): Promise<AuthResponse> {
+  async signIn(data: ISignInData): Promise<IAuthResponse> {
     try {
       const { data: authData, error } = await supabase.auth.signInWithPassword({
         email: data.email,
         password: data.password,
       });
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       return {
         user: authData.user,
@@ -101,11 +105,13 @@ class SupabaseAuthService {
       const { data, error } = await supabase.auth.signInWithOAuth({
         provider,
         options: {
-          redirectTo: typeof window !== 'undefined' ? window.location.origin : undefined,
+          redirectTo: globalThis.window?.location.origin,
         },
       });
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       return {
         data,
@@ -126,7 +132,9 @@ class SupabaseAuthService {
   async signOut(): Promise<{ error: AuthError | null }> {
     try {
       const { error } = await supabase.auth.signOut();
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       return { error: null };
     } catch (error) {
@@ -141,7 +149,9 @@ class SupabaseAuthService {
   async getSession(): Promise<Session | null> {
     try {
       const { data, error } = await supabase.auth.getSession();
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
       return data.session;
     } catch (error) {
       console.error('Get session error:', error);
@@ -155,7 +165,9 @@ class SupabaseAuthService {
   async getUser(): Promise<User | null> {
     try {
       const { data, error } = await supabase.auth.getUser();
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
       return data.user;
     } catch (error) {
       console.error('Get user error:', error);
@@ -166,12 +178,17 @@ class SupabaseAuthService {
   /**
    * Get current user with session (for AuthStateManager)
    */
-  async getCurrentUser(): Promise<AuthResponse> {
+  async getCurrentUser(): Promise<IAuthResponse> {
     try {
-      const { data: { session }, error: sessionError } = await supabase.auth.getSession();
-      
-      if (sessionError) throw sessionError;
-      
+      const {
+        data: { session },
+        error: sessionError,
+      } = await supabase.auth.getSession();
+
+      if (sessionError) {
+        throw sessionError;
+      }
+
       if (!session) {
         return {
           user: null,
@@ -198,10 +215,12 @@ class SupabaseAuthService {
   /**
    * Refresh session
    */
-  async refreshSession(): Promise<AuthResponse> {
+  async refreshSession(): Promise<IAuthResponse> {
     try {
       const { data, error } = await supabase.auth.refreshSession();
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       return {
         user: data.user,
@@ -224,12 +243,14 @@ class SupabaseAuthService {
   async resetPassword(email: string): Promise<{ error: AuthError | null }> {
     try {
       const { error } = await supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: typeof window !== 'undefined' 
-          ? `${window.location.origin}/reset-password` 
+        redirectTo: globalThis.window?.location.origin
+          ? `${globalThis.window.location.origin}/reset-password`
           : undefined,
       });
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
       return { error: null };
     } catch (error) {
       console.error('Reset password error:', error);
@@ -246,7 +267,9 @@ class SupabaseAuthService {
         password: newPassword,
       });
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
       return { error: null };
     } catch (error) {
       console.error('Update password error:', error);
@@ -260,7 +283,9 @@ class SupabaseAuthService {
   async updateProfile(updates: { fullName?: string; avatarUrl?: string }) {
     try {
       const user = await this.getUser();
-      if (!user) throw new Error('No user logged in');
+      if (!user) {
+        throw new Error('No user logged in');
+      }
 
       const { error } = await supabase
         .from('profiles')
@@ -271,7 +296,9 @@ class SupabaseAuthService {
         })
         .eq('id', user.id);
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
       return { error: null };
     } catch (error) {
       console.error('Update profile error:', error);
@@ -294,17 +321,17 @@ class SupabaseAuthService {
    */
   private async createUserProfile(userId: string, email: string, fullName?: string) {
     try {
-      const { error } = await supabase
-        .from('profiles')
-        .insert({
-          id: userId,
-          email,
-          full_name: fullName || null,
-          created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString(),
-        });
+      const { error } = await supabase.from('profiles').insert({
+        id: userId,
+        email,
+        full_name: fullName || null,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+      });
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
     } catch (error) {
       console.error('Create profile error:', error);
       // Don't throw - profile creation failure shouldn't break sign up

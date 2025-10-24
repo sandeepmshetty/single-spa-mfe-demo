@@ -1,20 +1,21 @@
 /**
  * Supabase Client Configuration
- * 
+ *
  * Provides a configured Supabase client for database operations and authentication.
  * This client is shared across all micro-frontends.
  */
 
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 
-// Environment variables
-const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
-const SUPABASE_ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
+// Environment variables - injected at build time via rollup replace plugin
+const SUPABASE_URL = process.env['NEXT_PUBLIC_SUPABASE_URL'] || '';
+const SUPABASE_ANON_KEY = process.env['NEXT_PUBLIC_SUPABASE_ANON_KEY'] || '';
 
 /**
  * Supabase client instance
  * Use this for all database and auth operations
  */
+// eslint-disable-next-line @typescript-eslint/naming-convention
 let _supabase: SupabaseClient | null = null;
 
 export const supabase: SupabaseClient = new Proxy({} as SupabaseClient, {
@@ -26,7 +27,7 @@ export const supabase: SupabaseClient = new Proxy({} as SupabaseClient, {
         console.error('Required: NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY');
         throw new Error('Supabase not configured');
       }
-      
+
       _supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
         auth: {
           autoRefreshToken: true,
@@ -45,13 +46,14 @@ export const supabase: SupabaseClient = new Proxy({} as SupabaseClient, {
       });
     }
     return _supabase[prop as keyof SupabaseClient];
-  }
+  },
 });
 
 /**
  * Database Tables Interface
  * Add your table types here for type-safe queries
  */
+// eslint-disable-next-line @typescript-eslint/naming-convention
 export interface Database {
   public: {
     Tables: {
@@ -119,7 +121,9 @@ export const isSupabaseConfigured = (): boolean => {
 export const getCurrentSession = async () => {
   try {
     const { data, error } = await supabase.auth.getSession();
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
     return data.session;
   } catch (error) {
     console.error('Error getting session:', error);
@@ -133,7 +137,9 @@ export const getCurrentSession = async () => {
 export const getCurrentUser = async () => {
   try {
     const { data, error } = await supabase.auth.getUser();
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
     return data.user;
   } catch (error) {
     console.error('Error getting user:', error);
@@ -147,7 +153,9 @@ export const getCurrentUser = async () => {
 export const signOut = async () => {
   try {
     const { error } = await supabase.auth.signOut();
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
     return { success: true };
   } catch (error) {
     console.error('Error signing out:', error);

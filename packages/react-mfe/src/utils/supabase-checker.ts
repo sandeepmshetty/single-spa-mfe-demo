@@ -5,9 +5,9 @@
 
 export const checkSupabaseConfig = async () => {
   const sharedServices = (globalThis as any).sharedServices;
-  
+
   console.group('🔍 Supabase Configuration Check');
-  
+
   // 1. Check if service is available
   if (!sharedServices?.supabaseAuthService) {
     console.error('❌ Supabase Auth Service not available!');
@@ -15,23 +15,23 @@ export const checkSupabaseConfig = async () => {
     console.groupEnd();
     return;
   }
-  
+
   console.log('✅ Supabase Auth Service is available');
-  
+
   // 2. Check environment variables
   const supabaseUrl = process.env.VITE_SUPABASE_URL || process.env.REACT_APP_SUPABASE_URL;
   const supabaseKey = process.env.VITE_SUPABASE_ANON_KEY || process.env.REACT_APP_SUPABASE_ANON_KEY;
-  
+
   console.log('Environment Variables:');
   console.log('  SUPABASE_URL:', supabaseUrl ? '✅ Set' : '❌ Missing');
   console.log('  SUPABASE_ANON_KEY:', supabaseKey ? '✅ Set' : '❌ Missing');
-  
+
   // 3. Test connection
   try {
     console.log('\n📡 Testing Supabase connection...');
     const { data, error } = await sharedServices.supabaseAuthService.getCurrentUser();
-    
-    if (error && error.message.includes('anonymous')) {
+
+    if (error?.message?.includes('anonymous')) {
       console.error('❌ Anonymous sign-ins are disabled in Supabase');
       console.log('\n📋 To fix this, go to Supabase Dashboard:');
       console.log('   1. Navigate to Authentication > Providers');
@@ -51,9 +51,9 @@ export const checkSupabaseConfig = async () => {
   } catch (err: any) {
     console.error('❌ Connection failed:', err.message);
   }
-  
+
   console.groupEnd();
-  
+
   // Return instructions
   return {
     supabaseUrl: supabaseUrl || 'NOT_SET',
@@ -67,12 +67,12 @@ To enable email authentication in Supabase:
    - Disable "Confirm email" (faster testing)
    - Or set up email templates and SMTP
 4. Save and try again
-    `.trim()
+    `.trim(),
   };
 };
 
 // Auto-run if in development
-if (typeof window !== 'undefined' && process.env.NODE_ENV === 'development') {
-  (window as any).checkSupabaseConfig = checkSupabaseConfig;
+if (globalThis.window !== undefined && process.env.NODE_ENV === 'development') {
+  (globalThis.window as any).checkSupabaseConfig = checkSupabaseConfig;
   console.log('💡 Run checkSupabaseConfig() in console to verify Supabase setup');
 }

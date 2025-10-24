@@ -10,17 +10,15 @@
       <div class="info-card">
         <h2>Product Catalog</h2>
         <p>
-          This is the Vue micro-frontend responsible for product listings,
-          shopping cart, and e-commerce functionality.
+          This is the Vue micro-frontend responsible for product listings, shopping cart, and
+          e-commerce functionality.
         </p>
       </div>
 
       <!-- Cross-MFE Communication Demo -->
       <div class="counter-demo">
         <h3>🔗 Cross-MFE Counter Display</h3>
-        <p class="demo-description">
-          This counter syncs with React & Angular MFEs in real-time!
-        </p>
+        <p class="demo-description">This counter syncs with React & Angular MFEs in real-time!</p>
 
         <div class="counter-display">
           <div class="counter-badge">{{ counter }}</div>
@@ -121,7 +119,7 @@ onUnmounted(() => {
   background-color: white;
   padding: 20px;
   border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   margin-bottom: 20px;
 }
 
@@ -139,7 +137,7 @@ onUnmounted(() => {
   background-color: #d4edda;
   padding: 25px;
   border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   border: 2px solid #42b883;
   text-align: center;
 }
@@ -170,7 +168,7 @@ onUnmounted(() => {
   background-color: white;
   border-radius: 10px;
   border: 3px solid #42b883;
-  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 .last-update {

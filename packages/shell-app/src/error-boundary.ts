@@ -26,15 +26,17 @@ export class MFEErrorBoundary {
 
   private handleError(error: Error): void {
     console.error(`[${this.config.name}] Failed to load:`, error);
-    
+
     if (this.config.onError) {
       this.config.onError(error);
     }
 
-    if (globalThis.sharedServices?.logger) {
-      globalThis.sharedServices.logger.error(`MFE Load Error: ${this.config.name}`, {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const sharedServices = (globalThis as any).sharedServices;
+    if (sharedServices?.logger) {
+      sharedServices.logger.error(`MFE Load Error: ${this.config.name}`, {
         error: error.message,
-        stack: error.stack
+        stack: error.stack,
       });
     }
   }
@@ -43,12 +45,14 @@ export class MFEErrorBoundary {
     return {
       bootstrap: () => Promise.resolve(),
       mount: (props: any) => {
-        this.container = props.domElement?.() || document.getElementById(`single-spa-application:${this.config.name}`);
-        
+        this.container =
+          props.domElement?.() ||
+          document.getElementById(`single-spa-application:${this.config.name}`);
+
         if (this.container) {
           this.container.innerHTML = this.config.fallbackUI || this.getDefaultFallbackUI();
         }
-        
+
         return Promise.resolve();
       },
       unmount: () => {
@@ -56,7 +60,7 @@ export class MFEErrorBoundary {
           this.container.innerHTML = '';
         }
         return Promise.resolve();
-      }
+      },
     };
   }
 

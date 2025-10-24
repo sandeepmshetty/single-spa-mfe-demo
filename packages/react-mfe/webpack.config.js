@@ -1,9 +1,15 @@
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const { ModuleFederationPlugin } = require('webpack').container;
+const webpack = require('webpack');
 const path = require('path');
+const dotenv = require('dotenv');
 
-module.exports = (env, argv) => {
+// Load environment variables from .env.local at the root
+const envPath = path.resolve(__dirname, '../../.env.local');
+const env = dotenv.config({ path: envPath }).parsed || {};
+
+module.exports = (argv) => {
   const isProduction = argv.mode === 'production';
   
   return {
@@ -72,6 +78,15 @@ module.exports = (env, argv) => {
         templateParameters: {
           isLocal: !isProduction,
         },
+      }),
+      
+      new webpack.DefinePlugin({
+        // NODE_ENV is automatically set by webpack based on mode
+        'process.env.NEXT_PUBLIC_SUPABASE_URL': JSON.stringify(env.NEXT_PUBLIC_SUPABASE_URL || ''),
+        'process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY': JSON.stringify(env.NEXT_PUBLIC_SUPABASE_ANON_KEY || ''),
+        'process.env.NEXT_PUBLIC_SENTRY_DSN': JSON.stringify(env.NEXT_PUBLIC_SENTRY_DSN || env.SENTRY_DSN || ''),
+        'process.env.NEXT_PUBLIC_POSTHOG_KEY': JSON.stringify(env.NEXT_PUBLIC_POSTHOG_KEY || ''),
+        'process.env.NEXT_PUBLIC_POSTHOG_HOST': JSON.stringify(env.NEXT_PUBLIC_POSTHOG_HOST || 'https://app.posthog.com'),
       }),
     ],
     

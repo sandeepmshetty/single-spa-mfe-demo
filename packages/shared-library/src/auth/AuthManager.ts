@@ -11,7 +11,7 @@ class AuthManager {
     user: null,
     token: null,
     refreshToken: null,
-    expiresAt: null
+    expiresAt: null,
   };
   private listeners: AuthListener[] = [];
   private readonly TOKEN_KEY = 'mfe_auth_token';
@@ -34,8 +34,8 @@ class AuthManager {
         theme: 'light',
         language: 'en',
         notifications: true,
-        timezone: 'UTC'
-      }
+        timezone: 'UTC',
+      },
     };
     const mockToken = `mock_token_${Date.now()}`;
     const mockRefreshToken = `mock_refresh_${Date.now()}`;
@@ -45,7 +45,7 @@ class AuthManager {
       user: mockUser,
       token: mockToken,
       refreshToken: mockRefreshToken,
-      expiresAt: Date.now() + (24 * 60 * 60 * 1000)
+      expiresAt: Date.now() + 24 * 60 * 60 * 1000,
     });
 
     this.saveToStorage();
@@ -58,7 +58,7 @@ class AuthManager {
       user: null,
       token: null,
       refreshToken: null,
-      expiresAt: null
+      expiresAt: null,
     });
     this.clearStorage();
   }
@@ -116,7 +116,7 @@ class AuthManager {
     if (typeof window === 'undefined') {
       return;
     }
-    
+
     try {
       if (this.state.token) {
         localStorage.setItem(this.TOKEN_KEY, this.state.token);
@@ -133,11 +133,11 @@ class AuthManager {
     if (typeof window === 'undefined') {
       return;
     }
-    
+
     try {
       const token = localStorage.getItem(this.TOKEN_KEY);
       const userStr = localStorage.getItem(this.USER_KEY);
-      
+
       if (token && userStr) {
         const user = JSON.parse(userStr);
         this.state = {
@@ -145,7 +145,7 @@ class AuthManager {
           user,
           token,
           refreshToken: null,
-          expiresAt: null
+          expiresAt: null,
         };
       }
     } catch (e) {
@@ -158,7 +158,7 @@ class AuthManager {
     if (typeof window === 'undefined') {
       return;
     }
-    
+
     try {
       localStorage.removeItem(this.TOKEN_KEY);
       localStorage.removeItem(this.USER_KEY);

@@ -1,9 +1,15 @@
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
+const webpack = require('webpack');
 const path = require('path');
+const dotenv = require('dotenv');
 
-module.exports = (env, argv) => {
+// Load environment variables from .env.local at the root
+const envPath = path.resolve(__dirname, '../../.env.local');
+const env = dotenv.config({ path: envPath }).parsed || {};
+
+module.exports = (argv) => {
   const isProduction = argv.mode === 'production';
   
   return {
@@ -38,6 +44,10 @@ module.exports = (env, argv) => {
       extensions: ['.tsx', '.ts', '.js'],
       alias: {
         '@': path.resolve(__dirname, 'src'),
+        '@/types': path.resolve(__dirname, 'src/types'),
+        '@/core': path.resolve(__dirname, 'src/core'),
+        '@/ui': path.resolve(__dirname, 'src/ui'),
+        '@/services': path.resolve(__dirname, 'src/services'),
       },
     },
     
@@ -69,10 +79,23 @@ module.exports = (env, argv) => {
             to: 'shared-library.js.map',
             noErrorOnMissing: true,
           },
+          {
+            from: path.resolve(__dirname, 'src/styles.css'),
+            to: 'styles.css',
+          },
+          {
+            from: path.resolve(__dirname, 'src/config'),
+            to: 'config',
+          },
         ],
       }),
-      new (require('webpack')).DefinePlugin({
-        'process.env.NODE_ENV': JSON.stringify(isProduction ? 'production' : 'development'),
+      new webpack.DefinePlugin({
+        // NODE_ENV is automatically set by webpack based on mode, don't redefine it
+        'process.env.NEXT_PUBLIC_SUPABASE_URL': JSON.stringify(env.NEXT_PUBLIC_SUPABASE_URL || ''),
+        'process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY': JSON.stringify(env.NEXT_PUBLIC_SUPABASE_ANON_KEY || ''),
+        'process.env.NEXT_PUBLIC_SENTRY_DSN': JSON.stringify(env.NEXT_PUBLIC_SENTRY_DSN || env.SENTRY_DSN || ''),
+        'process.env.NEXT_PUBLIC_POSTHOG_KEY': JSON.stringify(env.NEXT_PUBLIC_POSTHOG_KEY || ''),
+        'process.env.NEXT_PUBLIC_POSTHOG_HOST': JSON.stringify(env.NEXT_PUBLIC_POSTHOG_HOST || 'https://app.posthog.com'),
       }),
     ],
     

@@ -1,40 +1,40 @@
 import type { User, Session } from '@supabase/supabase-js';
 import type { EventBus } from '../event-bus';
 
-export interface AuthState {
+export interface IAuthState {
   user: User | null;
   session: Session | null;
   loading: boolean;
   isAuthenticated: boolean;
 }
 
-export type AuthStateChangeCallback = (state: AuthState) => void;
+export type AuthStateChangeCallback = (state: IAuthState) => void;
 
 /**
  * Centralized authentication state manager for cross-MFE session management.
- * 
+ *
  * Features:
  * - Single source of truth for auth state across all MFEs
  * - Session persistence via Supabase localStorage
  * - Automatic token refresh
  * - Cross-MFE state synchronization via EventBus
  * - Typed callbacks for auth state changes
- * 
+ *
  * Usage:
  * ```typescript
  * const authManager = new AuthStateManager(supabaseAuth, eventBus);
- * 
+ *
  * // Subscribe to auth changes
  * const unsubscribe = authManager.subscribe((state) => {
  *   console.log('Auth state:', state);
  * });
- * 
+ *
  * // Get current state
  * const currentState = authManager.getState();
  * ```
  */
 export class AuthStateManager {
-  private state: AuthState = {
+  private state: IAuthState = {
     user: null,
     session: null,
     loading: true,
@@ -61,8 +61,9 @@ export class AuthStateManager {
       return;
     }
 
+    // eslint-disable-next-line no-console
     console.log('🔐 Initializing AuthStateManager...');
-    
+
     try {
       // Restore session from localStorage
       await this.restoreSession();
@@ -77,6 +78,7 @@ export class AuthStateManager {
       this.setupTokenRefresh();
 
       this.isInitialized = true;
+      // eslint-disable-next-line no-console
       console.log('✅ AuthStateManager initialized');
     } catch (error) {
       console.error('❌ Failed to initialize AuthStateManager:', error);
@@ -90,7 +92,7 @@ export class AuthStateManager {
   private async restoreSession(): Promise<void> {
     try {
       const result = await this.supabaseAuthService.getCurrentUser();
-      
+
       if (result.user && result.session) {
         this.updateState({
           user: result.user,
@@ -98,9 +100,9 @@ export class AuthStateManager {
           loading: false,
           isAuthenticated: true,
         });
-        
+
         console.log('✅ Session restored:', result.user.email);
-        
+
         // Notify other MFEs
         this.emitAuthEvent('auth:session_restored', { user: result.user });
       } else {
@@ -212,14 +214,18 @@ export class AuthStateManager {
    * Setup automatic token refresh
    */
   private setupTokenRefresh(): void {
-    if (!this.state.session) return;
+    if (!this.state.session) {
+      return;
+    }
 
     const expiresAt = this.state.session.expires_at;
-    if (!expiresAt) return;
+    if (!expiresAt) {
+      return;
+    }
 
     // Refresh 5 minutes before expiry
-    const refreshTime = (expiresAt * 1000) - Date.now() - (5 * 60 * 1000);
-    
+    const refreshTime = expiresAt * 1000 - Date.now() - 5 * 60 * 1000;
+
     if (refreshTime > 0) {
       this.refreshTimer = setTimeout(async () => {
         console.log('🔄 Auto-refreshing token...');
@@ -258,18 +264,18 @@ export class AuthStateManager {
   /**
    * Update internal state and notify subscribers
    */
-  private updateState(updates: Partial<AuthState>): void {
+  private updateState(updates: Partial<IAuthState>): void {
     const prevState = this.state;
     this.state = { ...this.state, ...updates };
 
     // Notify all subscribers
-    this.subscribers.forEach(callback => {
+    for (const callback of this.subscribers) {
       try {
         callback(this.state);
       } catch (error) {
         console.error('Subscriber callback error:', error);
       }
-    });
+    }
 
     // Setup refresh timer if session changed
     if (updates.session && updates.session !== prevState.session) {
@@ -282,7 +288,9 @@ export class AuthStateManager {
    * Emit auth event via EventBus
    */
   private emitAuthEvent(type: string, payload: any): void {
-    if (!this.eventBus) return;
+    if (!this.eventBus) {
+      return;
+    }
 
     this.eventBus.emit(type as any, payload, 'auth-state-manager');
   }
@@ -290,7 +298,7 @@ export class AuthStateManager {
   /**
    * Get current auth state (synchronous)
    */
-  getState(): AuthState {
+  getState(): IAuthState {
     return { ...this.state };
   }
 
@@ -300,7 +308,7 @@ export class AuthStateManager {
    */
   subscribe(callback: AuthStateChangeCallback): () => void {
     this.subscribers.add(callback);
-    
+
     // Immediately call with current state
     callback(this.state);
 
@@ -334,13 +342,13 @@ export class AuthStateManager {
    * Wait for initialization to complete
    */
   private async waitForInitialization(): Promise<void> {
-    return new Promise((resolve) => {
+    return new Promise(resolve => {
       if (!this.state.loading) {
         resolve();
         return;
       }
 
-      const unsubscribe = this.subscribe((state) => {
+      const unsubscribe = this.subscribe(state => {
         if (!state.loading) {
           unsubscribe();
           resolve();

@@ -15,17 +15,17 @@ const getAuthService = () => (globalThis as any).sharedServices?.supabaseAuthSer
 
 /**
  * React hook for authentication state management
- * 
+ *
  * Subscribes to centralized AuthStateManager and provides:
  * - Current user and session
  * - Loading state
  * - Authentication status
  * - Login/logout/refresh methods
- * 
+ *
  * Usage:
  * ```tsx
  * const { user, isAuthenticated, loading, login, logout } = useAuth();
- * 
+ *
  * if (loading) return <div>Loading...</div>;
  * if (!isAuthenticated) return <LoginForm />;
  * return <Dashboard user={user} />;
@@ -44,20 +44,23 @@ export function useAuth() {
     let unsubscribe: (() => void) | undefined;
     let retryCount = 0;
     const maxRetries = 20; // 20 retries = 2 seconds max wait
-    
+
     const trySubscribe = () => {
       const authStateManager = getAuthStateManager();
-      
+
       if (!authStateManager) {
         retryCount++;
-        
+
         if (retryCount >= maxRetries) {
           console.error('⚠️ AuthStateManager not available after retries');
-          console.log('Available sharedServices:', Object.keys((globalThis as any).sharedServices || {}));
+          console.log(
+            'Available sharedServices:',
+            Object.keys((globalThis as any).sharedServices || {})
+          );
           setAuthState(prev => ({ ...prev, loading: false }));
           return;
         }
-        
+
         // Retry after 100ms
         console.log(`⏳ Waiting for AuthStateManager... (attempt ${retryCount}/${maxRetries})`);
         setTimeout(trySubscribe, 100);
@@ -68,7 +71,10 @@ export function useAuth() {
 
       // Subscribe to state changes
       unsubscribe = authStateManager.subscribe((newState: AuthState) => {
-        console.log('🔄 useAuth: Auth state updated:', { isAuthenticated: newState.isAuthenticated, user: newState.user?.email });
+        console.log('🔄 useAuth: Auth state updated:', {
+          isAuthenticated: newState.isAuthenticated,
+          user: newState.user?.email,
+        });
         setAuthState(newState);
       });
     };
@@ -92,7 +98,7 @@ export function useAuth() {
       }
 
       const result = await authService.signIn({ email, password });
-      
+
       if (result?.error) {
         throw result.error;
       }
@@ -156,7 +162,7 @@ export function useAuth() {
     session: authState.session,
     loading: authState.loading,
     isAuthenticated: authState.isAuthenticated,
-    
+
     // Methods
     login,
     logout,

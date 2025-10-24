@@ -60,12 +60,12 @@ export class Logger {
       message,
       data,
       timestamp: new Date().toISOString(),
-      source: this.source
+      source: this.source,
     };
 
     // Add to internal log store
     this.logs.push(logEntry);
-    
+
     // Trim logs if over limit
     if (this.logs.length > this.maxLogs) {
       this.logs = this.logs.slice(-this.maxLogs);
@@ -84,7 +84,7 @@ export class Logger {
   private outputToConsole(entry: ILogEntry): void {
     const timestamp = new Date(entry.timestamp).toLocaleTimeString();
     const prefix = `[${timestamp}] [${entry.source}] [${entry.level}]`;
-    
+
     switch (entry.level) {
       case 'DEBUG':
         console.debug(prefix, entry.message, entry.data || '');
@@ -107,19 +107,19 @@ export class Logger {
   private sendToExternalLogger(entry: ILogEntry): void {
     // In a real implementation, this would send logs to a service like
     // Datadog, LogRocket, Sentry, etc.
-    
+
     // For now, we'll just store in sessionStorage for debugging
     if (typeof window !== 'undefined' && entry.level === 'ERROR') {
       try {
         const errorLogs = sessionStorage.getItem('mfe-error-logs');
         const logs = errorLogs ? JSON.parse(errorLogs) : [];
         logs.push(entry);
-        
+
         // Keep only last 50 error logs
         if (logs.length > 50) {
           logs.splice(0, logs.length - 50);
         }
-        
+
         sessionStorage.setItem('mfe-error-logs', JSON.stringify(logs));
       } catch (error) {
         console.error('Failed to store error log:', error);
@@ -202,7 +202,10 @@ export class Logger {
 }
 
 // Create and export singleton instance
-export const logger = new Logger('shared-library', 
-  (typeof window !== 'undefined' && 
-   (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')) ? 'DEBUG' : 'INFO'
+export const logger = new Logger(
+  'shared-library',
+  typeof window !== 'undefined' &&
+  (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+    ? 'DEBUG'
+    : 'INFO'
 );

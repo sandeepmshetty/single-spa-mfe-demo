@@ -1,4 +1,6 @@
 // Type definitions for Node.js process in browser environment
+/* eslint-disable @typescript-eslint/naming-convention */
+/* eslint-disable no-var */
 declare namespace NodeJS {
   interface ProcessEnv {
     readonly NODE_ENV?: 'development' | 'production' | 'test';
@@ -12,6 +14,6 @@ declare namespace NodeJS {
   }
 }
 
-declare var process: {
+declare let process: {
   env: NodeJS.ProcessEnv;
 };

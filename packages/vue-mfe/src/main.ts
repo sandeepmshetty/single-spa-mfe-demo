@@ -23,7 +23,7 @@ const vueLifecycles = singleSpaVue({
       throw new Error('Vue MFE container element not found');
     }
     return element;
-  }
+  },
 });
 
 export const bootstrap = async (props: any) => {

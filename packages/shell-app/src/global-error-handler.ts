@@ -11,7 +11,7 @@ export class GlobalErrorHandler {
     }
 
     // Handle uncaught errors
-    globalThis.addEventListener('error', (event) => {
+    globalThis.addEventListener('error', event => {
       console.error('🚨 [Shell] Uncaught error:', event.error);
       // Log to API
       fetch('/api/errors/log', {
@@ -21,13 +21,13 @@ export class GlobalErrorHandler {
           message: event.message,
           stack: event.error?.stack,
           source: 'shell-app',
-          severity: 'high'
-        })
+          severity: 'high',
+        }),
       }).catch(console.error);
     });
 
     // Handle unhandled promise rejections
-    globalThis.addEventListener('unhandledrejection', (event) => {
+    globalThis.addEventListener('unhandledrejection', event => {
       console.error('🚨 [Shell] Unhandled rejection:', event.reason);
       fetch('/api/errors/log', {
         method: 'POST',
@@ -36,8 +36,8 @@ export class GlobalErrorHandler {
           message: event.reason?.message || 'Unhandled promise rejection',
           stack: event.reason?.stack,
           source: 'shell-app',
-          severity: 'high'
-        })
+          severity: 'high',
+        }),
       }).catch(console.error);
     });
 
@@ -52,8 +52,8 @@ export class GlobalErrorHandler {
             message: 'Single-SPA routing error',
             stack: event.detail.error.stack,
             source: 'shell-app',
-            severity: 'critical'
-          })
+            severity: 'critical',
+          }),
         }).catch(console.error);
       }
     });

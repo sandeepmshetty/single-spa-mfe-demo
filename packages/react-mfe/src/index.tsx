@@ -15,8 +15,11 @@ export async function bootstrap() {
 
 export async function mount(props: any) {
   console.log('React MFE mounting...', props);
-  console.log('Available DOM elements:', Array.from(document.querySelectorAll('[id*="single-spa"]')).map(el => el.id));
-  
+  console.log(
+    'Available DOM elements:',
+    Array.from(document.querySelectorAll('[id*="single-spa"]')).map(el => el.id)
+  );
+
   // Handle domElement as function or direct element
   let domElement;
   if (props.domElement) {
@@ -28,14 +31,16 @@ export async function mount(props: any) {
     domElement = document.getElementById('single-spa-application:react-mfe');
     console.log('Found by ID:', domElement);
   }
-  
+
   console.log('Final DOM element:', domElement, 'Type:', typeof domElement);
-  
+
   if (!domElement) {
     console.error('Available elements:', document.querySelectorAll('*[id]'));
-    throw new Error(`Dom element not found for React MFE. Checked: ${props.domElement ? 'props.domElement' : 'single-spa-application:react-mfe'}`);
+    throw new Error(
+      `Dom element not found for React MFE. Checked: ${props.domElement ? 'props.domElement' : 'single-spa-application:react-mfe'}`
+    );
   }
-  
+
   // Create React 18 root
   root = createRoot(domElement);
   root.render(
@@ -43,19 +48,19 @@ export async function mount(props: any) {
       <App {...props} />
     </ErrorBoundary>
   );
-  
+
   return Promise.resolve();
 }
 
 export async function unmount() {
   console.log('React MFE unmounting...');
-  
+
   performanceMonitor.cleanup();
-  
+
   if (root) {
     root.unmount();
     root = null;
   }
-  
+
   return Promise.resolve();
 }

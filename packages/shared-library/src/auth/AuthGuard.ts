@@ -39,8 +39,8 @@ export class AuthGuard {
     if (config.onUnauthorized) {
       config.onUnauthorized();
     } else if (config.redirectTo) {
-      if (typeof window !== 'undefined') {
-        window.location.href = config.redirectTo;
+      if (globalThis.window !== undefined) {
+        globalThis.window.location.href = config.redirectTo;
       }
     }
   }

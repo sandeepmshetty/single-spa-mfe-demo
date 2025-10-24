@@ -46,12 +46,12 @@ export class Utils {
     wait: number
   ): (...args: Parameters<T>) => void {
     let timeout: ReturnType<typeof setTimeout> | null = null;
-    
+
     return (...args: Parameters<T>) => {
       if (timeout) {
         clearTimeout(timeout);
       }
-      
+
       timeout = setTimeout(() => {
         func(...args);
       }, wait);
@@ -66,12 +66,12 @@ export class Utils {
     limit: number
   ): (...args: Parameters<T>) => void {
     let inThrottle = false;
-    
+
     return (...args: Parameters<T>) => {
       if (!inThrottle) {
         func(...args);
         inThrottle = true;
-        setTimeout(() => inThrottle = false, limit);
+        setTimeout(() => (inThrottle = false), limit);
       }
     };
   }
@@ -82,7 +82,7 @@ export class Utils {
   static formatCurrency(amount: number, currency = 'USD', locale = 'en-US'): string {
     return new Intl.NumberFormat(locale, {
       style: 'currency',
-      currency: currency
+      currency: currency,
     }).format(amount);
   }
 
@@ -94,9 +94,9 @@ export class Utils {
     const defaultOptions: Intl.DateTimeFormatOptions = {
       year: 'numeric',
       month: 'short',
-      day: 'numeric'
+      day: 'numeric',
     };
-    
+
     return dateObj.toLocaleDateString('en-US', options || defaultOptions);
   }
 
@@ -185,11 +185,11 @@ export class Utils {
     const urlString = url || (typeof window !== 'undefined' ? window.location.search : '');
     const params = new URLSearchParams(urlString);
     const result: Record<string, string> = {};
-    
+
     params.forEach((value, key) => {
       result[key] = value;
     });
-    
+
     return result;
   }
 
@@ -202,15 +202,15 @@ export class Utils {
     }
 
     const url = new URL(window.location.href);
-    
+
     if (replace) {
       url.search = '';
     }
-    
+
     Object.entries(params).forEach(([key, value]) => {
       url.searchParams.set(key, value);
     });
-    
+
     window.history.pushState({}, '', url.toString());
   }
 
@@ -259,11 +259,7 @@ export class Utils {
   /**
    * Retry function with exponential backoff
    */
-  static async retry<T>(
-    fn: () => Promise<T>,
-    maxAttempts = 3,
-    baseDelay = 1000
-  ): Promise<T> {
+  static async retry<T>(fn: () => Promise<T>, maxAttempts = 3, baseDelay = 1000): Promise<T> {
     let lastError: Error;
 
     for (let attempt = 1; attempt <= maxAttempts; attempt++) {
@@ -271,7 +267,7 @@ export class Utils {
         return await fn();
       } catch (error) {
         lastError = error as Error;
-        
+
         if (attempt === maxAttempts) {
           throw lastError;
         }
@@ -292,7 +288,7 @@ export class Utils {
       promise,
       new Promise<T>((_, reject) => {
         setTimeout(() => reject(new Error('Operation timed out')), ms);
-      })
+      }),
     ]);
   }
 

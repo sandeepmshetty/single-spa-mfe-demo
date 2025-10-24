@@ -9,16 +9,13 @@ import { singleSpaPropsSubject } from './single-spa/single-spa-props';
 const lifecycles = singleSpaAngular({
   bootstrapFunction: singleSpaProps => {
     singleSpaPropsSubject.next(singleSpaProps);
-    
+
     // Merge single-spa providers with app config
     const mergedConfig = {
       ...appConfig,
-      providers: [
-        ...(appConfig.providers || []),
-        ...getSingleSpaExtraProviders()
-      ]
+      providers: [...(appConfig.providers || []), ...getSingleSpaExtraProviders()],
     };
-    
+
     return bootstrapApplication(AppComponent, mergedConfig);
   },
   template: '<app-root />',
