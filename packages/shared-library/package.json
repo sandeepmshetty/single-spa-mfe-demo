@@ -1,0 +1,53 @@
+{
+  "name": "@single-spa-demo/shared-library",
+  "version": "1.0.0",
+  "description": "Shared utilities, components, and communication layer for Single-SPA micro-frontends",
+  "main": "dist/shared.js",
+  "module": "dist/shared.esm.js",
+  "types": "dist/types/index.d.ts",
+  "scripts": {
+    "dev": "rollup -c -w",
+    "build": "rollup -c && npm run build:types",
+    "build:types": "tsc --emitDeclarationOnly --outDir dist/types",
+    "test": "jest",
+    "lint": "eslint src --ext .ts,.js",
+    "clean": "node ../../scripts/rm-paths.cjs dist",
+    "prepublishOnly": "npm run build"
+  },
+  "files": [
+    "dist"
+  ],
+  "dependencies": {
+    "rxjs": "^7.8.1"
+  },
+  "devDependencies": {
+    "@rollup/plugin-commonjs": "^25.0.5",
+    "@rollup/plugin-node-resolve": "^15.2.3",
+    "@rollup/plugin-typescript": "^11.1.5",
+    "@types/jest": "^29.5.6",
+    "@types/node": "^20.8.7",
+    "jest": "^29.7.0",
+    "rollup": "^4.1.4",
+    "typescript": "^5.2.2",
+    "eslint": "^8.52.0",
+    "@typescript-eslint/eslint-plugin": "^6.9.0",
+    "@typescript-eslint/parser": "^6.9.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/your-username/single-spa-mfe-demo.git",
+    "directory": "packages/shared-library"
+  },
+  "keywords": [
+    "single-spa",
+    "micro-frontend",
+    "shared-library",
+    "event-bus",
+    "utilities"
+  ],
+  "author": "Your Name",
+  "license": "MIT"
+}

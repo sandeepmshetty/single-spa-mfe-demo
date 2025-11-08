@@ -1,0 +1,246 @@
+.analytics-container {
+  padding: 24px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.analytics-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  
+  h1 {
+    margin: 0;
+    color: #333;
+    font-weight: 500;
+  }
+}
+
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 48px;
+  
+  p {
+    margin-top: 16px;
+    color: #666;
+  }
+}
+
+.analytics-content {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+.metrics-section {
+  h2 {
+    margin-bottom: 16px;
+    color: #333;
+    font-weight: 500;
+  }
+}
+
+.user-metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 24px;
+  margin-bottom: 32px;
+}
+
+.metric-card {
+  transition: all 0.3s ease;
+  border-radius: 16px;
+  box-shadow: var(--shadow-md);
+  border: 1px solid var(--border-color);
+  
+  &:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-lg);
+  }
+  
+  &.active {
+    border-left: 4px solid var(--success-color);
+    background: linear-gradient(135deg, rgba(72, 187, 120, 0.03), rgba(72, 187, 120, 0.01));
+  }
+  
+  &.new {
+    border-left: 4px solid var(--primary-color);
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.03), rgba(102, 126, 234, 0.01));
+  }
+  
+  &.returning {
+    border-left: 4px solid var(--warn-color);
+    background: linear-gradient(135deg, rgba(237, 137, 54, 0.03), rgba(237, 137, 54, 0.01));
+  }
+  
+  mat-card-content {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 20px !important;
+  }
+  
+  .metric-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 56px;
+    height: 56px;
+    border-radius: 16px;
+    background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+    box-shadow: var(--shadow-sm);
+    
+    mat-icon {
+      color: white;
+      font-size: 28px;
+      width: 28px;
+      height: 28px;
+    }
+  }
+  
+  .metric-info {
+    flex: 1;
+  }
+  
+  .metric-value {
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 6px;
+    line-height: 1;
+  }
+  
+  .metric-label {
+    font-size: 13px;
+    color: var(--text-secondary);
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+}
+
+.analytics-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.page-views-card {
+  .page-views-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  
+  .page-view-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px;
+    background: #f9f9f9;
+    border-radius: 8px;
+    
+    .page-info {
+      .page-name {
+        font-weight: 500;
+        color: #333;
+        margin-bottom: 4px;
+      }
+      
+      .page-views {
+        font-size: 14px;
+        color: #666;
+      }
+    }
+    
+    mat-chip {
+      &.positive {
+        background-color: #e8f5e8;
+        color: #2e7d2e;
+      }
+      
+      &.negative {
+        background-color: #ffebee;
+        color: #c62828;
+      }
+    }
+  }
+}
+
+.chart-card {
+  .chart-placeholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 280px;
+    background: #f5f5f5;
+    border-radius: 8px;
+    
+    mat-icon {
+      font-size: 48px;
+      width: 48px;
+      height: 48px;
+      color: #ccc;
+      margin-bottom: 16px;
+    }
+    
+    p {
+      margin: 4px 0;
+      color: #666;
+      
+      &.chart-note {
+        font-size: 12px;
+        color: #999;
+      }
+    }
+  }
+}
+
+.events-card {
+  .events-info {
+    ul {
+      margin: 16px 0;
+      padding-left: 20px;
+      
+      li {
+        margin-bottom: 8px;
+        color: #666;
+      }
+    }
+    
+    .note {
+      background: #e3f2fd;
+      padding: 12px;
+      border-radius: 4px;
+      color: #1976d2;
+      font-size: 14px;
+      margin-top: 16px;
+    }
+  }
+}
+
+// Responsive design
+@media (max-width: 768px) {
+  .analytics-container {
+    padding: 16px;
+  }
+  
+  .analytics-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+  
+  .user-metrics-grid {
+    grid-template-columns: 1fr;
+  }
+}

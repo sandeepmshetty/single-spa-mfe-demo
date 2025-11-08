@@ -1,0 +1,126 @@
+<div class="dashboard-container">
+  <!-- Header -->
+  <div class="dashboard-header">
+    <h1>📈 Dashboard Overview</h1>
+    <button class="btn btn-primary" (click)="refreshData()" [disabled]="loading">
+      🔄 {{ loading ? 'Loading...' : 'Refresh' }}
+    </button>
+  </div>
+
+  <!-- Loading Spinner -->
+  <div class="loading-container" *ngIf="loading">
+    <div class="spinner">⏳</div>
+    <p>Loading dashboard data...</p>
+  </div>
+
+  <!-- Dashboard Content -->
+  <div class="dashboard-content" *ngIf="!loading">
+    <!-- Cross-MFE Counter Demo -->
+    <div class="counter-demo-card">
+      <div class="card-header">
+        <h3>🔗 Cross-MFE Communication Demo</h3>
+      </div>
+      <div class="card-content">
+        <p class="demo-description">
+          This counter syncs with React & Vue MFEs in real-time!
+        </p>
+        <div class="counter-display">
+          <div class="counter-badge">{{ counter }}</div>
+        </div>
+        <p class="last-update" *ngIf="lastSource">
+          Last updated by: <strong>{{ lastSource }}</strong>
+        </p>
+        <div class="action-hint">
+          💡 Go to React MFE to change the counter and watch it update here!
+        </div>
+      </div>
+    </div>
+
+    <!-- Metrics Cards -->
+    <div class="metrics-grid">
+      <div *ngFor="let metric of metrics" class="metric-card" [ngClass]="metric.color">
+        <div class="metric-header">
+          <span class="metric-icon">{{ getMetricIcon(metric.icon) }}</span>
+          <span class="metric-title">{{ metric.title }}</span>
+        </div>
+        <div class="metric-value">{{ metric.value }}</div>
+      </div>
+    </div>
+
+    <!-- Charts and Activities Row -->
+    <div class="dashboard-row">
+      <!-- Chart Section -->
+      <div class="card chart-card">
+        <div class="card-header">
+          <h3>📊 Performance Overview</h3>
+        </div>
+        <div class="card-content">
+          <div class="chart-placeholder">
+            <div class="chart-icon">📈</div>
+            <p>Chart visualization would go here</p>
+            <p class="chart-note">Integration with Chart.js or D3.js</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Recent Activities -->
+      <div class="card activities-card">
+        <div class="card-header">
+          <h3>🔔 Recent Activities</h3>
+        </div>
+        <div class="card-content">
+          <div class="activities-list">
+            <div *ngFor="let activity of recentActivities" class="activity-item">
+              <span class="activity-icon">{{ getActivityIcon(activity.icon) }}</span>
+              <div class="activity-details">
+                <div class="activity-action">{{ activity.action }}</div>
+                <div class="activity-time">{{ activity.time }}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Additional Dashboard Widgets -->
+    <div class="dashboard-row">
+      <div class="card widget-card">
+        <div class="card-header">
+          <h3>⚡ Quick Actions</h3>
+        </div>
+        <div class="card-content">
+          <div class="quick-actions">
+            <button class="btn btn-outline">➕ Add User</button>
+            <button class="btn btn-outline">⚙️ Settings</button>
+            <button class="btn btn-outline">📋 Reports</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="card status-card">
+        <div class="card-header">
+          <h3>🖥️ System Status</h3>
+        </div>
+        <div class="card-content">
+          <div class="status-items">
+            <div class="status-item">
+              <span class="status-dot online">●</span>
+              <span class="status-name">API Server</span>
+              <span class="status-badge online">Online</span>
+            </div>
+            <div class="status-item">
+              <span class="status-dot online">●</span>
+              <span class="status-name">Database</span>
+              <span class="status-badge online">Online</span>
+            </div>
+            <div class="status-item">
+              <span class="status-dot warning">●</span>
+              <span class="status-name">Cache</span>
+              <span class="status-badge warning">Slow</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

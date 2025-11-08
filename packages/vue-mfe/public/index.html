@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vue MFE - Product Catalog</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+                'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+                sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+    </style>
+</head>
+<body>
+    <noscript>You need to enable JavaScript to run this app.</noscript>
+    <div id="app"></div>
+    
+    <!-- UMD module loading for standalone mode -->
+    <script src="https://cdn.jsdelivr.net/npm/vue@3/dist/vue.global.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/single-spa@6/lib/umd/single-spa.min.js"></script>
+    <script src="vue-mfe.js"></script>
+    
+    <script>
+        // UMD module should be available globally
+        if (window['@single-spa-demo/vue-mfe']) {
+            const module = window['@single-spa-demo/vue-mfe'];
+            console.log('Vue MFE module loaded:', module);
+            
+            // Create mock Single-SPA props for standalone mode
+            const props = {
+                name: '@single-spa-demo/vue-mfe',
+                singleSpa: true,
+                mountParcel: () => {},
+                domElement: document.getElementById('app')
+            };
+            
+            // Bootstrap and mount
+            module.bootstrap(props)
+                .then(() => module.mount(props))
+                .then(() => console.log('Vue MFE mounted successfully'))
+                .catch(err => console.error('Failed to mount Vue MFE:', err));
+        } else {
+            console.error('Vue MFE module not found in global scope');
+        }
+    </script>
+</body>
+</html>
