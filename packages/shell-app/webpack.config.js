@@ -100,7 +100,7 @@ module.exports = (argv) => {
     ],
     
     devServer: {
-      port: 9999,
+      port: 9000,
       historyApiFallback: true,
       hot: true,
       open: true,

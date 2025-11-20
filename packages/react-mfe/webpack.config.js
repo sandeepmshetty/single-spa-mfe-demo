@@ -15,6 +15,7 @@ module.exports = (argv) => {
   return {
     entry: './src/index.tsx',
     mode: argv.mode || 'development',
+    target: ['web', 'es2020'],
     
     module: {
       rules: [
@@ -30,7 +31,12 @@ module.exports = (argv) => {
             loader: 'babel-loader',
             options: {
               presets: [
-                '@babel/preset-env',
+                ['@babel/preset-env', {
+                  targets: {
+                    browsers: ['last 2 versions', 'not dead', 'not ie 11']
+                  },
+                  modules: false
+                }],
                 '@babel/preset-react',
                 '@babel/preset-typescript',
               ],
@@ -63,10 +69,21 @@ module.exports = (argv) => {
       filename: 'react-mfe.js',
       path: path.resolve(__dirname, 'dist'),
       publicPath: '/',
-      library: '@single-spa-demo/react-mfe',
-      libraryTarget: 'umd',
-      globalObject: 'this',
+      library: {
+        name: '@single-spa-demo/react-mfe',
+        type: 'system',
+      },
       clean: true,
+      environment: {
+        arrowFunction: true,
+        const: true,
+        destructuring: true,
+        dynamicImport: true,
+        module: true,
+        optionalChaining: true,
+        templateLiteral: true,
+        asyncFunction: true,
+      },
     },
     
     plugins: [
@@ -105,6 +122,7 @@ module.exports = (argv) => {
     },
     
     externals: {
+      // Externalize everything for shell integration with SystemJS import map names
       '@single-spa-demo/shared-library': '@single-spa-demo/shared-library',
       'react': 'react',
       'react-dom': 'react-dom',

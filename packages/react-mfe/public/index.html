@@ -25,38 +25,41 @@
     <div id="root"></div>
     
     <% if (isLocal) { %>
-    <!-- UMD module loading for standalone mode -->
-    <script src="https://cdn.jsdelivr.net/npm/react@18/umd/react.development.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/react-dom@18/umd/react-dom.development.js"></script>
-    <script src="https://unpkg.com/single-spa@5.9.5/lib/system/single-spa.min.js"></script>
-    <% } %>
-    
-    <script src="react-mfe.js"></script>
-    
-    <% if (isLocal) { %>
+    <!-- SystemJS Import Map -->
+    <script type="systemjs-importmap">
+    {
+        "imports": {
+            "react": "https://cdn.jsdelivr.net/npm/react@18.2.0/umd/react.development.js",
+            "react-dom": "https://cdn.jsdelivr.net/npm/react-dom@18.2.0/umd/react-dom.development.js",
+            "rxjs": "https://cdn.jsdelivr.net/npm/rxjs@7.8.1/dist/bundles/rxjs.umd.min.js",
+            "@single-spa-demo/shared-library": "http://localhost:9000/shared-library.js",
+            "@single-spa-demo/react-mfe": "/react-mfe.js"
+        }
+    }
+    </script>
+
+    <!-- SystemJS -->
+    <script src="https://cdn.jsdelivr.net/npm/systemjs@6.14.2/dist/system.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/systemjs@6.14.2/dist/extras/amd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/systemjs@6.14.2/dist/extras/named-exports.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/systemjs@6.14.2/dist/extras/named-register.min.js"></script>
+
     <script>
-        // UMD module should be available globally for standalone mode
-        if (window['@single-spa-demo/react-mfe']) {
-            const module = window['@single-spa-demo/react-mfe'];
-            console.log('React MFE module loaded:', module);
-            
-            // Create mock Single-SPA props for standalone mode
+        System.import('@single-spa-demo/react-mfe').then(module => {
             const props = {
                 name: '@single-spa-demo/react-mfe',
                 singleSpa: true,
                 mountParcel: () => {},
-                domElement: document.getElementById('root')
+                domElement: document.getElementById('root'),
+                basename: '/'
             };
-            
-            // Bootstrap and mount
-            module.bootstrap(props)
-                .then(() => module.mount(props))
-                .then(() => console.log('React MFE mounted successfully'))
-                .catch(err => console.error('Failed to mount React MFE:', err));
-        } else {
-            console.error('React MFE module not found in global scope');
-        }
+            module.bootstrap(props).then(() => {
+                module.mount(props);
+            });
+        }).catch(err => console.error(err));
     </script>
+    <% } else { %>
+    <script src="react-mfe.js"></script>
     <% } %>
 </body>
 </html>

@@ -79,9 +79,7 @@ setupGlobalServices(authStateManager);
 
 // Initialize auth state (browser environment)
 if (globalThis.window !== undefined) {
-  try {
-    await initializeAuthState(authStateManager);
-  } catch (error) {
+  initializeAuthState(authStateManager).catch(error => {
     logger.error('Failed to initialize auth state:', error as Error);
-  }
+  });
 }

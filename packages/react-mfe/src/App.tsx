@@ -5,11 +5,13 @@ import { ProtectedRoute } from './components/ProtectedRoute';
 import { AuthPage } from './pages/AuthPage';
 import { Dashboard } from './pages/Dashboard';
 
-const App: React.FC = () => {
+const App: React.FC<{ basename?: string }> = ({ basename }) => {
+  const routerBasename = basename || '/users';
+
   return (
     <>
       <GlobalStyles />
-      <BrowserRouter basename="/users">
+      <BrowserRouter basename={routerBasename}>
         <Routes>
           <Route path="/login" element={<AuthPage />} />
           <Route
