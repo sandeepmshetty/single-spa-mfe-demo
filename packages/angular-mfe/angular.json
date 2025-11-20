@@ -31,7 +31,12 @@
             "inlineStyleLanguage": "scss",
             "assets": [
               "src/favicon.ico",
-              "src/assets"
+              "src/assets",
+              {
+                "glob": "shared-library.js",
+                "input": "../shared-library/dist",
+                "output": "/"
+              }
             ],
             "styles": [
               "src/styles.scss"

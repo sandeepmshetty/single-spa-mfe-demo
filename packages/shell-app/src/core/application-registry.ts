@@ -94,6 +94,11 @@ export class ApplicationRegistry {
       importName: '@single-spa-demo/vue-mfe',
       activeWhen: (location: Location) => location.pathname.startsWith('/products'),
       errorMessage: 'Failed to load Products application',
+      customProps: () => ({
+        domElement: document.getElementById('single-spa-application:vue-mfe'),
+        base: '/products',
+        ...this.sharedServices,
+      }),
     });
 
     // Angular MFE - Dashboard

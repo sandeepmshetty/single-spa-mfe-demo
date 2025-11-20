@@ -15,11 +15,19 @@ const vueLifecycles = singleSpaVue({
     app.use(router);
   },
   // Use domElementGetter to get the container element
-  domElementGetter: () => {
-    // Try to get from props first, then fallback to ID
+  domElementGetter: (props: any) => {
+    // Try to get from props first
+    if (props.domElement) {
+      return props.domElement;
+    }
+    
+    // Fallback to ID
     const element = document.getElementById('single-spa-application:vue-mfe');
-    console.log('Vue MFE - DOM element:', element);
     if (!element) {
+      // In standalone mode, we might use a different ID
+      const standaloneElement = document.getElementById('app');
+      if (standaloneElement) return standaloneElement;
+      
       throw new Error('Vue MFE container element not found');
     }
     return element;

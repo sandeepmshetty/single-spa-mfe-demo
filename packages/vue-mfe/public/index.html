@@ -19,33 +19,41 @@
     <noscript>You need to enable JavaScript to run this app.</noscript>
     <div id="app"></div>
     
-    <!-- UMD module loading for standalone mode -->
-    <script src="https://cdn.jsdelivr.net/npm/vue@3/dist/vue.global.js"></script>
-    <script src="https://unpkg.com/single-spa@5.9.5/lib/system/single-spa.min.js"></script>
-    <script src="vue-mfe.js"></script>
-    
+    <% if (isLocal) { %>
+    <!-- SystemJS Import Map -->
+    <script type="systemjs-importmap">
+    {
+        "imports": {
+            "vue": "https://cdn.jsdelivr.net/npm/vue@3.3.7/dist/vue.global.prod.js",
+            "rxjs": "https://cdn.jsdelivr.net/npm/rxjs@7.8.1/dist/bundles/rxjs.umd.min.js",
+            "@single-spa-demo/shared-library": "/shared-library.js",
+            "@single-spa-demo/vue-mfe": "/vue-mfe.js"
+        }
+    }
+    </script>
+
+    <!-- SystemJS -->
+    <script src="https://cdn.jsdelivr.net/npm/systemjs@6.14.2/dist/system.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/systemjs@6.14.2/dist/extras/amd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/systemjs@6.14.2/dist/extras/named-exports.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/systemjs@6.14.2/dist/extras/named-register.min.js"></script>
+
     <script>
-        // UMD module should be available globally
-        if (window['@single-spa-demo/vue-mfe']) {
-            const module = window['@single-spa-demo/vue-mfe'];
-            console.log('Vue MFE module loaded:', module);
-            
-            // Create mock Single-SPA props for standalone mode
+        System.import('@single-spa-demo/vue-mfe').then(module => {
             const props = {
                 name: '@single-spa-demo/vue-mfe',
                 singleSpa: true,
                 mountParcel: () => {},
-                domElement: document.getElementById('app')
+                domElement: document.getElementById('app'),
+                base: '/'
             };
-            
-            // Bootstrap and mount
-            module.bootstrap(props)
-                .then(() => module.mount(props))
-                .then(() => console.log('Vue MFE mounted successfully'))
-                .catch(err => console.error('Failed to mount Vue MFE:', err));
-        } else {
-            console.error('Vue MFE module not found in global scope');
-        }
+            module.bootstrap(props).then(() => {
+                module.mount(props);
+            });
+        }).catch(err => console.error(err));
     </script>
+    <% } else { %>
+    <script src="vue-mfe.js"></script>
+    <% } %>
 </body>
 </html>

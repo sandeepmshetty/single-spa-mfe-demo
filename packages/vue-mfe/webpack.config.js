@@ -78,9 +78,10 @@ module.exports = (argv) => {
       filename: 'vue-mfe.js',
       path: path.resolve(__dirname, 'dist'),
       publicPath: '/',
-      library: '@single-spa-demo/vue-mfe',
-      libraryTarget: 'umd',
-      globalObject: 'this',
+      library: {
+        name: '@single-spa-demo/vue-mfe',
+        type: 'system',
+      },
       clean: true,
     },
     
@@ -117,16 +118,20 @@ module.exports = (argv) => {
         'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, PATCH, OPTIONS',
         'Access-Control-Allow-Headers': 'X-Requested-With, content-type, Authorization',
       },
-      static: {
-        directory: path.join(__dirname, 'dist'),
-      },
+      static: [
+        {
+          directory: path.join(__dirname, 'dist'),
+        },
+        {
+          directory: path.resolve(__dirname, '../shared-library/dist'),
+          publicPath: '/',
+        },
+      ],
     },
     
-    externals: isProduction ? {
+    externals: {
       '@single-spa-demo/shared-library': '@single-spa-demo/shared-library',
       'vue': 'vue',
-    } : {
-      '@single-spa-demo/shared-library': '@single-spa-demo/shared-library',
     },
     
     optimization: {

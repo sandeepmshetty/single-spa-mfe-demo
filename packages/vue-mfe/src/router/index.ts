@@ -8,9 +8,11 @@ const routes = [
   },
 ];
 
-const router = createRouter({
-  history: createWebHistory(),
-  routes,
-});
+export function createRouterInstance(base: string = '/') {
+  return createRouter({
+    history: createWebHistory(base),
+    routes,
+  });
+}
 
-export default router;
+export default createRouterInstance();

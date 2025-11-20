@@ -6,8 +6,53 @@
   <base href="/">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="icon" type="image/x-icon" href="favicon.ico">
+
+  <!-- SystemJS Import Map -->
+  <script type="systemjs-importmap">
+    {
+      "imports": {
+        "@single-spa-demo/shared-library": "/shared-library.js",
+        "@single-spa-demo/angular-mfe": "/main.js",
+        "rxjs": "https://cdn.jsdelivr.net/npm/rxjs@7.8.0/dist/bundles/rxjs.umd.min.js"
+      }
+    }
+  </script>
+
+  <!-- Zone.js (Required for Angular) -->
+  <script src="https://cdn.jsdelivr.net/npm/zone.js@0.14.3/bundles/zone.umd.min.js"></script>
+
+  <!-- Single-SPA (Required as external) -->
+  <script src="https://cdn.jsdelivr.net/npm/single-spa@5.9.5/lib/umd/single-spa.min.js"></script>
+
+  <!-- SystemJS -->
+  <script src="https://cdn.jsdelivr.net/npm/systemjs@6.14.2/dist/system.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/systemjs@6.14.2/dist/extras/amd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/systemjs@6.14.2/dist/extras/named-register.min.js"></script>
 </head>
 <body>
-  <app-root></app-root>
+  <div id="single-spa-application:angular-mfe"></div>
+  
+  <script>
+    // Wait for the main.js (injected by Angular CLI) to register the module
+    window.addEventListener('load', () => {
+      System.import('@single-spa-demo/angular-mfe').then(module => {
+        console.log('Angular MFE loaded:', module);
+        const props = {
+          name: '@single-spa-demo/angular-mfe',
+          singleSpa: true,
+          mountParcel: () => {},
+          // Angular MFE will append <app-root> to this element
+          domElement: document.getElementById('single-spa-application:angular-mfe')
+        };
+        
+        // We need to manually trigger the lifecycle
+        if (module.bootstrap && module.mount) {
+            module.bootstrap(props).then(() => {
+                return module.mount(props);
+            });
+        }
+      }).catch(err => console.error(err));
+    });
+  </script>
 </body>
 </html>
