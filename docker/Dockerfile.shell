@@ -1,5 +1,8 @@
 FROM node:18-alpine
 
+# Copy scripts to parent directory (won't be overridden by volume mount)
+COPY scripts /scripts
+
 WORKDIR /app
 
 # Install dependencies

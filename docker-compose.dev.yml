@@ -10,6 +10,7 @@ services:
       - "9000:9000"
     volumes:
       - ./packages/shell-app:/app
+      - ./scripts:/scripts
       - /app/node_modules
     environment:
       - NODE_ENV=development
@@ -30,6 +31,7 @@ services:
       - "8081:8081"
     volumes:
       - ./packages/react-mfe:/app
+      - ./scripts:/scripts
       - /app/node_modules
     environment:
       - NODE_ENV=development
@@ -47,6 +49,7 @@ services:
       - "8082:8082"
     volumes:
       - ./packages/vue-mfe:/app
+      - ./scripts:/scripts
       - /app/node_modules
     environment:
       - NODE_ENV=development
@@ -64,6 +67,7 @@ services:
       - "8083:8083"
     volumes:
       - ./packages/angular-mfe:/app
+      - ./scripts:/scripts
       - /app/node_modules
     environment:
       - NODE_ENV=development
@@ -81,6 +85,7 @@ services:
       - "8084:8084"
     volumes:
       - ./packages/shared-library:/app
+      - ./scripts:/scripts
       - /app/node_modules
     environment:
       - NODE_ENV=development

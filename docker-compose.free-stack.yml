@@ -30,7 +30,24 @@ services:
       - mfe-network
 
   # ═══════════════════════════════════════════════════════════
-  # PgAdmin - Database Management UI (Open Source)
+  # Adminer - Lightweight Database Management UI (Open Source)
+  # ═══════════════════════════════════════════════════════════
+  adminer:
+    image: adminer:latest
+    container_name: mfe-adminer
+    environment:
+      ADMINER_DEFAULT_SERVER: postgres
+      ADMINER_DESIGN: nette
+    ports:
+      - "8081:8080"
+    depends_on:
+      - postgres
+    restart: unless-stopped
+    networks:
+      - mfe-network
+
+  # ═══════════════════════════════════════════════════════════
+  # PgAdmin - Advanced Database Management UI (Open Source)
   # ═══════════════════════════════════════════════════════════
   pgadmin:
     image: dpage/pgadmin4:latest

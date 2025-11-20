@@ -5,9 +5,18 @@ FROM node:18-alpine AS build
 
 WORKDIR /app
 
-# Copy package files
+# Copy root package files
 COPY package*.json ./
-COPY packages/*/package*.json ./packages/*/
+
+# Create workspace structure and copy all package.json files
+COPY packages/shell-app/package*.json ./packages/shell-app/
+COPY packages/react-mfe/package*.json ./packages/react-mfe/
+COPY packages/vue-mfe/package*.json ./packages/vue-mfe/
+COPY packages/angular-mfe/package*.json ./packages/angular-mfe/
+COPY packages/shared-library/package*.json ./packages/shared-library/
+
+# Copy scripts needed for postinstall
+COPY scripts ./scripts
 
 # Install dependencies
 RUN npm ci

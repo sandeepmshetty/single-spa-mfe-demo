@@ -6,8 +6,8 @@ const webpack = require('webpack');
 const path = require('path');
 const dotenv = require('dotenv');
 
-// Load environment variables from .env.local at the root
-const envPath = path.resolve(__dirname, '../../.env.local');
+// Load environment variables from .env at the root
+const envPath = path.resolve(__dirname, '../../.env');
 const env = dotenv.config({ path: envPath }).parsed || {};
 
 module.exports = (argv) => {

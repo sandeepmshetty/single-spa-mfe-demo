@@ -6,12 +6,12 @@ import { defineConfig } from 'rollup';
 import dotenv from 'dotenv';
 import path from 'path';
 
-// Load environment variables from root .env.local
-const envPath = path.resolve(process.cwd(), '../../.env.local');
+// Load environment variables from root .env
+const envPath = path.resolve(process.cwd(), '../../.env');
 const envConfig = dotenv.config({ path: envPath });
 
 if (envConfig.error) {
-  console.warn('⚠️ No .env.local found at root, using process.env');
+  console.warn('⚠️ No .env found at root, using process.env');
 }
 
 export default defineConfig({
