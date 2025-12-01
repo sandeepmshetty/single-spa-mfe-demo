@@ -71,8 +71,9 @@ try {
   execSync('npm cache clean --force', { stdio: 'inherit' });
   console.log('✓ npm cache cleared successfully');
 } catch (error) {
-  console.error('⚠️  Failed to clear npm cache:', error.message);
-  process.exitCode = 1;
+  console.warn('⚠️  Warning: Failed to clear npm cache. This is common on Windows and usually harmless.');
+  console.warn('   You can try running "npm cache verify" manually if you experience installation issues.');
+  // Do not set exitCode to 1 for cache clean failure as it's not critical for project cleanup
 }
 
 console.log('\n✅ Cleanup complete!');
