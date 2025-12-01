@@ -47,7 +47,7 @@ export class EventBus {
    * Subscribe to specific event types
    */
   on(eventType: EventType, callback: (payload: IEventPayload) => void): () => void {
-    const subscription = this.eventSubject.subscribe(payload => {
+    const subscription = this.eventSubject.subscribe((payload: IEventPayload) => {
       if (payload.type === eventType) {
         callback(payload);
       }
@@ -69,7 +69,7 @@ export class EventBus {
    * Subscribe to events from a specific micro-frontend
    */
   onFromSource(source: string, callback: (payload: IEventPayload) => void): () => void {
-    const subscription = this.eventSubject.subscribe(payload => {
+    const subscription = this.eventSubject.subscribe((payload: IEventPayload) => {
       if (payload.source === source) {
         callback(payload);
       }

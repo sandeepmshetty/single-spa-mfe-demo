@@ -8,8 +8,28 @@
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 
 // Environment variables - injected at build time via rollup replace plugin
-const SUPABASE_URL = process.env['NEXT_PUBLIC_SUPABASE_URL'] || '';
-const SUPABASE_ANON_KEY = process.env['NEXT_PUBLIC_SUPABASE_ANON_KEY'] || '';
+// OR read from global window object if available (for runtime configuration)
+const getEnv = (key: string, buildTimeValue?: string) => {
+  // 1. Use the value injected at build time if available
+  if (buildTimeValue && buildTimeValue !== 'undefined' && buildTimeValue !== '') {
+    return buildTimeValue;
+  }
+  
+  // 2. Runtime injection via window.__ENV__ (docker/runtime)
+  if (typeof window !== 'undefined' && (window as any).__ENV__ && (window as any).__ENV__[key]) {
+    return (window as any).__ENV__[key];
+  }
+  
+  // 3. Fallback to window.process.env (webpack dev server sometimes)
+  if (typeof window !== 'undefined' && (window as any).process && (window as any).process.env && (window as any).process.env[key]) {
+    return (window as any).process.env[key];
+  }
+  
+  return '';
+};
+
+const SUPABASE_URL = getEnv('NEXT_PUBLIC_SUPABASE_URL', process.env['NEXT_PUBLIC_SUPABASE_URL']);
+const SUPABASE_ANON_KEY = getEnv('NEXT_PUBLIC_SUPABASE_ANON_KEY', process.env['NEXT_PUBLIC_SUPABASE_ANON_KEY']);
 
 /**
  * Supabase client instance

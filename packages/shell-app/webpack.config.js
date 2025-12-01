@@ -65,6 +65,14 @@ module.exports = (argv) => {
         inject: false,
         templateParameters: {
           isLocal: !isProduction,
+          process: {
+            env: {
+              NEXT_PUBLIC_SUPABASE_URL: process.env.NEXT_PUBLIC_SUPABASE_URL || env.NEXT_PUBLIC_SUPABASE_URL || '',
+              NEXT_PUBLIC_SUPABASE_ANON_KEY: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '',
+              NODE_ENV: process.env.NODE_ENV || 'development',
+              IS_DOCKER: process.env.IS_DOCKER || 'false'
+            }
+          }
         },
         minify: false,
       }),
@@ -91,16 +99,17 @@ module.exports = (argv) => {
       }),
       new webpack.DefinePlugin({
         // NODE_ENV is automatically set by webpack based on mode, don't redefine it
-        'process.env.NEXT_PUBLIC_SUPABASE_URL': JSON.stringify(env.NEXT_PUBLIC_SUPABASE_URL || ''),
-        'process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY': JSON.stringify(env.NEXT_PUBLIC_SUPABASE_ANON_KEY || ''),
-        'process.env.NEXT_PUBLIC_SENTRY_DSN': JSON.stringify(env.NEXT_PUBLIC_SENTRY_DSN || env.SENTRY_DSN || ''),
-        'process.env.NEXT_PUBLIC_POSTHOG_KEY': JSON.stringify(env.NEXT_PUBLIC_POSTHOG_KEY || ''),
-        'process.env.NEXT_PUBLIC_POSTHOG_HOST': JSON.stringify(env.NEXT_PUBLIC_POSTHOG_HOST || 'https://app.posthog.com'),
+        'process.env.NEXT_PUBLIC_SUPABASE_URL': JSON.stringify(process.env.NEXT_PUBLIC_SUPABASE_URL || env.NEXT_PUBLIC_SUPABASE_URL || ''),
+        'process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY': JSON.stringify(process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || env.NEXT_PUBLIC_SUPABASE_ANON_KEY || ''),
+        'process.env.NEXT_PUBLIC_SENTRY_DSN': JSON.stringify(process.env.NEXT_PUBLIC_SENTRY_DSN || env.NEXT_PUBLIC_SENTRY_DSN || env.SENTRY_DSN || ''),
+        'process.env.NEXT_PUBLIC_POSTHOG_KEY': JSON.stringify(process.env.NEXT_PUBLIC_POSTHOG_KEY || env.NEXT_PUBLIC_POSTHOG_KEY || ''),
+        'process.env.NEXT_PUBLIC_POSTHOG_HOST': JSON.stringify(process.env.NEXT_PUBLIC_POSTHOG_HOST || env.NEXT_PUBLIC_POSTHOG_HOST || 'https://app.posthog.com'),
       }),
     ],
     
     devServer: {
-      port: 9000,
+      port: process.env.PORT || 9000,
+      host: '0.0.0.0',
       historyApiFallback: true,
       hot: true,
       open: true,

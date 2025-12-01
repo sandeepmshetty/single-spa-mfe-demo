@@ -1,3 +1,16 @@
+# Stage 1: Build shared library
+FROM node:18-alpine AS shared-builder
+
+WORKDIR /shared
+
+# Copy shared library package files
+COPY packages/shared-library/package*.json ./
+RUN npm install
+
+# Copy shared library source
+COPY packages/shared-library .
+
+# Stage 2: Build Angular MFE
 FROM node:18-alpine
 
 # Copy scripts to parent directory (won't be overridden by volume mount)
@@ -7,6 +20,9 @@ WORKDIR /app
 
 # Install Angular CLI globally
 RUN npm install -g @angular/cli
+
+# Copy built shared library from the builder stage
+COPY --from=shared-builder /shared /shared-library
 
 # Install dependencies
 COPY packages/angular-mfe/package*.json ./

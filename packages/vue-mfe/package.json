@@ -4,7 +4,7 @@
   "description": "Vue 3 micro-frontend for product catalog",
   "main": "src/main.ts",
   "scripts": {
-    "start": "webpack serve --mode development --port 3002",
+    "start": "webpack serve --mode development",
     "build": "webpack --mode production",
     "build:analyze": "webpack-bundle-analyzer dist/static/js/*.js",
     "test": "vitest",
@@ -19,7 +19,13 @@
   "dependencies": {
     "single-spa-vue": "^2.4.0",
     "vue": "^3.3.8",
-    "vue-router": "^4.2.5"
+    "vue-router": "^4.2.5",
+    "@single-spa-demo/shared-library": "file:../shared-library",
+    "rxjs": "^7.8.1",
+    "posthog-js": "^1.96.0",
+    "@supabase/supabase-js": "^2.39.0",
+    "@sentry/browser": "^7.85.0",
+    "@sentry/tracing": "^7.85.0"
   },
   "devDependencies": {
     "@babel/core": "^7.23.2",

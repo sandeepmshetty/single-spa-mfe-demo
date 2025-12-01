@@ -3,6 +3,10 @@
  * Helpers to access globalThis.sharedServices with type safety
  */
 
+declare global {
+  var sharedServices: any;
+}
+
 // Augment the counter actions type to include missing methods
 interface CounterActionsExtended {
   increment: (source?: string) => void;

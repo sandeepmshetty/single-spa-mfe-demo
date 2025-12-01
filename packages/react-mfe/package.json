@@ -4,7 +4,7 @@
   "description": "React micro-frontend for user management",
   "main": "src/index.tsx",
   "scripts": {
-    "start": "webpack serve --mode development --port 3001",
+    "start": "webpack serve --mode development",
     "build": "webpack --mode production",
     "build:analyze": "webpack-bundle-analyzer dist/static/js/*.js",
     "test": "jest",
@@ -21,7 +21,12 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.17.0",
-    "styled-components": "^6.1.0"
+    "styled-components": "^6.1.0",
+    "@supabase/supabase-js": "^2.39.0",
+    "rxjs": "^7.8.1",
+    "posthog-js": "^1.96.0",
+    "@sentry/browser": "^7.85.0",
+    "@sentry/tracing": "^7.85.0"
   },
   "devDependencies": {
     "@babel/core": "^7.23.2",

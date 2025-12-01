@@ -93,11 +93,11 @@ module.exports = (argv) => {
         __VUE_PROD_DEVTOOLS__: JSON.stringify(false),
         __VUE_PROD_HYDRATION_MISMATCH_DETAILS__: JSON.stringify(false),
         // NODE_ENV is automatically set by webpack based on mode
-        'process.env.NEXT_PUBLIC_SUPABASE_URL': JSON.stringify(env.NEXT_PUBLIC_SUPABASE_URL || ''),
-        'process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY': JSON.stringify(env.NEXT_PUBLIC_SUPABASE_ANON_KEY || ''),
-        'process.env.NEXT_PUBLIC_SENTRY_DSN': JSON.stringify(env.NEXT_PUBLIC_SENTRY_DSN || env.SENTRY_DSN || ''),
-        'process.env.NEXT_PUBLIC_POSTHOG_KEY': JSON.stringify(env.NEXT_PUBLIC_POSTHOG_KEY || ''),
-        'process.env.NEXT_PUBLIC_POSTHOG_HOST': JSON.stringify(env.NEXT_PUBLIC_POSTHOG_HOST || 'https://app.posthog.com'),
+        'process.env.NEXT_PUBLIC_SUPABASE_URL': JSON.stringify(process.env.NEXT_PUBLIC_SUPABASE_URL || env.NEXT_PUBLIC_SUPABASE_URL || ''),
+        'process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY': JSON.stringify(process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || env.NEXT_PUBLIC_SUPABASE_ANON_KEY || ''),
+        'process.env.NEXT_PUBLIC_SENTRY_DSN': JSON.stringify(process.env.NEXT_PUBLIC_SENTRY_DSN || env.NEXT_PUBLIC_SENTRY_DSN || env.SENTRY_DSN || ''),
+        'process.env.NEXT_PUBLIC_POSTHOG_KEY': JSON.stringify(process.env.NEXT_PUBLIC_POSTHOG_KEY || env.NEXT_PUBLIC_POSTHOG_KEY || ''),
+        'process.env.NEXT_PUBLIC_POSTHOG_HOST': JSON.stringify(process.env.NEXT_PUBLIC_POSTHOG_HOST || env.NEXT_PUBLIC_POSTHOG_HOST || 'https://app.posthog.com'),
       }),
       new HtmlWebpackPlugin({
         template: 'public/index.html',
@@ -109,7 +109,8 @@ module.exports = (argv) => {
     ],
     
     devServer: {
-      port: 3002,
+      port: process.env.PORT || 3002,
+      host: '0.0.0.0',
       historyApiFallback: true,
       hot: false,
       liveReload: true,

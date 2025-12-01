@@ -19,7 +19,11 @@
   ],
   "type": "module",
   "dependencies": {
-    "rxjs": "^7.8.1"
+    "rxjs": "^7.8.1",
+    "posthog-js": "^1.96.0",
+    "@supabase/supabase-js": "^2.39.0",
+    "@sentry/browser": "^7.85.0",
+    "@sentry/tracing": "^7.85.0"
   },
   "devDependencies": {
     "@rollup/plugin-commonjs": "^25.0.5",

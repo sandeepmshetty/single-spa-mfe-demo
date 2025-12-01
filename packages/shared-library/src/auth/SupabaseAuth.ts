@@ -310,7 +310,7 @@ class SupabaseAuthService {
    * Listen to auth state changes
    */
   onAuthStateChange(callback: (event: string, session: Session | null) => void) {
-    return supabase.auth.onAuthStateChange((event, session) => {
+    return supabase.auth.onAuthStateChange((event: string, session: Session | null) => {
       callback(event, session);
     });
   }

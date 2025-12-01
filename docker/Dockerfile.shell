@@ -1,3 +1,17 @@
+# Stage 1: Build shared library
+FROM node:18-alpine AS shared-builder
+
+WORKDIR /shared
+
+# Copy shared library package files
+COPY packages/shared-library/package*.json ./
+RUN npm install
+
+# Copy shared library source and build it
+COPY packages/shared-library .
+RUN npm run build
+
+# Stage 2: Build shell app
 FROM node:18-alpine
 
 # Copy scripts to parent directory (won't be overridden by volume mount)
@@ -11,6 +25,10 @@ RUN npm install
 
 # Copy source code
 COPY packages/shell-app .
+
+# Copy built shared library from the builder stage
+# This ensures the file exists when webpack's CopyWebpackPlugin tries to copy it
+COPY --from=shared-builder /shared/dist ../shared-library/dist
 
 EXPOSE 9000
 

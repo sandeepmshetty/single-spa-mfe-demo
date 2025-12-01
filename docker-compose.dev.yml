@@ -14,6 +14,12 @@ services:
       - /app/node_modules
     environment:
       - NODE_ENV=development
+      - PORT=9000
+      - IS_DOCKER=true
+      - NEXT_PUBLIC_SUPABASE_URL=${NEXT_PUBLIC_SUPABASE_URL}
+      - NEXT_PUBLIC_SUPABASE_ANON_KEY=${NEXT_PUBLIC_SUPABASE_ANON_KEY}
+    env_file:
+      - .env
     networks:
       - mfe-network
     depends_on:
@@ -35,6 +41,11 @@ services:
       - /app/node_modules
     environment:
       - NODE_ENV=development
+      - PORT=8081
+      - NEXT_PUBLIC_SUPABASE_URL=${NEXT_PUBLIC_SUPABASE_URL}
+      - NEXT_PUBLIC_SUPABASE_ANON_KEY=${NEXT_PUBLIC_SUPABASE_ANON_KEY}
+    env_file:
+      - .env
     networks:
       - mfe-network
     depends_on:
@@ -53,6 +64,11 @@ services:
       - /app/node_modules
     environment:
       - NODE_ENV=development
+      - PORT=8082
+      - NEXT_PUBLIC_SUPABASE_URL=${NEXT_PUBLIC_SUPABASE_URL}
+      - NEXT_PUBLIC_SUPABASE_ANON_KEY=${NEXT_PUBLIC_SUPABASE_ANON_KEY}
+    env_file:
+      - .env
     networks:
       - mfe-network
     depends_on:
@@ -71,6 +87,11 @@ services:
       - /app/node_modules
     environment:
       - NODE_ENV=development
+      - PORT=8083
+      - NEXT_PUBLIC_SUPABASE_URL=${NEXT_PUBLIC_SUPABASE_URL}
+      - NEXT_PUBLIC_SUPABASE_ANON_KEY=${NEXT_PUBLIC_SUPABASE_ANON_KEY}
+    env_file:
+      - .env
     networks:
       - mfe-network
     depends_on:
@@ -89,6 +110,11 @@ services:
       - /app/node_modules
     environment:
       - NODE_ENV=development
+      - PORT=8084
+      - NEXT_PUBLIC_SUPABASE_URL=${NEXT_PUBLIC_SUPABASE_URL}
+      - NEXT_PUBLIC_SUPABASE_ANON_KEY=${NEXT_PUBLIC_SUPABASE_ANON_KEY}
+    env_file:
+      - .env
     networks:
       - mfe-network
 

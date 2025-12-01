@@ -57,7 +57,7 @@ export const initSentry = (options?: {
       },
 
       // Filter out noise
-      beforeSend(event, hint) {
+      beforeSend(event: Sentry.Event, hint: Sentry.EventHint) {
         // Don't send errors in development unless explicitly enabled
         if (ENVIRONMENT === 'development') {
           console.log('[Sentry] Would send in production:', event);
@@ -83,7 +83,7 @@ export const initSentry = (options?: {
       },
 
       // Don't capture console logs as breadcrumbs in production
-      beforeBreadcrumb(breadcrumb, hint) {
+      beforeBreadcrumb(breadcrumb: Sentry.Breadcrumb, hint: Sentry.BreadcrumbHint | undefined) {
         if (ENVIRONMENT === 'production' && breadcrumb.category === 'console') {
           return null;
         }

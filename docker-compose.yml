@@ -28,9 +28,12 @@ services:
       - "9000:9000"
     volumes:
       - ./packages/shell-app:/app
+      - ./packages/shared-library:/shared-library
       - /app/node_modules
     environment:
       - NODE_ENV=development
+      - NEXT_PUBLIC_SUPABASE_URL=${NEXT_PUBLIC_SUPABASE_URL}
+      - NEXT_PUBLIC_SUPABASE_ANON_KEY=${NEXT_PUBLIC_SUPABASE_ANON_KEY}
     networks:
       - mfe-network
     profiles:
@@ -42,12 +45,14 @@ services:
       dockerfile: docker/Dockerfile.react
     container_name: mfe-react-dev
     ports:
-      - "8081:8081"
+      - "3001:8081"
     volumes:
       - ./packages/react-mfe:/app
       - /app/node_modules
     environment:
       - NODE_ENV=development
+      - NEXT_PUBLIC_SUPABASE_URL=${NEXT_PUBLIC_SUPABASE_URL}
+      - NEXT_PUBLIC_SUPABASE_ANON_KEY=${NEXT_PUBLIC_SUPABASE_ANON_KEY}
     networks:
       - mfe-network
     profiles:
@@ -59,12 +64,14 @@ services:
       dockerfile: docker/Dockerfile.vue
     container_name: mfe-vue-dev
     ports:
-      - "8082:8082"
+      - "3002:8082"
     volumes:
       - ./packages/vue-mfe:/app
       - /app/node_modules
     environment:
       - NODE_ENV=development
+      - NEXT_PUBLIC_SUPABASE_URL=${NEXT_PUBLIC_SUPABASE_URL}
+      - NEXT_PUBLIC_SUPABASE_ANON_KEY=${NEXT_PUBLIC_SUPABASE_ANON_KEY}
     networks:
       - mfe-network
     profiles:
@@ -76,12 +83,14 @@ services:
       dockerfile: docker/Dockerfile.angular
     container_name: mfe-angular-dev
     ports:
-      - "8083:8083"
+      - "3003:8083"
     volumes:
       - ./packages/angular-mfe:/app
       - /app/node_modules
     environment:
       - NODE_ENV=development
+      - NEXT_PUBLIC_SUPABASE_URL=${NEXT_PUBLIC_SUPABASE_URL}
+      - NEXT_PUBLIC_SUPABASE_ANON_KEY=${NEXT_PUBLIC_SUPABASE_ANON_KEY}
     networks:
       - mfe-network
     profiles:
@@ -99,6 +108,8 @@ services:
       - /app/node_modules
     environment:
       - NODE_ENV=development
+      - NEXT_PUBLIC_SUPABASE_URL=${NEXT_PUBLIC_SUPABASE_URL}
+      - NEXT_PUBLIC_SUPABASE_ANON_KEY=${NEXT_PUBLIC_SUPABASE_ANON_KEY}
     networks:
       - mfe-network
     profiles:

@@ -58,7 +58,7 @@ export const initPostHog = (options?: {
       mask_all_element_attributes: false,
 
       // Performance
-      loaded: posthog => {
+      loaded: (posthog: PostHog) => {
         if (ENVIRONMENT === 'development') {
           posthog.debug(false); // Set to true for debugging
         }
